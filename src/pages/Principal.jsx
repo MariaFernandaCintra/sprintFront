@@ -15,6 +15,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import { Padding } from "@mui/icons-material";
 
 function Principal() {
   const styles = getStyles();
@@ -68,30 +69,34 @@ function Principal() {
           />
         </Button>
       </Box>
-      <TableContainer component={Paper} sx={styles.tableContainer}>
-        <Table size="small" sx={styles.table}>
-          <TableHead sx={styles.tableHead}>
-            <TableRow sx={styles.tableRow}>
-              <TableCell align="center" sx={styles.tableCell}>
-                Nome
-              </TableCell>
-              <TableCell align="center" sx={styles.tableCell}>
-                Descrição
-              </TableCell>
-              <TableCell align="center" sx={styles.tableCell}>
-                Bloco
-              </TableCell>
-              <TableCell align="center" sx={styles.tableCell}>
-                Tipo
-              </TableCell>
-              <TableCell align="center" sx={styles.tableCell}>
-                Capacidade
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody sx={styles.tableBody}>{listSalas}</TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={styles.boxFundoTabela}>
+        <Container sx={styles.container}>{/* Conteúdo da página */}</Container>
+
+        <TableContainer sx={styles.tableContainer}>
+          <Table size="small" sx={styles.table}>
+            <TableHead sx={styles.tableHead}>
+              <TableRow sx={styles.tableRow}>
+                <TableCell align="center" sx={styles.tableCell}>
+                  Nome
+                </TableCell>
+                <TableCell align="center" sx={styles.tableCell}>
+                  Descrição
+                </TableCell>
+                <TableCell align="center" sx={styles.tableCell}>
+                  Bloco
+                </TableCell>
+                <TableCell align="center" sx={styles.tableCell}>
+                  Tipo
+                </TableCell>
+                <TableCell align="center" sx={styles.tableCell}>
+                  Capacidade
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody sx={styles.tableBody}>{listSalas}</TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
       <Box sx={styles.footer}>
         <Typography sx={styles.footerText}>
           &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
@@ -131,7 +136,6 @@ function getStyles() {
       border: "4px solid white",
       borderRadius: 15,
     },
-
     buttonHome: {
       mr: 8,
     },
@@ -140,28 +144,37 @@ function getStyles() {
     },
     table: {
       backgroundColor: "#949494",
-      mt: 5,
-      mb: 5,
+      marginTop:2.5,
+      marginBottom:2.5,
+      marginLeft: "auto", // Para centralizar
+      marginRight: "auto", // Para centralizar
+      width: "calc(100% - 40px)", // Ajuste o tamanho total da tabela
+      borderRadius: "15px", // Bordas arredondadas
     },
-    tableHead: { backgroundColor: "gray", borderRadius: 10 },
-
-    tableCell: {
+    tableHead: {
       backgroundColor: "gray",
-      border: "3px solid white",
-      borderRadius: 2,
-      color: "white",
+      borderRadius: "50px",
+      border: "2px solid white",
+    },
+    boxFundoTabela: {
+      border: "5px solid white",
+      borderRadius: "15px",
+      backgroundColor: "#B5B5B5",
+      width: "90%",
+    },
+    tableCell: {
+      backgroundColor: "#D9D9D9",
+      border: "2px solid white",
       fontWeight: "bold",
       fontSize: 22,
       paddingTop: 2,
-      paddingBottom: 2,
+      
     },
-
     tableBody: {
       backgroundColor: "#949494",
       border: "3px solid white",
       borderRadius: 10,
     },
-
     tableBodyCell: {
       backgroundColor: "#949494",
       border: "1px solid white",
@@ -171,7 +184,6 @@ function getStyles() {
       paddingTop: 1.2,
       paddingBottom: 1.2,
     },
-
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
       width: "210vh",
