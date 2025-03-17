@@ -77,6 +77,7 @@ function Principal() {
             style={{ width: "58px", height: "58px" }}
           />
         </Button>
+
       </Box>
       <Box sx={styles.boxFundoTabela}>
         <Container sx={styles.container}>{/* Conteúdo da página */}</Container>
@@ -136,12 +137,12 @@ function getStyles() {
       display: "flex",
       alignItems: "center",
       justifyContent: "end",
-      borderBottom: "5px solid white",
+      borderBottom: "7px solid white",
     },
     logo: {
       width: "230px",
       height: "auto",
-      marginRight: "1400px",
+      marginRight: "1500px",
       border: "4px solid white",
       borderRadius: 15,
     },
@@ -205,7 +206,7 @@ function getStyles() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      borderTop: "5px solid white",
+      borderTop: "7px solid white",
     },
     footerText: {
       color: "white",

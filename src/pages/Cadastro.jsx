@@ -157,7 +157,7 @@ function getStyles() {
       display: "flex",
       alignItems: "center",
       justifyContent: "end",
-      borderBottom: "5px solid white",
+      borderBottom: "7px solid white",
     },
     buttonHome: {
       mr: 8,
@@ -244,7 +244,7 @@ function getStyles() {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      borderTop: "5px solid white",
+      borderTop: "7px solid white",
     },
     footerText: {
       color: "white",
