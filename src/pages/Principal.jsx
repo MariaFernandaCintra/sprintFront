@@ -141,7 +141,7 @@ function getStyles() {
     logo: {
       width: "230px",
       height: "auto",
-      marginRight: "1500px",
+      marginRight: "1400px",
       border: "4px solid white",
       borderRadius: 15,
     },
