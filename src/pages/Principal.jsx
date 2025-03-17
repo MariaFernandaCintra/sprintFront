@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import logout from "../../img/iconelogout.png";
 import logo from "../../img/logo.png";
+import Iconeperfil from "../../img/iconeperfil.png";
 import api from "../services/axios";
 
 import Box from "@mui/material/Box";
@@ -61,6 +62,14 @@ function Principal() {
     <Container sx={styles.container}>
       <Box sx={styles.header}>
         <img src={logo} alt="Logo" style={styles.logo} />
+        <Button component={Link} to="/principal" sx={styles.buttonPerfil}>
+          <img 
+            src={Iconeperfil}
+            alt="Perfil"
+            style={{width: "58px", height: "58px"}}
+          />
+        </Button>
+
         <Button component={Link} to="/home" sx={styles.buttonHome}>
           <img
             src={logout}
@@ -132,12 +141,16 @@ function getStyles() {
     logo: {
       width: "230px",
       height: "auto",
-      marginRight: "1540px",
+      marginRight: "1500px",
       border: "4px solid white",
       borderRadius: 15,
     },
     buttonHome: {
-      mr: 8,
+      mr: 10,
+    },
+    buttonPerfil:{
+      mr: 3,
+
     },
     tableContainer: {
       backgroundColor: "transparent",
@@ -157,6 +170,7 @@ function getStyles() {
       border: "2px solid white",
     },
     boxFundoTabela: {
+      margin:"25px",
       border: "5px solid white",
       borderRadius: "15px",
       backgroundColor: "#B5B5B5",
