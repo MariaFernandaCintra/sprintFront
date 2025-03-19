@@ -2,13 +2,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
-import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import home from "../../img/iconehome.png";
 import logo from "../../img/logo.png";
 import api from "../services/axios";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 function Login() {
   const styles = getStyles();
@@ -41,15 +41,7 @@ function Login() {
 
   return (
     <Container component="main" sx={styles.container}>
-      <Box sx={styles.header}>
-        <Button component={Link} to="/" sx={styles.buttonHome}>
-          <img
-            src={home}
-            alt="Home"
-            style={{ width: "65px", height: "65px" }}
-          />
-        </Button>
-      </Box>
+      <Header/>
         <Box
           component="form"
           sx={styles.form}
@@ -92,11 +84,7 @@ function Login() {
             Cadastre-se
           </Button>
         </Box>
-      <Box sx={styles.footer}>
-        <Typography sx={styles.footerText}>
-          &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
-        </Typography>
-      </Box>
+      <Footer/>
     </Container>
   );
 }
@@ -116,18 +104,6 @@ function getStyles() {
       minHeight: "100vh",
       minWidth: "100%",
     },
-    header: {
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
-      height: "11vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "end",
-      borderBottom: "7px solid white",
-    },
-    buttonHome: {
-      mr:8,
-    },
     form: {
       mt:14.8,
       display: "flex",
@@ -137,7 +113,7 @@ function getStyles() {
       paddingRight: 6,
       paddingLeft: 6,
       paddingTop: 9,
-      paddingBottom: 5,
+      paddingBottom: 7,
       borderRadius: 10,
     },
     logo: {
@@ -199,20 +175,6 @@ function getStyles() {
         backgroundColor: "transparent",
         color: "rgb(167, 63, 63)",
       },
-    },
-    footer: {
-      mt:17.5,
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
-      height: "7vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      borderTop: "7px solid white",
-    },
-    footerText: {
-      color: "white",
-      fontSize: 18,
     },
   };
 }

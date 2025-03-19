@@ -6,9 +6,10 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import home from "../../img/iconehome.png";
 import logo from "../../img/logo.png";
 import api from "../services/axios";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 function Cadastro() {
   const styles = getStyles();
@@ -46,15 +47,7 @@ function Cadastro() {
 
   return (
     <Container component="main" sx={styles.container}>
-      <Box sx={styles.header}>
-        <Button component={Link} to="/" sx={styles.buttonHome}>
-          <img
-            src={home}
-            alt="Home"
-            style={{ width: "65px", height: "65px" }}
-          />
-        </Button>
-      </Box>
+      <Header />
       <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
         <Box
           component="img"
@@ -126,11 +119,7 @@ function Cadastro() {
           Login
         </Button>
       </Box>
-      <Box sx={styles.footer}>
-        <Typography sx={styles.footerText}>
-          &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
-        </Typography>
-      </Box>
+      <Footer/>
     </Container>
   );
 }
@@ -150,18 +139,6 @@ function getStyles() {
       minHeight: "100vh",
       minWidth: "100%",
     },
-    header: {
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
-      height: "11vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "end",
-      borderBottom: "7px solid white",
-    },
-    buttonHome: {
-      mr: 8,
-    },
     form: {
       mt: 5.2,
       display: "flex",
@@ -171,7 +148,7 @@ function getStyles() {
       paddingRight: 6,
       paddingLeft: 6,
       paddingTop: 9,
-      paddingBottom: 5,
+      paddingBottom: 7,
       borderRadius: 10,
     },
     textField: {
@@ -235,20 +212,6 @@ function getStyles() {
       },
       "&:focus": { textDecoration: "underline" },
       "&:active": { textDecoration: "underline" },
-    },
-    footer: {
-      mt: 9,
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
-      height: "7vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      borderTop: "7px solid white",
-    },
-    footerText: {
-      color: "white",
-      fontSize: 18,
     },
   };
 }

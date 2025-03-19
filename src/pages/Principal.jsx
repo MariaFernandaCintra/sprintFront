@@ -13,6 +13,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
+import Footer from "../components/Footer";
 
 function Principal() {
   const styles = getStyles();
@@ -147,11 +148,7 @@ function Principal() {
           </Table>
         </TableContainer>
       </Box>
-      <Box sx={styles.footer}>
-        <Typography sx={styles.footerText}>
-          &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
-        </Typography>
-      </Box>
+      <Footer/>
     </Container>
       )}
     </div>
