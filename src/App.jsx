@@ -3,6 +3,7 @@ import Login from "./pages/Login";
 import Cadastro from "./pages/Cadastro";
 import Principal from "./pages/Principal";
 import Home from "./pages/Home";
+import ProtectedRouter from "./components/ProjetectedRoute";
 
 function App() {
   return (
@@ -10,9 +11,11 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/cadastro" element={<Cadastro />} />
-        <Route path="/principal" element={<Principal />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="*" element={<Home />} />
+        <Route path="/principal" element={
+          <ProtectedRouter>
+            <Principal/>
+          </ProtectedRouter> } />
+        <Route path="/" element={<Home />} />
       </Routes>
     </Router>
   );

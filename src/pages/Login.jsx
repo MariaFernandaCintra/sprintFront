@@ -29,6 +29,7 @@ function Login() {
     await api.postLogin(usuario).then(
       (response) => {
         alert(response.data.message);
+        localStorage.setItem('authenticated', true)
         navigate("/principal");
       },
       (error) => {
@@ -41,7 +42,7 @@ function Login() {
   return (
     <Container component="main" sx={styles.container}>
       <Box sx={styles.header}>
-        <Button component={Link} to="/home" sx={styles.buttonHome}>
+        <Button component={Link} to="/" sx={styles.buttonHome}>
           <img
             src={home}
             alt="Home"
@@ -79,8 +80,8 @@ function Login() {
             onChange={onChange}
             sx={{ ...styles.textField, mt: 3 }}
           />
-          <Button sx={styles.buttonLogin} type="submit" variant="contained">
-            Login
+          <Button sx={styles.buttonLogin} type="submit" variant="contained" >
+            Entrar
           </Button>
           <Button
             component={Link}
