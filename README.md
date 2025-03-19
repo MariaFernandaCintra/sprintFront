@@ -65,23 +65,23 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
 
 1. **Material UI (MUI)**
 
-- Para utilizar os componentes de UI do Material-UI:
+ - Para utilizar os componentes de UI do Material-UI:
 
   ```bash
     npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
   ```
 
-  2. **Axios:**
+2. **Axios:**
 
-- Para integrar com a API utilizando Axios, instale::
+ - Para integrar com a API utilizando Axios, instale::
 
   ```bash
      npm i axios
   ```
 
-  1. **React Router DOM**
+3. **React Router DOM**
 
-- Para gerenciar a navegação entre as páginas:
+ - Para gerenciar a navegação entre as páginas:
   ```bash
      npm install react-router-dom
   ```
