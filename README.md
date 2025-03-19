@@ -49,14 +49,15 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
 
 3. **Instalar as Dependências**
 
-   - Se estiver usando npm, execute:
+ - Se estiver usando npm, execute:
 
    ```bash
       npm install
    ```
 
 4. **Iniciar o Servidor de Desenvolvimento**
-   - Com npm, execute:
+
+ - Com npm, execute:
    ```bash
       npm run dev
    ```
