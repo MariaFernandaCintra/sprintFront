@@ -1,6 +1,6 @@
-# SrintFront
+# SprintFront
 
-Este é o front-end de um sistema de reservas desenvolvido durante um sprint.
+Este é o front-end de um sistema de reservas desenvolvido durante uma Sprint.
 
 ## Descrição
 
@@ -52,7 +52,7 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
  - Se estiver usando npm, execute:
 
    ```bash
-      npm install
+      npm i
    ```
 
 4. **Iniciar o Servidor de Desenvolvimento**
@@ -69,12 +69,12 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
  - Para utilizar os componentes de UI do Material-UI:
 
    ```bash
-      npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
+      npm i @mui/material @emotion/react @emotion/styled @mui/icons-material
    ```
 
-2. **Axios:**
+2. **Axios**
 
- - Para integrar com a API utilizando Axios, instale::
+ - Para integrar com a API utilizando Axios, instale:
 
    ```bash
        npm i axios
@@ -84,5 +84,5 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
 
  - Para gerenciar a navegação entre as páginas:
    ```bash
-       npm install react-router-dom
+       npm i react-router-dom
    ```
