@@ -47,7 +47,7 @@ function Cadastro() {
   return (
     <Container component="main" sx={styles.container}>
       <Box sx={styles.header}>
-        <Button component={Link} to="/home" sx={styles.buttonHome}>
+        <Button component={Link} to="/" sx={styles.buttonHome}>
           <img
             src={home}
             alt="Home"

@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import logout from "../../img/iconelogout.png";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../../img/logo.png";
 import Iconeperfil from "../../img/iconeperfil.png";
 import api from "../services/axios";
-
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -16,11 +13,11 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
-import { Padding } from "@mui/icons-material";
 
 function Principal() {
   const styles = getStyles();
   const [salas, setSalas] = useState([]);
+  const navigate = useNavigate();
 
   async function getSalas() {
     await api.getSalas().then(
@@ -32,6 +29,11 @@ function Principal() {
         console.log("Erro", error);
       }
     );
+  }
+  function Logout(){
+    console.log("teste logout")
+    localStorage.removeItem('authenticated')
+    navigate("/")
   }
 
   useEffect(() => {
@@ -59,6 +61,43 @@ function Principal() {
   ));
 
   return (
+    <div> 
+      {salas.length === 0 ? (
+        <Container sx={styles.container}>
+          <Box sx={styles.header}>
+        <img src={logo} alt="Logo" style={styles.logo} />
+        <Button component={Link} to="/principal" sx={styles.buttonPerfil}>
+          <img 
+            src={Iconeperfil}
+            alt="Perfil"
+            style={{width: "58px", height: "58px"}}
+          />
+        </Button>
+
+        <Button sx={styles.buttonHome}>
+          <img
+            src={"../../../img/iconelogout.png"}
+            alt="Logout"
+            style={{ width: "58px", height: "58px" }}
+            onClick={Logout} 
+          />
+        </Button>
+
+      </Box>
+      <Box>
+        <Container sx={styles.container}>{/* Conteúdo da página */}</Container>
+        <p style={{ color: 'white', fontSize: 55, margin:365}}>Carregando Salas...</p>
+      </Box>
+      <Box sx={styles.footer}>
+        <Typography sx={styles.footerText}>
+          &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
+        </Typography>
+      </Box>
+      </Container>
+
+
+
+      ) : (
     <Container sx={styles.container}>
       <Box sx={styles.header}>
         <img src={logo} alt="Logo" style={styles.logo} />
@@ -70,11 +109,12 @@ function Principal() {
           />
         </Button>
 
-        <Button component={Link} to="/home" sx={styles.buttonHome}>
+        <Button component={Link} to="/" sx={styles.buttonHome}>
           <img
-            src={logout}
+            src={"../../../img/iconelogout.png"}
             alt="Logout"
             style={{ width: "58px", height: "58px" }}
+            onClick={Logout}
           />
         </Button>
 
@@ -113,6 +153,8 @@ function Principal() {
         </Typography>
       </Box>
     </Container>
+      )}
+    </div>
   );
 }
 
@@ -151,7 +193,9 @@ function getStyles() {
     },
     buttonPerfil:{
       mr: 3,
-
+    },
+    paragrafo:{
+      
     },
     tableContainer: {
       backgroundColor: "transparent",
