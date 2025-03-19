@@ -72,9 +72,9 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
       npm install @mui/material @emotion/react @emotion/styled @mui/icons-material
    ```
 
-2. **Axios:**
+2. **Axios**
 
- - Para integrar com a API utilizando Axios, instale::
+ - Para integrar com a API utilizando Axios, instale:
 
    ```bash
        npm i axios
