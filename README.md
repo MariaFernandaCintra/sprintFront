@@ -1,4 +1,4 @@
-# SrintFront
+# SprintFront
 
 Este é o front-end de um sistema de reservas desenvolvido durante um sprint.
 
