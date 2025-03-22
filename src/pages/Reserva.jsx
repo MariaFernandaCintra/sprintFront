@@ -4,38 +4,35 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
 import logo from "../../img/logo.png";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import api from "../services/axios";
 
-function Cadastro() {
+function Reserva() {
   const styles = getStyles();
-  const [usuario, setUsuario] = useState({
-    nome: "",
-    email: "",
-    NIF: "",
-    senha: "",
+  const [reserva, setReserva] = useState({
+    fk_id_usuario: "",
+    fk_id_sala: "",
+    data: "",
+    hora_inicio: "",
+    hora_fim: "",
   });
 
   const onChange = (event) => {
     const { name, value } = event.target;
-    setUsuario({ ...usuario, [name]: value });
+    setReserva({ ...reserva, [name]: value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Cadastro();
+    Reserva();
   };
 
-  const navigate = useNavigate();
-
-  async function Cadastro() {
-    await api.postCadastro(usuario).then(
+  async function Reserva() {
+    await api.postReserva(reserva).then(
       (response) => {
         alert(response.data.message);
-        navigate("/principal");
       },
       (error) => {
         console.log(error);
@@ -62,60 +59,58 @@ function Cadastro() {
           }}
         />
         <TextField
-          required
-          fullWidth
-          id="nome"
-          placeholder="  nome"
-          name="nome"
+          id="fk_id_usuario"
+          label="ID do Usuário"
+          name="fk_id_usuario"
           margin="normal"
-          value={usuario.nome}
+          value={reserva.fk_id_usuario}
           onChange={onChange}
           sx={styles.textField}
         />
         <TextField
-          required
-          fullWidth
-          id="email"
-          placeholder="  e-mail"
-          name="email"
+          id="fk_id_sala"
+          label="ID da Sala"
+          name="fk_id_sala"
           margin="normal"
-          value={usuario.email}
+          value={reserva.fk_id_sala}
           onChange={onChange}
           sx={styles.textField}
         />
         <TextField
-          required
-          fullWidth
-          id="NIF"
-          placeholder="  NIF"
-          name="NIF"
+          id="data"
+          name="data"
+          label="Data"
           margin="normal"
-          value={usuario.NIF}
+          type="date"
+          value={reserva.data}
           onChange={onChange}
           sx={styles.textField}
+          slotProps={{ inputLabel: { shrink: true } }}
         />
         <TextField
-          required
-          fullWidth
-          id="senha"
-          placeholder="  senha"
-          name="senha"
-          type="password"
+          id="hora_inicio"
+          name="hora_inicio"
+          label="Hora de Início"
           margin="normal"
-          value={usuario.senha}
+          type="time"
+          value={reserva.hora_inicio}
           onChange={onChange}
           sx={styles.textField}
+          slotProps={{ inputLabel: { shrink: true } }}
         />
-        <Button type="submit" variant="contained" sx={styles.buttonCadastro}>
-          Cadastrar-se
-        </Button>
-        <Button
-          component={Link}
-          to="/login"
-          variant="text"
-          sx={styles.buttonToLogin}
-        >
-          Login
+        <TextField
+          id="hora_fim"
+          name="hora_fim"
+          label="Hora de Fim"
+          margin="normal"
+          type="time"
+          value={reserva.hora_fim}
+          onChange={onChange}
+          sx={styles.textField}
+          slotProps={{ inputLabel: { shrink: true } }}
+        />
+        <Button type="submit" variant="contained" sx={styles.buttonReservar}>
+          Reservar
         </Button>
       </Box>
       <Footer />
@@ -143,7 +138,7 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      backgroundColor: "rgba(255, 255, 255, 0.7)",
+      backgroundColor: "rgba(209, 209, 209, 1)",
       paddingRight: 6,
       paddingLeft: 6,
       paddingTop: 9,
@@ -167,7 +162,7 @@ function getStyles() {
       border: "0px transparent",
       borderRadius: 10,
     },
-    buttonCadastro: {
+    buttonReservar: {
       "&.MuiButton-root": {
         border: "none",
         boxShadow: "none",
@@ -192,27 +187,7 @@ function getStyles() {
       borderRadius: 15,
       textTransform: "none",
     },
-    buttonToLogin: {
-      color: "rgb(152, 0, 0)",
-      backgroundColor: "transparent",
-      fontWeight: "bold",
-      fontSize: 15.5,
-      textDecoration: "underline",
-      textDecorationThickness: "1.5px",
-      textUnderlineOffset: "4px",
-      mt: 2,
-      textTransform: "none",
-      "&:hover": {
-        textDecoration: "underline",
-        backgroundColor: "transparent",
-        textDecorationThickness: "1.5px",
-        textUnderlineOffset: "4px",
-        color: "rgb(167, 63, 63)",
-      },
-      "&:focus": { textDecoration: "underline" },
-      "&:active": { textDecoration: "underline" },
-    },
   };
 }
 
-export default Cadastro;
+export default Reserva;

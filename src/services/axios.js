@@ -8,6 +8,7 @@ const api = axios.create({
 const sheets = {
   postLogin: (usuario) => api.post("login/", usuario),
   postCadastro: (usuario) => api.post("cadastro/", usuario),
+  postReserva: (reserva) => api.post("reserva/", reserva),
   getSalas: (sala) => api.get("salas/", sala),
 };
 

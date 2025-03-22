@@ -1,8 +1,8 @@
-import React from "react";
-import home from "../../img/iconehome.png";
-import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import React from "react";
+import { Link } from "react-router-dom";
+import home from "../../img/iconehome.png";
 
 const Header = () => {
   const styles = getStyles();
@@ -27,7 +27,7 @@ function getStyles() {
       borderBottom: "7px solid white",
     },
     buttonHome: {
-      mr:8,
+      mr: 8,
     },
   };
 }
