@@ -52,14 +52,14 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
  - Se estiver usando npm, execute:
 
    ```bash
-      npm i
+   npm i
    ```
 
 4. **Iniciar o Servidor de Desenvolvimento**
 
  - Com npm, execute:
    ```bash
-      npm run dev
+   npm run dev
    ```
 
 ### Dependências Necessárias
@@ -69,7 +69,7 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
  - Para utilizar os componentes de UI do Material-UI:
 
    ```bash
-      npm i @mui/material @emotion/react @emotion/styled @mui/icons-material
+   npm i @mui/material @emotion/react @emotion/styled @mui/icons-material
    ```
 
 2. **Axios**
@@ -77,12 +77,12 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
  - Para integrar com a API utilizando Axios, instale:
 
    ```bash
-       npm i axios
+   npm i axios
    ```
 
 3. **React Router DOM**
 
  - Para gerenciar a navegação entre as páginas:
    ```bash
-       npm i react-router-dom
+   npm i react-router-dom
    ```
