@@ -1,6 +1,10 @@
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
 import { useState } from "react";
@@ -15,6 +19,9 @@ function Login() {
   const [usuario, setUsuario] = useState({ email: "", senha: "" });
   const navigate = useNavigate();
 
+  // Estado para controlar a visualização da senha
+  const [showPassword, setShowPassword] = useState(false);
+
   const onChange = (event) => {
     const { name, value } = event.target;
     setUsuario({ ...usuario, [name]: value });
@@ -22,14 +29,14 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Login();
+    handleLogin();
   };
 
-  async function Login() {
+  async function handleLogin() {
     await api.postLogin(usuario).then(
       (response) => {
         alert(response.data.message);
-        localStorage.setItem('authenticated', true)
+        localStorage.setItem("authenticated", true);
         navigate("/principal");
       },
       (error) => {
@@ -39,52 +46,62 @@ function Login() {
     );
   }
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <Container component="main" sx={styles.container}>
-      <Header/>
-        <Box
-          component="form"
-          sx={styles.form}
-          onSubmit={handleSubmit}
-          noValidate
+      <Header />
+      <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
+        <Box component="img" src={logo} alt="Logo" sx={styles.logo} />
+        <TextField
+          id="email"
+          placeholder="e-mail"
+          name="email"
+          margin="normal"
+          value={usuario.email}
+          onChange={onChange}
+          sx={styles.textField}
+        />
+        <TextField
+          id="senha"
+          placeholder="senha"
+          name="senha"
+          type={showPassword ? "text" : "password"}
+          margin="normal"
+          value={usuario.senha}
+          onChange={onChange}
+          sx={{ ...styles.textField, mt: 3 }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                    aria-label="alternar visibilidade da senha"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+        <Button sx={styles.buttonLogin} type="submit" variant="contained">
+          Entrar
+        </Button>
+        <Button
+          component={Link}
+          to="/cadastro"
+          sx={styles.buttonCadastro}
+          variant="text"
         >
-          <Box component="img" src={logo} alt="Logo" sx={styles.logo} />
-          <TextField
-            required
-            fullWidth
-            id="email"
-            placeholder=" e-mail"
-            name="email"
-            margin="normal"
-            value={usuario.email}
-            onChange={onChange}
-            sx={styles.textField}
-          />
-          <TextField
-            required
-            fullWidth
-            id="senha"
-            placeholder=" senha"
-            name="senha"
-            type="password"
-            margin="normal"
-            value={usuario.senha}
-            onChange={onChange}
-            sx={{ ...styles.textField, mt: 3 }}
-          />
-          <Button sx={styles.buttonLogin} type="submit" variant="contained" >
-            Entrar
-          </Button>
-          <Button
-            component={Link}
-            to="/cadastro"
-            sx={styles.buttonCadastro}
-            variant="text"
-          >
-            Cadastre-se
-          </Button>
-        </Box>
-      <Footer/>
+          Cadastre-se
+        </Button>
+      </Box>
+      <Footer />
     </Container>
   );
 }
@@ -105,7 +122,7 @@ function getStyles() {
       minWidth: "100%",
     },
     form: {
-      mt:14.8,
+      mt: 14.8,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -135,11 +152,11 @@ function getStyles() {
         color: "black",
       },
       width: "35vh",
-      height: "5.5vh",
+      height: "5vh",
       backgroundColor: "white",
       display: "flex",
       border: "0px transparent",
-      borderRadius: 10,
+      borderRadius: 4,
     },
     buttonLogin: {
       "&.MuiButton-root": {

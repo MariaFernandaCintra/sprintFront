@@ -1,6 +1,10 @@
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
 import { useState } from "react";
@@ -19,6 +23,9 @@ function Cadastro() {
     senha: "",
   });
 
+  // Estado para controlar a visualização da senha
+  const [showPassword, setShowPassword] = useState(false);
+
   const onChange = (event) => {
     const { name, value } = event.target;
     setUsuario({ ...usuario, [name]: value });
@@ -26,15 +33,16 @@ function Cadastro() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Cadastro();
+    CadastroUsuario();
   };
 
   const navigate = useNavigate();
 
-  async function Cadastro() {
+  async function CadastroUsuario() {
     await api.postCadastro(usuario).then(
       (response) => {
         alert(response.data.message);
+        localStorage.setItem("authenticated", true);
         navigate("/principal");
       },
       (error) => {
@@ -43,6 +51,10 @@ function Cadastro() {
       }
     );
   }
+
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev);
+  };
 
   return (
     <Container component="main" sx={styles.container}>
@@ -62,10 +74,8 @@ function Cadastro() {
           }}
         />
         <TextField
-          required
-          fullWidth
           id="nome"
-          placeholder="  nome"
+          placeholder="nome"
           name="nome"
           margin="normal"
           value={usuario.nome}
@@ -73,10 +83,8 @@ function Cadastro() {
           sx={styles.textField}
         />
         <TextField
-          required
-          fullWidth
           id="email"
-          placeholder="  e-mail"
+          placeholder="e-mail"
           name="email"
           margin="normal"
           value={usuario.email}
@@ -84,10 +92,8 @@ function Cadastro() {
           sx={styles.textField}
         />
         <TextField
-          required
-          fullWidth
           id="NIF"
-          placeholder="  NIF"
+          placeholder="NIF"
           name="NIF"
           margin="normal"
           value={usuario.NIF}
@@ -95,16 +101,29 @@ function Cadastro() {
           sx={styles.textField}
         />
         <TextField
-          required
-          fullWidth
           id="senha"
-          placeholder="  senha"
+          placeholder="senha"
           name="senha"
-          type="password"
+          type={showPassword ? "text" : "password"}
           margin="normal"
           value={usuario.senha}
           onChange={onChange}
           sx={styles.textField}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={togglePasswordVisibility}
+                    edge="end"
+                    aria-label="alternar visibilidade da senha"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
         <Button type="submit" variant="contained" sx={styles.buttonCadastro}>
           Cadastrar-se
@@ -165,7 +184,7 @@ function getStyles() {
       backgroundColor: "white",
       display: "flex",
       border: "0px transparent",
-      borderRadius: 10,
+      borderRadius: 4,
     },
     buttonCadastro: {
       "&.MuiButton-root": {
