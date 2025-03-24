@@ -17,7 +17,7 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
 
 ## Estrutura do Projeto
 
-- **public/**: Arquivos públicos, incluindo o _index.html_ que carrega a aplicação.
+- **public/**: Arquivos públicos, incluindo o _vite.svg_ para arquivos estáticos.
 - **src/**: Código-fonte da aplicação (componentes, páginas, estilos e lógica).
 - **img/**: Imagens e ícones utilizados na interface.
 - Arquivos de configuração:

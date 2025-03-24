@@ -94,6 +94,7 @@ function Cadastro() {
         <TextField
           id="NIF"
           placeholder="NIF"
+          type="number"
           name="NIF"
           margin="normal"
           value={usuario.NIF}
