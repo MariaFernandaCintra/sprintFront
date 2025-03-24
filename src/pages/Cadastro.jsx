@@ -1,10 +1,6 @@
-import Visibility from "@mui/icons-material/Visibility";
-import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
 import TextField from "@mui/material/TextField";
 import * as React from "react";
 import { useState } from "react";
@@ -22,9 +18,6 @@ function Cadastro() {
     NIF: "",
     senha: "",
   });
-
-  // Estado para controlar a visualização da senha
-  const [showPassword, setShowPassword] = useState(false);
 
   const onChange = (event) => {
     const { name, value } = event.target;
@@ -51,10 +44,6 @@ function Cadastro() {
       }
     );
   }
-
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
-  };
 
   return (
     <Container component="main" sx={styles.container}>
@@ -105,26 +94,11 @@ function Cadastro() {
           id="senha"
           placeholder="senha"
           name="senha"
-          type={showPassword ? "text" : "password"}
+          type="password"
           margin="normal"
           value={usuario.senha}
           onChange={onChange}
           sx={styles.textField}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={togglePasswordVisibility}
-                    edge="end"
-                    aria-label="alternar visibilidade da senha"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
         />
         <Button type="submit" variant="contained" sx={styles.buttonCadastro}>
           Cadastrar-se
