@@ -152,7 +152,7 @@ function getStyles() {
         color: "black",
       },
       width: "35vh",
-      height: "5vh",
+      height: "5.5vh",
       backgroundColor: "white",
       display: "flex",
       border: "0px transparent",
