@@ -47,7 +47,6 @@ function Cadastro() {
 
   return (
     <Container component="main" sx={styles.container}>
-      <Header />
       <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
         <Box
           component="img"
@@ -94,7 +93,6 @@ function Cadastro() {
           id="senha"
           placeholder="senha"
           name="senha"
-          type="password"
           margin="normal"
           value={usuario.senha}
           onChange={onChange}
@@ -112,7 +110,6 @@ function Cadastro() {
           Login
         </Button>
       </Box>
-      <Footer />
     </Container>
   );
 }
@@ -133,7 +130,7 @@ function getStyles() {
       minWidth: "100%",
     },
     form: {
-      mt: 5.2,
+      mt: 15,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",

@@ -39,9 +39,9 @@ function Login() {
     );
   }
 
+
   return (
     <Container component="main" sx={styles.container}>
-      <Header />
       <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
         <Box component="img" src={logo} alt="Logo" sx={styles.logo} />
         <TextField
@@ -57,7 +57,6 @@ function Login() {
           id="senha"
           placeholder="senha"
           name="senha"
-          type="password"
           margin="normal"
           value={usuario.senha}
           onChange={onChange}
@@ -75,7 +74,6 @@ function Login() {
           Cadastre-se
         </Button>
       </Box>
-      <Footer />
     </Container>
   );
 }

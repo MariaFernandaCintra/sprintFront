@@ -10,10 +10,12 @@ import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Iconeperfil from "../../img/iconeperfil.png";
 import logo from "../../img/logo.png";
 import Footer from "../components/Footer";
 import api from "../services/axios";
+import PersonIcon from "@mui/icons-material/Person";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import HeaderPrincipal from '../components/HeaderPrincipal'
 
 function Principal() {
   const styles = getStyles();
@@ -65,25 +67,6 @@ function Principal() {
     <div>
       {salas.length === 0 ? (
         <Container sx={styles.container}>
-          <Box sx={styles.header}>
-            <img src={logo} alt="Logo" style={styles.logo} />
-            <Button component={Link} to="/principal" sx={styles.buttonPerfil}>
-              <img
-                src={Iconeperfil}
-                alt="Perfil"
-                style={{ width: "58px", height: "58px" }}
-              />
-            </Button>
-
-            <Button sx={styles.buttonHome}>
-              <img
-                src={"../../../img/iconelogout.png"}
-                alt="Logout"
-                style={{ width: "58px", height: "58px" }}
-                onClick={Logout}
-              />
-            </Button>
-          </Box>
           <Box>
             <Container sx={styles.container}>
               {/* Conteúdo da página */}
@@ -92,34 +75,9 @@ function Principal() {
               Carregando Salas...
             </p>
           </Box>
-          <Box sx={styles.footer}>
-            <Typography sx={styles.footerText}>
-              &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria
-              Fernanda
-            </Typography>
-          </Box>
         </Container>
       ) : (
         <Container sx={styles.container}>
-          <Box sx={styles.header}>
-            <img src={logo} alt="Logo" style={styles.logo} />
-            <Button component={Link} to="/principal" sx={styles.buttonPerfil}>
-              <img
-                src={Iconeperfil}
-                alt="Perfil"
-                style={{ width: "58px", height: "58px" }}
-              />
-            </Button>
-
-            <Button component={Link} to="/" sx={styles.buttonHome}>
-              <img
-                src={"../../../img/iconelogout.png"}
-                alt="Logout"
-                style={{ width: "58px", height: "58px" }}
-                onClick={Logout}
-              />
-            </Button>
-          </Box>
           <Box sx={styles.boxFundoTabela}>
             <Container sx={styles.container}>
               {/* Conteúdo da página */}
@@ -150,7 +108,6 @@ function Principal() {
               </Table>
             </TableContainer>
           </Box>
-          <Footer />
         </Container>
       )}
     </div>
@@ -180,19 +137,7 @@ function getStyles() {
       justifyContent: "end",
       borderBottom: "7px solid white",
     },
-    logo: {
-      width: "230px",
-      height: "auto",
-      marginRight: "1500px",
-      border: "4px solid white",
-      borderRadius: 15,
-    },
-    buttonHome: {
-      mr: 10,
-    },
-    buttonPerfil: {
-      mr: 3,
-    },
+    
     paragrafo: {},
     tableContainer: {
       backgroundColor: "transparent",

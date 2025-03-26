@@ -2,16 +2,18 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import React from "react";
 import { Link } from "react-router-dom";
-import home from "../../img/iconehome.png";
+import HomeIcon from "@mui/icons-material/Home";
 
-const Header = () => {
+
+const Header = ({}) => {
   const styles = getStyles();
   return (
     <Box sx={styles.header}>
       <Button component={Link} to="/" sx={styles.buttonHome}>
-        <img src={home} alt="Home" style={{ width: "65px", height: "65px" }} />
+        <HomeIcon sx={styles.HomeIcon} />
       </Button>
     </Box>
+    
   );
 };
 
@@ -28,6 +30,18 @@ function getStyles() {
     },
     buttonHome: {
       mr: 8,
+    },
+    HomeIcon: {
+      width: 50, // Tamanho do círculo
+      height: 50,
+      borderRadius: "50%",
+      backgroundColor: "darkred", // Cor de fundo do círculo
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "4px solid white", // Borda branca ao redor
+      color: "white",
+      padding: 0.5,
     },
   };
 }
