@@ -7,15 +7,11 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../img/logo.png";
-import Footer from "../components/Footer";
+
 import api from "../services/axios";
-import PersonIcon from "@mui/icons-material/Person";
-import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import HeaderPrincipal from '../components/HeaderPrincipal'
+
 
 function Principal() {
   const styles = getStyles();
@@ -32,11 +28,6 @@ function Principal() {
         console.log("Erro", error);
       }
     );
-  }
-  function Logout() {
-    console.log("teste logout");
-    localStorage.removeItem("authenticated");
-    navigate("/");
   }
 
   useEffect(() => {
