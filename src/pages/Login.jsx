@@ -90,11 +90,11 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      minHeight: "100vh",
+      minHeight: "80.6vh",
       minWidth: "100%",
     },
     form: {
-      mt: 20,
+      mt: 15,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",

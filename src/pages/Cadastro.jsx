@@ -126,11 +126,11 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      minHeight: "100vh",
+      minHeight: "80.6vh",
       minWidth: "100%",
     },
     form: {
-      mt: 15,
+      mt: 8,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
