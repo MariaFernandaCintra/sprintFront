@@ -121,19 +121,6 @@ function getStyles() {
       fontSize: 100,
       fontWeight: 760,
     },
-    footer: {
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
-      height: "7vh",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      borderTop: "7px solid white",
-    },
-    footerText: {
-      color: "white",
-      fontSize: 18,
-    },
   };
 }
 

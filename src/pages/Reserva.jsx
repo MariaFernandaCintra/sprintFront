@@ -43,7 +43,6 @@ function Reserva() {
 
   return (
     <Container component="main" sx={styles.container}>
-      <Header />
       <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
         <Box
           component="img"
@@ -113,7 +112,6 @@ function Reserva() {
           Reservar
         </Button>
       </Box>
-      <Footer />
     </Container>
   );
 }
@@ -130,7 +128,7 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      minHeight: "100vh",
+      minHeight: "80.6vh",
       minWidth: "100%",
     },
     form: {
@@ -138,7 +136,7 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      backgroundColor: "rgba(209, 209, 209, 1)",
+      backgroundColor: "rgba(255, 255, 255, 0.7)",
       paddingRight: 6,
       paddingLeft: 6,
       paddingTop: 9,

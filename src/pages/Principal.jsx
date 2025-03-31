@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -8,15 +7,12 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../services/axios";
 
 
 function Principal() {
   const styles = getStyles();
   const [salas, setSalas] = useState([]);
-  const navigate = useNavigate();
-
   async function getSalas() {
     await api.getSalas().then(
       (response) => {
