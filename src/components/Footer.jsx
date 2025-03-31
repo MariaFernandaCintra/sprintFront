@@ -15,7 +15,6 @@ const Footer = () => {
 
 const footerStyle = {
   footer: {
-    mt: 9,
     backgroundColor: "rgba(177, 16, 16, 1)",
     width: "210vh",
     height: "7vh",

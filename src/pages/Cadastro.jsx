@@ -6,8 +6,6 @@ import * as React from "react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../img/logo.png";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
 import api from "../services/axios";
 
 function Cadastro() {
