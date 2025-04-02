@@ -30,7 +30,7 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
 
 ### Pré-requisitos
 
-- [Node.js](https://nodejs.org/) instalado.
+- [node.js](https://nodejs.org/) instalado.
 
 ### Passos para Instalação da sprinFront
 
@@ -86,3 +86,13 @@ O projeto consiste em uma tela de login, cadastro. Desenvolvida com React e conf
    ```bash
    npm i react-router-dom
    ```
+
+## Documentação Completa dos Requisitos Necessários
+
+Os requisitos necessários para funcionamento pleno do projeto estão em outro repositório. Acesse-os [aqui](https://github.com/MariaFernandaCintra/sprintApi/).
+
+## Autores
+
+- [@fogazzaa](https://github.com/Fogazzaa)
+- [@mariafernandacintra](https://github.com/MariaFernandaCintra)
+- [@mariajuliacintra](https://github.com/mariajuliacintra)
