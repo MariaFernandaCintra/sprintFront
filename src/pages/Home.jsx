@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
+import Footer from "../components/Footer"
 
 function Home() {
   const styles = getStyles();
@@ -34,11 +35,7 @@ function Home() {
           Seja Bem-vindo ao site de Reservas do SENAI
         </Typography>
       </Box>
-      <Box sx={styles.footer}>
-        <Typography sx={styles.footerText}>
-          &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
-        </Typography>
-      </Box>
+      <Footer />
     </Container>
   );
 }
