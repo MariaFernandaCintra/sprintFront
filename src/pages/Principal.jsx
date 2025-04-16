@@ -7,12 +7,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import { useEffect, useState } from "react";
+import Modal from "@mui/material/Modal";
 import api from "../services/axios";
-
+import { BorderLeft } from "@mui/icons-material";
 
 function Principal() {
   const styles = getStyles();
   const [salas, setSalas] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
+  const [salaSelecionada, setSalaSelecionada] = useState(null);
   async function getSalas() {
     await api.getSalas().then(
       (response) => {
@@ -25,12 +28,27 @@ function Principal() {
     );
   }
 
+  const handleOpenModal = (sala) => {
+    setSalaSelecionada(sala);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSalaSelecionada(null);
+  };
+
   useEffect(() => {
     getSalas();
   }, []);
 
   const listSalas = salas.map((sala) => (
-    <TableRow key={sala.id_sala}>
+    <TableRow
+      key={sala.id_sala}
+      onClick={() => handleOpenModal(sala)}
+      hover
+      sx={styles.tableRowCell}
+    >
       <TableCell align="center" sx={styles.tableBodyCell}>
         {sala.nome}
       </TableCell>
@@ -90,12 +108,42 @@ function Principal() {
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody sx={styles.tableBody}>{listSalas}</TableBody>
+                <TableBody>{listSalas}</TableBody>
               </Table>
             </TableContainer>
           </Box>
         </Container>
       )}
+      <Modal open={openModal} onClose={handleCloseModal}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+            borderRadius: "12px",
+          }}
+        >
+          {salaSelecionada && (
+            <>
+              <h2>Disponibilidade de salas:</h2>
+              <p>{salaSelecionada.nome}</p>
+              <TextField
+                id="data"
+                placeholder="Data:"
+                name="data"
+                value={postReserva.data}
+                sx={styles.textField}
+              />
+            </>
+          )}
+        </Box>
+      </Modal>
     </div>
   );
 }
@@ -123,7 +171,7 @@ function getStyles() {
       justifyContent: "end",
       borderBottom: "7px solid white",
     },
-    
+
     paragrafo: {},
     tableContainer: {
       backgroundColor: "transparent",
@@ -136,6 +184,7 @@ function getStyles() {
       marginRight: "auto", // Para centralizar
       width: "calc(100% - 40px)", // Ajuste o tamanho total da tabela
       borderRadius: "15px", // Bordas arredondadas
+      tableLayout: "fixed",
     },
     tableHead: {
       backgroundColor: "gray",
@@ -155,11 +204,15 @@ function getStyles() {
       fontWeight: "bold",
       fontSize: 22,
       paddingTop: 2,
+      width: 180,
     },
     tableBody: {
       backgroundColor: "#949494",
       border: "3px solid white",
       borderRadius: 10,
+    },
+    tableRowCell: {
+      cursor: "pointer",
     },
     tableBodyCell: {
       backgroundColor: "#949494",
@@ -169,6 +222,10 @@ function getStyles() {
       fontSize: 20,
       paddingTop: 1.2,
       paddingBottom: 1.2,
+    },
+    textField:{
+      color: "black",
+      size: 10,
     },
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
