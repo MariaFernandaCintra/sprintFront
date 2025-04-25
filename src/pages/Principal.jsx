@@ -1,25 +1,39 @@
-import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
+// React
 import { useEffect, useState } from "react";
-import Modal from "@mui/material/Modal";
+
+// React Router
+import { Link } from "react-router-dom";
+
+// MUI - Componentes
+import {
+  Box,
+  Button,
+  Container,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from "../components";
+
+// MUI - Ícones
+import { PersonIcon, ExitToAppIcon, AddIcon } from "../components";
+
+// Assets e serviços
+import logo from "../../img/logo.png";
 import api from "../services/axios";
-import { BorderLeft } from "@mui/icons-material";
 
 function Principal() {
   const styles = getStyles();
+  useEffect(() => {
+    document.title = "Principal | SENAI";
+  }, []);
   const [salas, setSalas] = useState([]);
-  const [openModal, setOpenModal] = useState(false);
-  const [salaSelecionada, setSalaSelecionada] = useState(null);
   async function getSalas() {
     await api.getSalas().then(
       (response) => {
-        console.log(response.data.salas);
         setSalas(response.data.salas);
       },
       (error) => {
@@ -28,27 +42,17 @@ function Principal() {
     );
   }
 
-  const handleOpenModal = (sala) => {
-    setSalaSelecionada(sala);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setSalaSelecionada(null);
-  };
+  function Logout() {
+    localStorage.removeItem("authenticated");
+    navigate("/");
+  }
 
   useEffect(() => {
     getSalas();
   }, []);
 
   const listSalas = salas.map((sala) => (
-    <TableRow
-      key={sala.id_sala}
-      onClick={() => handleOpenModal(sala)}
-      hover
-      sx={styles.tableRowCell}
-    >
+    <TableRow key={sala.id_sala}>
       <TableCell align="center" sx={styles.tableBodyCell}>
         {sala.nome}
       </TableCell>
@@ -82,6 +86,24 @@ function Principal() {
         </Container>
       ) : (
         <Container sx={styles.container}>
+          <Box sx={styles.header}>
+            <img src={logo} alt="Logo" style={styles.logo} />
+            <Button component={Link} to="/reserva" sx={styles.buttonToReserva}>
+              <AddIcon sx={styles.IconeToReserva} />
+            </Button>
+            <Button component={Link} to="/perfil" sx={styles.buttonPerfil}>
+              <PersonIcon sx={styles.IconeToPerfil} />
+            </Button>
+
+            <Button
+              component={Link}
+              to="/"
+              sx={styles.buttonLogout}
+              onClick={Logout}
+            >
+              <ExitToAppIcon sx={styles.IconeLogout} />
+            </Button>
+          </Box>
           <Box sx={styles.boxFundoTabela}>
             <Container sx={styles.container}>
               {/* Conteúdo da página */}
@@ -108,42 +130,18 @@ function Principal() {
                     </TableCell>
                   </TableRow>
                 </TableHead>
-                <TableBody>{listSalas}</TableBody>
+                <TableBody sx={styles.tableBody}>{listSalas}</TableBody>
               </Table>
             </TableContainer>
           </Box>
+          <Box sx={styles.footer}>
+            <Typography sx={styles.footerText}>
+              &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria
+              Fernanda
+            </Typography>
+          </Box>
         </Container>
       )}
-      <Modal open={openModal} onClose={handleCloseModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 400,
-            bgcolor: "background.paper",
-            border: "2px solid #000",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: "12px",
-          }}
-        >
-          {salaSelecionada && (
-            <>
-              <h2>Disponibilidade de salas:</h2>
-              <p>{salaSelecionada.nome}</p>
-              <TextField
-                id="data"
-                placeholder="Data:"
-                name="data"
-                value={postReserva.data}
-                sx={styles.textField}
-              />
-            </>
-          )}
-        </Box>
-      </Modal>
     </div>
   );
 }
@@ -161,18 +159,66 @@ function getStyles() {
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "column",
+      pl: { sm: 0 },
+      pr: { sm: 0 },
     },
     header: {
       backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
+      width: "100%",
       height: "11vh",
       display: "flex",
       alignItems: "center",
-      justifyContent: "end",
+      justifyContent: "flex-end",
       borderBottom: "7px solid white",
     },
-
-    paragrafo: {},
+    logo: {
+      width: "230px",
+      height: "auto",
+      marginRight: "1350px",
+      border: "4px solid white",
+      borderRadius: 15,
+    },
+    IconeToPerfil: {
+      width: 54,
+      height: 54,
+      borderRadius: "50%",
+      backgroundColor: "darkred",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "4px solid white",
+      color: "white",
+    },
+    IconeLogout: {
+      width: 40,
+      height: 40,
+      borderRadius: "50%",
+      backgroundColor: "darkred",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "4px solid white",
+      padding: "7px",
+      color: "white",
+    },
+    buttonLogout: {
+      mr: 1,
+    },
+    IconeToReserva: {
+      width: 40,
+      height: 40,
+      borderRadius: "50%",
+      backgroundColor: "darkred",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "4px solid white",
+      padding: "7px",
+      color: "white",
+    },
+    buttonToReserva: {
+      mr: 0.9,
+    },
     tableContainer: {
       backgroundColor: "transparent",
     },
@@ -180,11 +226,10 @@ function getStyles() {
       backgroundColor: "#949494",
       marginTop: 2.5,
       marginBottom: 2.5,
-      marginLeft: "auto", // Para centralizar
-      marginRight: "auto", // Para centralizar
-      width: "calc(100% - 40px)", // Ajuste o tamanho total da tabela
-      borderRadius: "15px", // Bordas arredondadas
-      tableLayout: "fixed",
+      marginLeft: "auto",
+      marginRight: "auto",
+      width: "calc(100% - 40px)",
+      borderRadius: "15px",
     },
     tableHead: {
       backgroundColor: "gray",
@@ -204,15 +249,11 @@ function getStyles() {
       fontWeight: "bold",
       fontSize: 22,
       paddingTop: 2,
-      width: 180,
     },
     tableBody: {
       backgroundColor: "#949494",
       border: "3px solid white",
       borderRadius: 10,
-    },
-    tableRowCell: {
-      cursor: "pointer",
     },
     tableBodyCell: {
       backgroundColor: "#949494",
@@ -223,18 +264,15 @@ function getStyles() {
       paddingTop: 1.2,
       paddingBottom: 1.2,
     },
-    textField:{
-      color: "black",
-      size: 10,
-    },
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
+      width: "100%",
       height: "7vh",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       borderTop: "7px solid white",
+      marginTop: "auto",
     },
     footerText: {
       color: "white",

@@ -1,42 +1,58 @@
+// React
+import * as React from "react";
+
+// React Router
 import { Link } from "react-router-dom";
+
+// MUI - Componentes
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+} from "../components";
+
+// Assets e serviços
 import logo from "../../img/logo.png";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
-import Footer from "../components/Footer"
 
 function Home() {
   const styles = getStyles();
 
   return (
-    <Container sx={styles.container}>
-      <Box sx={styles.header}>
-        <img src={logo} alt="Logo" style={styles.logo} />
-        <Button
-          component={Link}
-          to="/cadastro"
-          sx={styles.buttonToCadastro}
-          variant="text"
-        >
-          Cadastre-se
-        </Button>
-        <Button
-          component={Link}
-          to="/login"
-          sx={styles.buttonToLogin}
-          variant="text"
-        >
-          Login
-        </Button>
-      </Box>
-      <Box sx={styles.body}>
-        <Typography sx={styles.bodyText}>
-          Seja Bem-vindo ao site de Reservas do SENAI
-        </Typography>
-      </Box>
-      <Footer />
-    </Container>
+    <div>
+      <Container sx={styles.container}>
+        <Box sx={styles.header}>
+          <img src={logo} alt="Logo" style={styles.logo} />
+          <Button
+            component={Link}
+            to="/cadastro"
+            sx={styles.buttonToCadastro}
+            variant="text"
+          >
+            Cadastre-se
+          </Button>
+          <Button
+            component={Link}
+            to="/login"
+            sx={styles.buttonToLogin}
+            variant="text"
+          >
+            Login
+          </Button>
+        </Box>
+        <Box sx={styles.body}>
+          <Typography sx={styles.bodyText}>
+            Seja Bem-vindo ao site de Reservas do SENAI
+          </Typography>
+        </Box>
+        <Box sx={styles.footer}>
+          <Typography sx={styles.footerText}>
+            &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria
+            Fernanda
+          </Typography>
+        </Box>
+      </Container>
+    </div>
   );
 }
 
@@ -47,17 +63,19 @@ function getStyles() {
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
-      height: "auto",
+      height: "100vh",
       minWidth: "100%",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       flexDirection: "column",
+      pl: { sm: 0 },
+      pr: { sm: 0 },
     },
     header: {
       backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "210vh",
-      length: "100%",
+      width: "100%",
+      minWidth: "100%",
       height: "11vh",
       display: "flex",
       alignItems: "center",
@@ -96,7 +114,7 @@ function getStyles() {
           backgroundColor: "rgba(255, 0, 0, 0.55)",
         },
       },
-      mr: 8,
+      mr: 3,
       ml: 3,
       color: "white",
       backgroundColor: "rgba(255, 0, 0, 1)",
@@ -110,13 +128,27 @@ function getStyles() {
     body: {
       mt: 8,
       mr: 110,
-      width: "70vh",
-      height: "74.2vh",
+      width: "75vh",
+      height: "74.1vh",
     },
     bodyText: {
       color: "white",
       fontSize: 100,
-      fontWeight: 760,
+      fontWeight: "bold",
+    },
+    footer: {
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      width: "100%",
+      height: "7vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      borderTop: "7px solid white",
+      marginTop: "auto",
+    },
+    footerText: {
+      color: "white",
+      fontSize: 18,
     },
   };
 }

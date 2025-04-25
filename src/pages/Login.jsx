@@ -1,17 +1,45 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
+// React
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// React Router
 import { Link, useNavigate } from "react-router-dom";
+
+// MUI - Componentes
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "../components";
+
+// MUI - Ícones
+import { Visibility, VisibilityOff } from "../components";
+
+// Componentes
+import CustomModal from "../components/CustomModal";
+
+// Assets e serviços
 import logo from "../../img/logo.png";
 import api from "../services/axios";
 
 function Login() {
   const styles = getStyles();
-  const [usuario, setUsuario] = useState({ email: "", senha: ""});
+  useEffect(() => {
+    document.title = "Login | SENAI";
+  }, []);
+  const [usuario, setUsuario] = useState({ email: "", senha: "" });
+  const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalInfo, setModalInfo] = useState({
+    title: "",
+    message: "",
+    isSuccess: false,
+    type: "",
+  });
 
   const onChange = (event) => {
     const { name, value } = event.target;
@@ -20,23 +48,42 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    handleLogin();
+    LoginUsuario();
   };
 
-  async function handleLogin() {
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    if (modalInfo.isSuccess) {
+      navigate("/principal");
+    }
+  };
+
+  async function LoginUsuario() {
     await api.postLogin(usuario).then(
       (response) => {
-        alert(response.data.message);
+        setModalInfo({
+          title: "Sucesso!",
+          message: response.data.message,
+          isSuccess: true,
+          type: "success",
+        });
+        setModalOpen(true);
+        const idUsuario = response.data.usuario.id_usuario;
+        localStorage.setItem("idUsuario", idUsuario);
         localStorage.setItem("authenticated", true);
-        navigate("/principal");
       },
       (error) => {
         console.log(error);
-        alert(error.response.data.error);
+        setModalInfo({
+          title: "Erro!",
+          message: error.response?.data?.error || "Erro ao fazer Login",
+          isSuccess: false,
+          type: "error",
+        });
+        setModalOpen(true);
       }
     );
   }
-
 
   return (
     <Container component="main" sx={styles.container}>
@@ -44,24 +91,53 @@ function Login() {
         <Box component="img" src={logo} alt="Logo" sx={styles.logo} />
         <TextField
           id="email"
-          placeholder="e-mail"
+          label="e-mail"
           name="email"
           margin="normal"
+          autoComplete="off"
           value={usuario.email}
           onChange={onChange}
           sx={styles.textField}
         />
+
         <TextField
           id="senha"
-          placeholder="senha"
+          type={mostrarSenha ? "text" : "password"}
+          label="senha"
           name="senha"
           margin="normal"
+          autoComplete="off"
           value={usuario.senha}
           onChange={onChange}
-          sx={{ ...styles.textField, mt: 3 }}
+          sx={{
+            ...styles.textField,
+            mt: 3,
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() =>
+                      setMostrarSenha((previousState) => !previousState)
+                    }
+                    edge="end"
+                    sx={{ color: "gray", mr: 0 }}
+                  >
+                    {mostrarSenha ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
         />
-        <Button sx={styles.buttonLogin} type="submit" variant="contained">
-          Entrar
+        <Button
+          variant="contained"
+          onClick={LoginUsuario}
+          sx={styles.buttonLogin}
+        >
+          Login
         </Button>
         <Button
           component={Link}
@@ -71,6 +147,14 @@ function Login() {
         >
           Cadastre-se
         </Button>
+        <CustomModal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          title={modalInfo.title}
+          message={modalInfo.message}
+          type={modalInfo.type}
+          buttonText="Fechar"
+        />
       </Box>
     </Container>
   );
@@ -84,29 +168,28 @@ function getStyles() {
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
       height: "auto",
-      width: "100%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      minHeight: "80.6vh",
+      minHeight: "80.5vh",
       minWidth: "100%",
     },
     form: {
-      mt: 15,
+      mt: 19,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       backgroundColor: "rgba(255, 255, 255, 0.7)",
       paddingRight: 6,
       paddingLeft: 6,
-      paddingTop: 9,
-      paddingBottom: 7,
+      paddingTop: 8,
+      paddingBottom: 4,
       borderRadius: 10,
     },
     logo: {
       width: "280px",
       height: "auto",
-      mb: 4,
+      mb: 2,
       border: 5,
       borderColor: "white",
       borderRadius: 4,
@@ -117,15 +200,23 @@ function getStyles() {
         "&:hover fieldset": { border: "none" },
         "&.Mui-focused fieldset": { border: "none" },
       },
-      "& input::placeholder": {
-        fontSize: "17px",
-        color: "black",
+      "& .MuiOutlinedInput-input": {
+        color: "gray",
+        fontSize: "16px",
+      },
+      "& .MuiInputLabel-shrink": {
+        fontSize: "18px",
+        marginTop: -1.39,
+        color: "white",
+      },
+      "& .MuiInputLabel-root.Mui-focused": {
+        color: "#FFFFFF",
       },
       width: "35vh",
       height: "5.5vh",
       backgroundColor: "white",
       display: "flex",
-      border: "0px transparent",
+      border: 0,
       borderRadius: 4,
     },
     buttonLogin: {

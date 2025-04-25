@@ -1,22 +1,44 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Container from "@mui/material/Container";
-import TextField from "@mui/material/TextField";
+// React
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// React Router
+import { Link } from "react-router-dom";
+
+// MUI - Componentes
+import { Box, Button, Container, TextField, Typography } from "../components";
+
+// MUI - Ícones
+import { PersonIcon, ExitToAppIcon } from "../components";
+
+// Componentes
+import CustomModal from "../components/CustomModal";
+
+// Assets e serviços
 import logo from "../../img/logo.png";
-import Footer from "../components/Footer";
-import Header from "../components/Header";
 import api from "../services/axios";
 
 function Reserva() {
   const styles = getStyles();
+
+  useEffect(() => {
+    document.title = "Reserva | SENAI";
+  }, []);
+
   const [reserva, setReserva] = useState({
     fk_id_usuario: "",
     fk_id_sala: "",
     data: "",
     hora_inicio: "",
     hora_fim: "",
+  });
+
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalInfo, setModalInfo] = useState({
+    title: "",
+    message: "",
+    isSuccess: false,
+    type: "",
   });
 
   const onChange = (event) => {
@@ -26,23 +48,48 @@ function Reserva() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    Reserva();
+    cadastrarReserva();
   };
 
-  async function Reserva() {
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+
+  async function cadastrarReserva() {
     await api.postReserva(reserva).then(
       (response) => {
-        alert(response.data.message);
+        setModalInfo({
+          title: "Sucesso!",
+          message: response.data.message,
+          isSuccess: true,
+          type: "success",
+        });
+        setModalOpen(true);
       },
       (error) => {
         console.log(error);
-        alert(error.response.data.error);
+        setModalInfo({
+          title: "Erro!",
+          message: error.response?.data?.error || "Erro ao fazer Login",
+          isSuccess: false,
+          type: "error",
+        });
+        setModalOpen(true);
       }
     );
   }
 
   return (
     <Container component="main" sx={styles.container}>
+      <Box sx={styles.header}>
+        <Button component={Link} to="/perfil" sx={styles.buttonToPerfil}>
+          <PersonIcon sx={styles.IconeToPerfil} />
+        </Button>
+
+        <Button component={Link} to="/principal" sx={styles.buttonToPrincipal}>
+          <ExitToAppIcon sx={styles.IconeToPrincipal} />
+        </Button>
+      </Box>
       <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
         <Box
           component="img"
@@ -111,6 +158,19 @@ function Reserva() {
         <Button type="submit" variant="contained" sx={styles.buttonReservar}>
           Reservar
         </Button>
+        <CustomModal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          title={modalInfo.title}
+          message={modalInfo.message}
+          type={modalInfo.type}
+          buttonText="Fechar"
+        />
+      </Box>
+      <Box sx={styles.footer}>
+        <Typography sx={styles.footerText}>
+          &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
+        </Typography>
       </Box>
     </Container>
   );
@@ -123,13 +183,52 @@ function getStyles() {
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
-      height: "auto",
       width: "100%",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      minHeight: "80.6vh",
+      minHeight: "100vh",
       minWidth: "100%",
+      pl: { sm: 0 },
+      pr: { sm: 0 },
+    },
+    header: {
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      width: "100%",
+      height: "11vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "flex-end",
+      borderBottom: "7px solid white",
+    },
+    IconeToPerfil: {
+      width: 54,
+      height: 54,
+      borderRadius: "50%",
+      backgroundColor: "darkred",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "4px solid white",
+      color: "white",
+    },
+    buttonToPerfil: {
+      mr: 0.9,
+    },
+    IconeToPrincipal: {
+      width: 40,
+      height: 40,
+      borderRadius: "50%",
+      backgroundColor: "darkred",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      border: "4px solid white",
+      padding: "7px",
+      color: "white",
+    },
+    buttonToPrincipal: {
+      mr: 2,
     },
     form: {
       mt: 5.2,
@@ -149,17 +248,36 @@ function getStyles() {
         "&:hover fieldset": { border: "none" },
         "&.Mui-focused fieldset": { border: "none" },
       },
-      "& input::placeholder": {
-        fontSize: "17px",
-        color: "black",
+      "& .MuiOutlinedInput-input": {
+        color: "gray",
+        fontSize: "16px",
+      },
+      "& .MuiInputLabel-shrink": {
+        fontSize: "18px",
+        marginTop: -1.39,
+        color: "white",
+      },
+      "& input[type='date']": {
+        color: "gray",
+        fontSize: "16px",
+      },
+      "& input[type='time']": {
+        color: "gray",
+        fontSize: "16px",
+      },
+      "& input[type='date']::-webkit-calendar-picker-indicator": {
+        filter: "invert(50%)",
+      },
+      "& input[type='time']::-webkit-calendar-picker-indicator": {
+        filter: "invert(50%)",
       },
       width: "35vh",
       height: "5.5vh",
       backgroundColor: "white",
       display: "flex",
-      border: "0px transparent",
-      borderRadius: 10,
-    },
+      border: 0,
+      borderRadius: 4,
+    },    
     buttonReservar: {
       "&.MuiButton-root": {
         border: "none",
@@ -184,6 +302,20 @@ function getStyles() {
       fontSize: 15,
       borderRadius: 15,
       textTransform: "none",
+    },
+    footer: {
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      width: "100%",
+      height: "7vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      borderTop: "7px solid white",
+      marginTop: "auto",
+    },
+    footerText: {
+      color: "white",
+      fontSize: 18,
     },
   };
 }
