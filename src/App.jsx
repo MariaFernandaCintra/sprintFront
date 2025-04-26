@@ -6,7 +6,6 @@ import Cadastro from "./pages/Cadastro";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Principal from "./pages/Principal";
-import Reserva from "./pages/Reserva";
 import Perfil from "./pages/Perfil";
 import DefaultLayout from "./components/DefaultLayout";
 
@@ -43,14 +42,6 @@ function App() {
             element={
               <ProtectedRouter>
                 <Principal/>
-              </ProtectedRouter>
-            }
-          />
-          <Route
-            path="/reserva"
-            element={
-              <ProtectedRouter>
-                <Reserva />
               </ProtectedRouter>
             }
           />

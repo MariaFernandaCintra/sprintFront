@@ -1,10 +1,5 @@
-// React
 import { useEffect, useState } from "react";
-
-// React Router
 import { Link } from "react-router-dom";
-
-// MUI - Componentes
 import {
   Box,
   Button,
@@ -17,55 +12,82 @@ import {
   TableRow,
   Typography,
 } from "../components";
-
-// MUI - Ícones
-import { PersonIcon, ExitToAppIcon, AddIcon } from "../components";
-
-// Assets e serviços
+import { PersonIcon, ExitToAppIcon } from "../components";
 import logo from "../../img/logo.png";
 import api from "../services/axios";
+import ModalReservar from "../components/ReservarModal";
 
 function Principal() {
   const styles = getStyles();
+
+  const [salas, setSalas] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedSalaId, setSelectedSalaId] = useState(null);
+
   useEffect(() => {
     document.title = "Principal | SENAI";
-  }, []);
-  const [salas, setSalas] = useState([]);
-  async function getSalas() {
-    await api.getSalas().then(
-      (response) => {
-        setSalas(response.data.salas);
-      },
-      (error) => {
-        console.log("Erro", error);
-      }
-    );
-  }
-
-  function Logout() {
-    localStorage.removeItem("authenticated");
-    navigate("/");
-  }
-
-  useEffect(() => {
     getSalas();
   }, []);
 
+  async function getSalas() {
+    try {
+      const response = await api.getSalas();
+      setSalas(response.data.salas);
+    } catch (error) {
+      console.log("Erro", error);
+    }
+  }
+
+  function handleCellClick(idSala) {
+    setSelectedSalaId(idSala);
+    setModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setModalOpen(false);
+    setSelectedSalaId(null);
+  }
+
   const listSalas = salas.map((sala) => (
     <TableRow key={sala.id_sala}>
-      <TableCell align="center" sx={styles.tableBodyCell}>
+      <TableCell
+        align="center"
+        sx={styles.tableBodyCell}
+        onClick={() => handleCellClick(sala.id_sala)}
+        style={{ cursor: "pointer" }}
+      >
         {sala.nome}
       </TableCell>
-      <TableCell align="center" sx={styles.tableBodyCell}>
+      <TableCell
+        align="center"
+        sx={styles.tableBodyCell}
+        onClick={() => handleCellClick(sala.id_sala)}
+        style={{ cursor: "pointer" }}
+      >
         {sala.descricao}
       </TableCell>
-      <TableCell align="center" sx={styles.tableBodyCell}>
+      <TableCell
+        align="center"
+        sx={styles.tableBodyCell}
+        onClick={() => handleCellClick(sala.id_sala)}
+        style={{ cursor: "pointer" }}
+      >
         {sala.bloco}
       </TableCell>
-      <TableCell align="center" sx={styles.tableBodyCell}>
+      <TableCell
+        align="center"
+        sx={styles.tableBodyCell}
+        onClick={() => handleCellClick(sala.id_sala)}
+        style={{ cursor: "pointer" }}
+      >
         {sala.tipo}
       </TableCell>
-      <TableCell align="center" sx={styles.tableBodyCell}>
+      <TableCell
+        align="center"
+        sx={styles.tableBodyCell}
+        onClick={() => handleCellClick(sala.id_sala)}
+        style={{ cursor: "pointer" }}
+      >
         {sala.capacidade}
       </TableCell>
     </TableRow>
@@ -76,9 +98,6 @@ function Principal() {
       {salas.length === 0 ? (
         <Container sx={styles.container}>
           <Box>
-            <Container sx={styles.container}>
-              {/* Conteúdo da página */}
-            </Container>
             <p style={{ color: "white", fontSize: 55, margin: 365 }}>
               Carregando Salas...
             </p>
@@ -88,27 +107,22 @@ function Principal() {
         <Container sx={styles.container}>
           <Box sx={styles.header}>
             <img src={logo} alt="Logo" style={styles.logo} />
-            <Button component={Link} to="/reserva" sx={styles.buttonToReserva}>
-              <AddIcon sx={styles.IconeToReserva} />
-            </Button>
             <Button component={Link} to="/perfil" sx={styles.buttonPerfil}>
               <PersonIcon sx={styles.IconeToPerfil} />
             </Button>
-
             <Button
               component={Link}
               to="/"
               sx={styles.buttonLogout}
-              onClick={Logout}
+              onClick={() => {
+                localStorage.removeItem("authenticated");
+              }}
             >
               <ExitToAppIcon sx={styles.IconeLogout} />
             </Button>
           </Box>
-          <Box sx={styles.boxFundoTabela}>
-            <Container sx={styles.container}>
-              {/* Conteúdo da página */}
-            </Container>
 
+          <Box sx={styles.boxFundoTabela}>
             <TableContainer sx={styles.tableContainer}>
               <Table size="small" sx={styles.table}>
                 <TableHead sx={styles.tableHead}>
@@ -134,6 +148,7 @@ function Principal() {
               </Table>
             </TableContainer>
           </Box>
+
           <Box sx={styles.footer}>
             <Typography sx={styles.footerText}>
               &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria
@@ -141,6 +156,14 @@ function Principal() {
             </Typography>
           </Box>
         </Container>
+      )}
+
+      {selectedSalaId && (
+        <ModalReservar
+          isOpen={modalOpen}
+          onClose={handleCloseModal}
+          idSala={selectedSalaId}
+        />
       )}
     </div>
   );
@@ -203,21 +226,6 @@ function getStyles() {
     },
     buttonLogout: {
       mr: 1,
-    },
-    IconeToReserva: {
-      width: 40,
-      height: 40,
-      borderRadius: "50%",
-      backgroundColor: "darkred",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      border: "4px solid white",
-      padding: "7px",
-      color: "white",
-    },
-    buttonToReserva: {
-      mr: 0.9,
     },
     tableContainer: {
       backgroundColor: "transparent",

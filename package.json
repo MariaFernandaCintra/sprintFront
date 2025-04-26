@@ -10,16 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@date-io/date-fns": "^3.2.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@fontsource/roboto-mono": "^5.2.5",
-    "@mui/icons-material": "^6.4.3",
-    "@mui/material": "^6.4.3",
+    "@mui/icons-material": "^6.4.11",
+    "@mui/material": "^6.4.11",
+    "@mui/x-date-pickers": "^8.1.0",
     "axios": "^1.7.9",
+    "date-fns": "^4.1.0",
     "dotenv": "^16.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^7.2.0",
+    "react-router-dom": "^7.5.2",
     "styled-components": "^6.1.14"
   },
   "devDependencies": {

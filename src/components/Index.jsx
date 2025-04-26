@@ -25,7 +25,6 @@ export { default as ErrorIcon } from "@mui/icons-material/Error";
 export { default as ExitToAppIcon } from "@mui/icons-material/ExitToApp";
 export { default as PersonIcon } from "@mui/icons-material/Person";
 export { default as HomeIcon } from "@mui/icons-material/Home";
-export { default as AddIcon } from "@mui/icons-material/Add";
 export { default as Visibility } from "@mui/icons-material/Visibility";
 export { default as VisibilityOff } from "@mui/icons-material/VisibilityOff";
 
