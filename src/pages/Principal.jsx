@@ -15,7 +15,7 @@ import {
 import { PersonIcon, ExitToAppIcon } from "../components";
 import logo from "../../img/logo.png";
 import api from "../services/axios";
-import ModalReservar from "../components/ReservarModal";
+import ReservarModal from "../components/ReservarModal";
 
 function Principal() {
   const styles = getStyles();
@@ -159,7 +159,7 @@ function Principal() {
       )}
 
       {selectedSalaId && (
-        <ModalReservar
+        <ReservarModal
           isOpen={modalOpen}
           onClose={handleCloseModal}
           idSala={selectedSalaId}
