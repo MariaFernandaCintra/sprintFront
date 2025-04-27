@@ -167,7 +167,7 @@ function Perfil() {
           <MenuItem disabled value="">
             Minhas Reservas
           </MenuItem>
-          {reservas.slice(0, 3).map((reserva) => (
+          {reservas.slice(0, 4).map((reserva) => (
             <MenuItem
               key={reserva.id}
               value={reserva.id}

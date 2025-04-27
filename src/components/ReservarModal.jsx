@@ -183,7 +183,7 @@ function getStyles() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      width: "15%",
+      width: 300,
       backgroundColor: "rgb(227, 227, 227)",
       boxShadow: 24,
       p: 4,
