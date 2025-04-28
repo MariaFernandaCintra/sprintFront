@@ -3,7 +3,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 
 // React Router
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 // MUI - Componentes
 import {
@@ -14,30 +14,20 @@ import {
   IconButton,
   InputAdornment,
   Typography,
-  MenuItem,
-  Select,
 } from "../components";
 
 // MUI - Ícones
-import {
-  Visibility,
-  VisibilityOff,
-  ExitToAppIcon,
-} from "../components";
+import { Visibility, VisibilityOff, ExitToAppIcon } from "../components";
 
 // Assets e serviços
 import logo from "../../img/logo.png";
 import api from "../services/axios";
 
+// Modal
+import ReservasUsuarioModal from "../components/ReservasUsuarioModal"; // Ajuste o caminho conforme seu projeto
+
 function Perfil() {
   const styles = getStyles();
-  useEffect(() => {
-    document.title = "Perfil | SENAI";
-  }, []);
-  const [reservas, setReservas] = useState([]);
-  const navigate = useNavigate();
-  const [reservaSelecionada, setReservaSelecionada] = useState("");
-  const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const [usuario, setUsuario] = useState({
     nome: "",
@@ -46,7 +36,12 @@ function Perfil() {
     senha: "",
   });
 
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [reservas, setReservas] = useState([]);
+  const [openReservasModal, setOpenReservasModal] = useState(false);
+
   useEffect(() => {
+    document.title = "Perfil | SENAI";
     const fetchDados = async () => {
       const idUsuario = localStorage.getItem("idUsuario");
       if (!idUsuario) return;
@@ -64,35 +59,6 @@ function Perfil() {
 
     fetchDados();
   }, []);
-
-  useEffect(() => {
-    const fetchUsuario = async () => {
-      const idUsuario = localStorage.getItem("idUsuario");
-
-      if (!idUsuario) {
-        console.error("ID do usuário não encontrado no localStorage");
-        return;
-      }
-
-      try {
-        const response = await api.getUsuarioById(idUsuario);
-        setUsuario(response.data.usuario);
-      } catch (error) {
-        console.error("Erro ao buscar dados do usuário:", error);
-      }
-    };
-
-    fetchUsuario();
-  }, []);
-
-  const handleChangeReserva = (event) => {
-    const valor = event.target.value;
-    if (valor === "verTodas") {
-      navigate("/reservas");
-    } else {
-      setReservaSelecionada(valor);
-    }
-  };
 
   return (
     <Container component="main" sx={styles.container}>
@@ -138,16 +104,14 @@ function Perfil() {
           margin="normal"
           disabled
           value={usuario.senha || ""}
-          sx={{ ...styles.textField, mt: 2 }}
+          sx={styles.passwordField}
           slotProps={{
             input: {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
                     aria-label="toggle password visibility"
-                    onClick={() =>
-                      setMostrarSenha((previousState) => !previousState)
-                    }
+                    onClick={() => setMostrarSenha((prev) => !prev)}
                     edge="end"
                     sx={{ color: "gray", mr: 0.1 }}
                   >
@@ -158,33 +122,15 @@ function Perfil() {
             },
           }}
         />
-        <Select
-          value={reservaSelecionada}
-          onChange={handleChangeReserva}
-          displayEmpty
-          sx={{ ...styles.textField, mt: 2, color: "gray" }}
-        >
-          <MenuItem disabled value="">
-            Minhas Reservas
-          </MenuItem>
-          {reservas.slice(0, 4).map((reserva) => (
-            <MenuItem
-              key={reserva.id}
-              value={reserva.id}
-              sx={{ fontWeight: "bold", color: "gray" }}
-            >
-              {reserva.sala} - {reserva.data}
-            </MenuItem>
-          ))}
-          <MenuItem
-            value="verTodas"
-            sx={{ fontWeight: "bold", color: "darkred" }}
-          >
-            Ver todas as reservas
-          </MenuItem>
-        </Select>
         <Button variant="contained" sx={styles.buttonAtualizar}>
           Atualizar Perfil
+        </Button>
+        <Button
+          variant="outlined"
+          onClick={() => setOpenReservasModal(true)}
+          sx={styles.buttonMinhasReservas}
+        >
+          Minhas Reservas
         </Button>
       </Box>
       <Box sx={styles.footer}>
@@ -192,6 +138,14 @@ function Perfil() {
           &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
         </Typography>
       </Box>
+
+      {openReservasModal && (
+        <ReservasUsuarioModal
+          open={openReservasModal}
+          onClose={() => setOpenReservasModal(false)}
+          reservas={reservas}
+        />
+      )}
     </Container>
   );
 }
@@ -220,17 +174,6 @@ function getStyles() {
       alignItems: "center",
       justifyContent: "flex-end",
       borderBottom: "7px solid white",
-    },
-    Iconeperfil: {
-      width: 54,
-      height: 54,
-      borderRadius: "50%",
-      backgroundColor: "darkred",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      border: "4px solid white",
-      color: "white",
     },
     IconeLogout: {
       width: 40,
@@ -282,6 +225,36 @@ function getStyles() {
       border: "0px transparent",
       borderRadius: 4,
     },
+    passwordField: {
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": { border: "none" },
+        "&:hover fieldset": { border: "none" },
+        "&.Mui-focused fieldset": { border: "none" },
+      },
+      "& input::placeholder": {
+        fontSize: "17px",
+        color: "black",
+      },
+      width: "35vh",
+      height: "5.5vh",
+      backgroundColor: "white",
+      display: "flex",
+      borderRadius: 4,
+      color: "gray",
+    },
+    selectField: {
+      mt: 2,
+      width: "35vh",
+      height: "5.5vh",
+      backgroundColor: "white",
+      display: "flex",
+      borderRadius: 4,
+      color: "gray",
+      justifyContent: "center",
+      alignItems: "center",
+      fontWeight: "bold",
+      textTransform: "none",
+    },
     buttonAtualizar: {
       "&.MuiButton-root": {
         border: "none",
@@ -301,6 +274,29 @@ function getStyles() {
       borderRadius: 15,
       textTransform: "none",
     },
+    buttonMinhasReservas: {
+      "&.MuiButton-root": {
+        border: "none",
+        boxShadow: "none",
+        backgroundColor: "transparent",
+        "&:hover": {
+          border: "none",
+          backgroundColor: "transparent",
+          boxShadow: "none",
+          textDecoration: "underline",
+          textDecorationColor: "rgba(177, 16, 16, 1)",
+        },
+      },
+      mt: 2,
+      color: "rgba(177, 16, 16, 1)",
+      width: 180,
+      height: 45,
+      fontWeight: 600,
+      fontSize: 15,
+      borderRadius: 15,
+      textTransform: "none",
+    },    
+
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
       width: "100%",
