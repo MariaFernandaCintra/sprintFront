@@ -11,7 +11,7 @@ import { getToday } from "../utils/dateUtils";
 import CustomModal from "./CustomModal";
 import { useNavigate } from "react-router-dom";
 
-export default function ModalReservar({ isOpen, onClose, idSala }) {
+export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
   const styles = getStyles();
 
   const [data, setData] = useState(new Date());
@@ -25,11 +25,12 @@ export default function ModalReservar({ isOpen, onClose, idSala }) {
     title: "",
     message: "",
   });
-  const [idUsuario, setIdUsuario] = useState(localStorage.getItem("idUsuario")); // Pega diretamente do localStorage
+  const [idUsuario] = useState(localStorage.getItem("idUsuario")); // Pega diretamente do localStorage
   const navigate = useNavigate();
 
   function ajustarHoraFim() {
     const novaHoraFim = new Date(horaInicio.getTime() + 60 * 60 * 1000);
+    setHoraFim(novaHoraFim);
     setHoraFim(novaHoraFim);
   }
 
@@ -49,7 +50,7 @@ export default function ModalReservar({ isOpen, onClose, idSala }) {
       hora_inicio: formatarHoraComSegundosZero(horaInicio),
       hora_fim: formatarHoraComSegundosZero(horaFim),
       fk_id_usuario: idUsuario, // Usa diretamente do localStorage
-      fk_id_sala: idSala,
+      fk_id_sala: idSala
     };
 
     try {
@@ -83,7 +84,11 @@ export default function ModalReservar({ isOpen, onClose, idSala }) {
       <Modal open={isOpen} onClose={onClose}>
         <Box sx={styles.modalBox}>
           <Typography variant="h6" sx={styles.title}>
-            Reservar
+            Reservar Sala:
+          </Typography>
+
+          <Typography variant="subtitle2" sx={styles.subTitle}>
+            Sala: {roomNome}
           </Typography>
 
           <Typography variant="subtitle2" sx={styles.inputTitle}>
@@ -193,6 +198,11 @@ function getStyles() {
       fontWeight: "bold",
       marginBottom: 2,
       fontSize: 30,
+    },
+    subTitle: {
+      marginBottom: 0,
+      fontSize: 21,
+      marginLeft: -1,
     },
     inputTitle: {
       marginTop: 1,

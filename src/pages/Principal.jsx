@@ -23,6 +23,7 @@ function Principal() {
   const [salas, setSalas] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSalaId, setSelectedSalaId] = useState(null);
+  const [selectedSalaNome, setSelectedSalaNome] = useState("");
 
   useEffect(() => {
     document.title = "Principal | SENAI";
@@ -38,8 +39,9 @@ function Principal() {
     }
   }
 
-  function handleCellClick(idSala) {
+  function handleCellClick(idSala, nomeSala) {
     setSelectedSalaId(idSala);
+    setSelectedSalaNome(nomeSala);
     setModalOpen(true);
   }
 
@@ -53,7 +55,7 @@ function Principal() {
       <TableCell
         align="center"
         sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala)}
+        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
         style={{ cursor: "pointer" }}
       >
         {sala.nome}
@@ -61,7 +63,7 @@ function Principal() {
       <TableCell
         align="center"
         sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala)}
+        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
         style={{ cursor: "pointer" }}
       >
         {sala.descricao}
@@ -69,7 +71,7 @@ function Principal() {
       <TableCell
         align="center"
         sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala)}
+        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
         style={{ cursor: "pointer" }}
       >
         {sala.bloco}
@@ -77,7 +79,7 @@ function Principal() {
       <TableCell
         align="center"
         sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala)}
+        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
         style={{ cursor: "pointer" }}
       >
         {sala.tipo}
@@ -85,7 +87,7 @@ function Principal() {
       <TableCell
         align="center"
         sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala)}
+        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
         style={{ cursor: "pointer" }}
       >
         {sala.capacidade}
@@ -116,6 +118,7 @@ function Principal() {
               sx={styles.buttonLogout}
               onClick={() => {
                 localStorage.removeItem("authenticated");
+                localStorage.removeItem("idUsuario");
               }}
             >
               <ExitToAppIcon sx={styles.IconeLogout} />
@@ -163,8 +166,9 @@ function Principal() {
           isOpen={modalOpen}
           onClose={handleCloseModal}
           idSala={selectedSalaId}
+          roomNome={selectedSalaNome}
         />
-      )}
+      )}==
     </div>
   );
 }
@@ -197,7 +201,7 @@ function getStyles() {
     logo: {
       width: "230px",
       height: "auto",
-      marginRight: "1350px",
+      marginRight: "1415px",
       border: "4px solid white",
       borderRadius: 15,
     },

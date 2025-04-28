@@ -63,12 +63,15 @@ function Perfil() {
   return (
     <Container component="main" sx={styles.container}>
       <Box sx={styles.header}>
+        <img src={logo} alt="Logo" style={styles.logo} />
         <Button component={Link} to="/principal" sx={styles.buttonToPrincipal}>
           <ExitToAppIcon sx={styles.IconeLogout} />
         </Button>
       </Box>
       <Box component="form" sx={styles.form} noValidate>
-        <Box component="img" src={logo} alt="Logo" sx={styles.logo} />
+        <Typography variant="h6" sx={styles.title}>
+          Seu Perfil:
+        </Typography>
         <TextField
           id="nome"
           placeholder="nome"
@@ -103,7 +106,7 @@ function Perfil() {
           name="senha"
           margin="normal"
           disabled
-          value={usuario.senha || ""}
+          value={usuario.senha}
           sx={styles.passwordField}
           slotProps={{
             input: {
@@ -175,6 +178,13 @@ function getStyles() {
       justifyContent: "flex-end",
       borderBottom: "7px solid white",
     },
+    logo: {
+      width: "220px",
+      height: "auto",
+      marginRight: 1550,
+      border: "4.5px solid white",
+      borderRadius: 15,
+    },
     IconeLogout: {
       width: 40,
       height: 40,
@@ -188,16 +198,8 @@ function getStyles() {
       padding: "7px",
       color: "white",
     },
-    logo: {
-      width: "280px",
-      height: "auto",
-      mb: 4,
-      border: 5,
-      borderColor: "white",
-      borderRadius: 4,
-    },
     form: {
-      mt: 5,
+      marginTop: 9,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -206,7 +208,14 @@ function getStyles() {
       paddingLeft: 6,
       paddingTop: 9,
       paddingBottom: 7,
+      marginBottom: 1.5,
       borderRadius: 10,
+      height: 450,
+    },
+    title:{
+      fontWeight: "bold",
+      marginBottom: 2,
+      fontSize: 30,
     },
     textField: {
       "& .MuiOutlinedInput-root": {
@@ -287,15 +296,15 @@ function getStyles() {
           textDecorationColor: "rgba(177, 16, 16, 1)",
         },
       },
-      mt: 2,
+      mt: 0,
       color: "rgba(177, 16, 16, 1)",
       width: 180,
-      height: 45,
+      height: 40,
       fontWeight: 600,
       fontSize: 15,
       borderRadius: 15,
       textTransform: "none",
-    },    
+    },
 
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
@@ -305,7 +314,7 @@ function getStyles() {
       alignItems: "center",
       justifyContent: "center",
       borderTop: "7px solid white",
-      mt: 5,
+      mt: 10,
     },
     footerText: {
       color: "white",

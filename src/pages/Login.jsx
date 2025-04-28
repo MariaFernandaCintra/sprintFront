@@ -71,6 +71,7 @@ function Login() {
         const idUsuario = response.data.usuario.id_usuario;
         localStorage.setItem("idUsuario", idUsuario);
         localStorage.setItem("authenticated", true);
+        localStorage.setItem("Token", true);
       },
       (error) => {
         console.log(error);
