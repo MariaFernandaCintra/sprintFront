@@ -79,7 +79,7 @@ function Cadastro() {
           type: "success",
         });
         setModalOpen(true);
-        localStorage.setItem("authenticated", true);
+        localStorage.setItem("tokenUsuario", response.data.token);
       },
       (error) => {
         console.log(error);

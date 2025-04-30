@@ -69,9 +69,9 @@ function Login() {
         });
         setModalOpen(true);
         const idUsuario = response.data.usuario.id_usuario;
+        const tokenUsuario = response.data.token;
         localStorage.setItem("idUsuario", idUsuario);
-        localStorage.setItem("authenticated", true);
-        localStorage.setItem("Token", true);
+        localStorage.setItem("tokenUsuario", tokenUsuario);
       },
       (error) => {
         console.log(error);
