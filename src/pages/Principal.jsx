@@ -65,7 +65,10 @@ function Principal() {
       console.log("Erro ao filtrar salas", error);
 
       setModalTitle("Erro ao Filtrar");
-      setModalMessage(error.response?.data?.error || "Não foi possível buscar as salas disponíveis.");
+      setModalMessage(
+        error.response?.data?.error ||
+          "Não foi possível buscar as salas disponíveis."
+      );
       setModalType("error");
       setCustomModalOpen(true);
     }
@@ -129,33 +132,38 @@ function Principal() {
           </Box>
 
           {/* Filtros */}
-          <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
+          <Box sx={styles.containerFiltro}>
             <TextField
+              sx={styles.inputFiltro}
               type="date"
               label="Data"
-              InputLabelProps={{ shrink: true }}
+              slotProps={{ inputLabel: { shrink: true }}}
               value={filters.data}
               onChange={(e) => setFilters({ ...filters, data: e.target.value })}
             />
             <TextField
+              sx={styles.inputFiltro}
               type="time"
               label="Hora Início"
-              InputLabelProps={{ shrink: true }}
+              fullWidth
+              margin="normal"
+              slotProps={{ inputLabel: { shrink: true }}}
               value={filters.hora_inicio}
               onChange={(e) =>
                 setFilters({ ...filters, hora_inicio: e.target.value })
               }
             />
             <TextField
+              sx={styles.inputFiltro}
               type="time"
               label="Hora Fim"
-              InputLabelProps={{ shrink: true }}
+              slotProps={{ inputLabel: { shrink: true }}}
               value={filters.hora_fim}
               onChange={(e) =>
                 setFilters({ ...filters, hora_fim: e.target.value })
               }
             />
-            <Button variant="contained" onClick={handleFilter}>
+            <Button variant="contained" onClick={handleFilter} sx={styles.buttonFiltrar}>
               Filtrar
             </Button>
           </Box>
@@ -293,6 +301,32 @@ function getStyles() {
       backgroundColor: "gray",
       borderRadius: "50px",
       border: "2px solid white",
+    },
+    containerFiltro: {
+      mt: 4,
+      display: "flex",
+      gap: 2,
+      backgroundColor: "#B5B5B5",
+      margin: "30px",
+      marginBottom:1,
+      border: "5px solid white",
+      borderRadius: "15px",
+      width: "90%",
+      alignItems: "center",
+      height: 80,
+    },
+    inputFiltro: {
+      height: 3,
+      width: 400,
+      marginTop: -1,
+      marginBottom: 5,
+      marginLeft: 8,
+      marginRight:8,
+    },
+    buttonFiltrar:{
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      width: 100,
+      height: 50,
     },
     boxFundoTabela: {
       margin: "25px",
