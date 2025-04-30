@@ -11,11 +11,13 @@ import {
   TableHead,
   TableRow,
   Typography,
+  TextField,
 } from "../components";
 import { PersonIcon, ExitToAppIcon } from "../components";
 import logo from "../../img/logo.png";
 import api from "../services/axios";
 import ReservarModal from "../components/ReservarModal";
+import CustomModal from "../components/CustomModal";
 
 function Principal() {
   const styles = getStyles();
@@ -24,6 +26,17 @@ function Principal() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSalaId, setSelectedSalaId] = useState(null);
   const [selectedSalaNome, setSelectedSalaNome] = useState("");
+
+  const [filters, setFilters] = useState({
+    data: "",
+    hora_inicio: "",
+    hora_fim: "",
+  });
+
+  const [customModalOpen, setCustomModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalType, setModalType] = useState("info");
 
   useEffect(() => {
     document.title = "Principal | SENAI";
@@ -36,6 +49,25 @@ function Principal() {
       setSalas(response.data.salas);
     } catch (error) {
       console.log("Erro", error);
+    }
+  }
+
+  async function handleFilter() {
+    try {
+      const response = await api.getSalasDisponivelHorario(filters);
+      setSalas(response.data.salas);
+
+      setModalTitle("Resultado da Filtragem");
+      setModalMessage(response.data.message || "Salas filtradas com sucesso!");
+      setModalType("success");
+      setCustomModalOpen(true);
+    } catch (error) {
+      console.log("Erro ao filtrar salas", error);
+
+      setModalTitle("Erro ao Filtrar");
+      setModalMessage(error.response?.data?.error || "Não foi possível buscar as salas disponíveis.");
+      setModalType("error");
+      setCustomModalOpen(true);
     }
   }
 
@@ -52,46 +84,17 @@ function Principal() {
 
   const listSalas = salas.map((sala) => (
     <TableRow key={sala.id_sala}>
-      <TableCell
-        align="center"
-        sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
-        style={{ cursor: "pointer" }}
-      >
-        {sala.nome}
-      </TableCell>
-      <TableCell
-        align="center"
-        sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
-        style={{ cursor: "pointer" }}
-      >
-        {sala.descricao}
-      </TableCell>
-      <TableCell
-        align="center"
-        sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
-        style={{ cursor: "pointer" }}
-      >
-        {sala.bloco}
-      </TableCell>
-      <TableCell
-        align="center"
-        sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
-        style={{ cursor: "pointer" }}
-      >
-        {sala.tipo}
-      </TableCell>
-      <TableCell
-        align="center"
-        sx={styles.tableBodyCell}
-        onClick={() => handleCellClick(sala.id_sala, sala.nome)}
-        style={{ cursor: "pointer" }}
-      >
-        {sala.capacidade}
-      </TableCell>
+      {["nome", "descricao", "bloco", "tipo", "capacidade"].map((campo) => (
+        <TableCell
+          key={campo}
+          align="center"
+          sx={styles.tableBodyCell}
+          onClick={() => handleCellClick(sala.id_sala, sala.nome)}
+          style={{ cursor: "pointer" }}
+        >
+          {sala[campo]}
+        </TableCell>
+      ))}
     </TableRow>
   ));
 
@@ -125,6 +128,39 @@ function Principal() {
             </Button>
           </Box>
 
+          {/* Filtros */}
+          <Box sx={{ mt: 4, display: "flex", gap: 2 }}>
+            <TextField
+              type="date"
+              label="Data"
+              InputLabelProps={{ shrink: true }}
+              value={filters.data}
+              onChange={(e) => setFilters({ ...filters, data: e.target.value })}
+            />
+            <TextField
+              type="time"
+              label="Hora Início"
+              InputLabelProps={{ shrink: true }}
+              value={filters.hora_inicio}
+              onChange={(e) =>
+                setFilters({ ...filters, hora_inicio: e.target.value })
+              }
+            />
+            <TextField
+              type="time"
+              label="Hora Fim"
+              InputLabelProps={{ shrink: true }}
+              value={filters.hora_fim}
+              onChange={(e) =>
+                setFilters({ ...filters, hora_fim: e.target.value })
+              }
+            />
+            <Button variant="contained" onClick={handleFilter}>
+              Filtrar
+            </Button>
+          </Box>
+
+          {/* Tabela */}
           <Box sx={styles.boxFundoTabela}>
             <TableContainer sx={styles.tableContainer}>
               <Table size="small" sx={styles.table}>
@@ -161,6 +197,7 @@ function Principal() {
         </Container>
       )}
 
+      {/* Modal de Reserva */}
       {selectedSalaId && (
         <ReservarModal
           isOpen={modalOpen}
@@ -168,7 +205,16 @@ function Principal() {
           idSala={selectedSalaId}
           roomNome={selectedSalaNome}
         />
-      )}==
+      )}
+
+      {/* Custom Modal */}
+      <CustomModal
+        open={customModalOpen}
+        onClose={() => setCustomModalOpen(false)}
+        title={modalTitle}
+        message={modalMessage}
+        type={modalType}
+      />
     </div>
   );
 }
