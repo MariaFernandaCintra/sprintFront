@@ -208,7 +208,7 @@ function getStyles() {
       paddingLeft: 6,
       paddingTop: 9,
       paddingBottom: 7,
-      marginBottom: 1.5,
+      marginBottom: 8,
       borderRadius: 10,
       height: 450,
     },
