@@ -123,7 +123,7 @@ function Principal() {
               to="/"
               sx={styles.buttonLogout}
               onClick={() => {
-                localStorage.removeItem("authenticated");
+                localStorage.removeItem("tokenUsuario");
                 localStorage.removeItem("idUsuario");
               }}
             >
