@@ -68,73 +68,75 @@ function Perfil() {
           <ExitToAppIcon sx={styles.IconeLogout} />
         </Button>
       </Box>
-      <Box component="form" sx={styles.form} noValidate>
-        <Typography variant="h6" sx={styles.title}>
-          Seu Perfil:
-        </Typography>
-        <TextField
-          id="nome"
-          placeholder="nome"
-          name="nome"
-          margin="normal"
-          disabled
-          value={usuario.nome || ""}
-          sx={styles.textField}
-        />
-        <TextField
-          id="email"
-          placeholder="e-mail"
-          name="email"
-          margin="normal"
-          disabled
-          value={usuario.email || ""}
-          sx={styles.textField}
-        />
-        <TextField
-          id="NIF"
-          placeholder="NIF"
-          name="NIF"
-          margin="normal"
-          disabled
-          value={usuario.NIF || ""}
-          sx={styles.textField}
-        />
-        <TextField
-          id="senha"
-          type={mostrarSenha ? "text" : "password"}
-          placeholder="senha"
-          name="senha"
-          margin="normal"
-          disabled
-          value={usuario.senha}
-          sx={styles.passwordField}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setMostrarSenha((prev) => !prev)}
-                    edge="end"
-                    sx={{ color: "gray", mr: 0.1 }}
-                  >
-                    {mostrarSenha ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-        <Button variant="contained" sx={styles.buttonAtualizar}>
-          Atualizar Perfil
-        </Button>
-        <Button
-          variant="outlined"
-          onClick={() => setOpenReservasModal(true)}
-          sx={styles.buttonMinhasReservas}
-        >
-          Minhas Reservas
-        </Button>
+      <Box component="form" sx={styles.body}>
+        <Box component="form" sx={styles.form} noValidate>
+          <Typography variant="h6" sx={styles.title}>
+            Seu Perfil
+          </Typography>
+          <TextField
+            id="nome"
+            placeholder="nome"
+            name="nome"
+            margin="normal"
+            disabled
+            value={usuario.nome || ""}
+            sx={styles.textField}
+          />
+          <TextField
+            id="email"
+            placeholder="e-mail"
+            name="email"
+            margin="normal"
+            disabled
+            value={usuario.email || ""}
+            sx={styles.textField}
+          />
+          <TextField
+            id="NIF"
+            placeholder="NIF"
+            name="NIF"
+            margin="normal"
+            disabled
+            value={usuario.NIF || ""}
+            sx={styles.textField}
+          />
+          <TextField
+            id="senha"
+            type={mostrarSenha ? "text" : "password"}
+            placeholder="senha"
+            name="senha"
+            margin="normal"
+            disabled
+            value={usuario.senha}
+            sx={styles.passwordField}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={() => setMostrarSenha((prev) => !prev)}
+                      edge="end"
+                      sx={{ color: "gray", mr: 0.1 }}
+                    >
+                      {mostrarSenha ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Button variant="contained" sx={styles.buttonAtualizar}>
+            Atualizar Perfil
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => setOpenReservasModal(true)}
+            sx={styles.buttonMinhasReservas}
+          >
+            Minhas Reservas
+          </Button>
+        </Box>
       </Box>
       <Box sx={styles.footer}>
         <Typography sx={styles.footerText}>
@@ -164,7 +166,7 @@ function getStyles() {
       flex: 1,
       flexDirection: "column",
       alignItems: "center",
-      minHeight: "75vh",
+      minHeight: "100vh",
       minWidth: "100%",
       pl: { sm: 0 },
       pr: { sm: 0 },
@@ -178,6 +180,7 @@ function getStyles() {
       justifyContent: "flex-end",
       borderBottom: "7px solid white",
     },
+    body: { height: "78.5vh" },
     logo: {
       width: "220px",
       height: "auto",
@@ -199,7 +202,6 @@ function getStyles() {
       color: "white",
     },
     form: {
-      marginTop: 9,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -208,14 +210,21 @@ function getStyles() {
       paddingLeft: 6,
       paddingTop: 9,
       paddingBottom: 7,
-      marginBottom: 8,
       borderRadius: 10,
-      height: 450,
+      mt: 10,
+      height: "62.5%",
     },
-    title:{
-      fontWeight: "bold",
+    title: {
+      fontWeight: 1000,
       marginBottom: 2,
+      color: "rgb(202, 0, 0)",
       fontSize: 30,
+      backgroundColor: "rgba(219, 112, 112, 0.67)",
+      paddingTop: 1,
+      paddingBottom: 1,
+      paddingRight: 3,
+      paddingLeft: 3,
+      borderRadius: 10
     },
     textField: {
       "& .MuiOutlinedInput-root": {
@@ -296,7 +305,6 @@ function getStyles() {
           textDecorationColor: "rgba(177, 16, 16, 1)",
         },
       },
-      mt: 0,
       color: "rgba(177, 16, 16, 1)",
       width: 180,
       height: 40,
@@ -309,12 +317,11 @@ function getStyles() {
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
       width: "100%",
-      height: "7vh",
+      height: "9vh",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
       borderTop: "7px solid white",
-      mt: 10,
     },
     footerText: {
       color: "white",

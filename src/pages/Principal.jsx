@@ -137,7 +137,7 @@ function Principal() {
               sx={styles.inputFiltro}
               type="date"
               label="Data"
-              slotProps={{ inputLabel: { shrink: true }}}
+              slotProps={{ inputLabel: { shrink: true } }}
               value={filters.data}
               onChange={(e) => setFilters({ ...filters, data: e.target.value })}
             />
@@ -147,7 +147,7 @@ function Principal() {
               label="Hora Início"
               fullWidth
               margin="normal"
-              slotProps={{ inputLabel: { shrink: true }}}
+              slotProps={{ inputLabel: { shrink: true } }}
               value={filters.hora_inicio}
               onChange={(e) =>
                 setFilters({ ...filters, hora_inicio: e.target.value })
@@ -157,13 +157,17 @@ function Principal() {
               sx={styles.inputFiltro}
               type="time"
               label="Hora Fim"
-              slotProps={{ inputLabel: { shrink: true }}}
+              slotProps={{ inputLabel: { shrink: true } }}
               value={filters.hora_fim}
               onChange={(e) =>
                 setFilters({ ...filters, hora_fim: e.target.value })
               }
             />
-            <Button variant="contained" onClick={handleFilter} sx={styles.buttonFiltrar}>
+            <Button
+              variant="contained"
+              onClick={handleFilter}
+              sx={styles.buttonFiltrar}
+            >
               Filtrar
             </Button>
           </Box>
@@ -308,7 +312,7 @@ function getStyles() {
       gap: 2,
       backgroundColor: "#B5B5B5",
       margin: "30px",
-      marginBottom:1,
+      marginBottom: 1,
       border: "5px solid white",
       borderRadius: "15px",
       width: "90%",
@@ -316,17 +320,46 @@ function getStyles() {
       height: 80,
     },
     inputFiltro: {
-      height: 3,
-      width: 400,
-      marginTop: -1,
-      marginBottom: 5,
-      marginLeft: 8,
-      marginRight:8,
+      height: "68%",
+      width: "25%",
+      margin: 5,
+      borderRadius: 1,
+      "& .MuiInputBase-input": {
+        color: "gray", // Cor do texto digitado
+        fontSize: "15px",
+        fontWeight: "bold",
+        backgroundColor: "white",
+        borderRadius: 5
+      },
+      "& .MuiInputLabel-root": {
+        color: "rgb(114, 114, 114)",
+        fontWeight: "bold",
+        fontSize: "20px",
+      },
+      "& .MuiInputLabel-shrink": {
+        color: "rgb(114, 114, 114)", // Cor do label quando encolhido
+      },
+      "& .MuiOutlinedInput-root": {
+        "& fieldset": {
+          borderColor: "gray", // Cor da borda
+          borderWidth: 2,
+          borderRadius: 5
+        },
+        "&:hover fieldset": {
+          borderColor: "gray",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "gray", // Cor ao focar
+        },
+      },
     },
-    buttonFiltrar:{
+    buttonFiltrar: {
       backgroundColor: "rgba(177, 16, 16, 1)",
-      width: 100,
-      height: 50,
+      width: "8%",
+      height: "60%",
+      marginRight: 5,
+      fontSize: 18,
+      fontWeight: "bold"
     },
     boxFundoTabela: {
       margin: "25px",

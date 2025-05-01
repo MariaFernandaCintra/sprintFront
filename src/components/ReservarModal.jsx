@@ -84,11 +84,11 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
       <Modal open={isOpen} onClose={onClose}>
         <Box sx={styles.modalBox}>
           <Typography variant="h6" sx={styles.title}>
-            Reservar Sala:
+            Reservar Sala
           </Typography>
 
           <Typography variant="subtitle2" sx={styles.subTitle}>
-            Sala: {roomNome}
+            {roomNome}
           </Typography>
 
           <Typography variant="subtitle2" sx={styles.inputTitle}>
@@ -158,7 +158,7 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
               variant="contained"
               color="primary"
               onClick={handleReserva}
-              sx={styles.buttonCancelar}
+              sx={styles.buttonReservar}
             >
               Reservar
             </Button>
@@ -197,12 +197,12 @@ function getStyles() {
     title: {
       fontWeight: "bold",
       marginBottom: 2,
-      fontSize: 30,
+      fontSize: 32,
     },
     subTitle: {
       marginBottom: 0,
-      fontSize: 21,
-      marginLeft: -1,
+      fontSize: 22,
+      marginBottom: 1
     },
     inputTitle: {
       marginTop: 1,
@@ -212,10 +212,11 @@ function getStyles() {
     input: {
       backgroundColor: "white",
       borderRadius: 1,
-      marginBottom: 0.5,
+      mb: 0.5,
+      mt: 1
     },
     buttonContainer: {
-      mt: 2,
+      mt: 3,
       mb:2,
       display: "flex",
       justifyContent: "space-between",
@@ -224,11 +225,15 @@ function getStyles() {
       backgroundColor: "rgba(177, 16, 16, 1)",
       width: "45%",
       borderRadius: 1,
+      fontWeight: "bold",
+      fontSize: 16
     },
     buttonReservar: {
       backgroundColor: "rgba(177, 16, 16, 1)",
       width: "45%",
       borderRadius: 1,
+      fontWeight: "bold",
+      fontSize: 16
     },
   };
 }
