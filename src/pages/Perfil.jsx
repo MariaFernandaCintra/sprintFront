@@ -63,16 +63,13 @@ function Perfil() {
   return (
     <Container component="main" sx={styles.container}>
       <Box sx={styles.header}>
-        <img src={logo} alt="Logo" style={styles.logo} />
         <Button component={Link} to="/principal" sx={styles.buttonToPrincipal}>
           <ExitToAppIcon sx={styles.IconeLogout} />
         </Button>
       </Box>
       <Box component="form" sx={styles.body}>
         <Box component="form" sx={styles.form} noValidate>
-          <Typography variant="h6" sx={styles.title}>
-            Seu Perfil
-          </Typography>
+        <img src={logo} alt="Logo" style={styles.logo} />
           <TextField
             id="nome"
             placeholder="nome"
@@ -182,9 +179,9 @@ function getStyles() {
     },
     body: { height: "78.5vh" },
     logo: {
-      width: "220px",
+      width: "280px",
       height: "auto",
-      marginRight: 1550,
+      marginBottom: 10,
       border: "4.5px solid white",
       borderRadius: 15,
     },
