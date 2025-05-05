@@ -200,7 +200,6 @@ function getStyles() {
       fontSize: 32,
     },
     subTitle: {
-      marginBottom: 0,
       fontSize: 22,
       marginBottom: 1
     },

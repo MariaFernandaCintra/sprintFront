@@ -1,13 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://192.168.100.253:5000/reservas/v1/",
+  baseURL: "http://10.89.240.83:5000/reservas/v1/",
   headers: { accept: "application/json" },
 });
 
 // Interceptor para adicionar o token no cabeçalho de todas as requisições
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
     const token = localStorage.getItem("tokenUsuario"); // pega o token armazenado
     if (token) {
       config.headers["Authorization"] = token; // adiciona o token no cabeçalho

@@ -107,7 +107,7 @@ function getStyles() {
     button: (type) => ({
       backgroundColor: type === "success" ? "green" : "rgb(226, 16, 16)",
       "&:hover": {
-        backgroundColor: type === "success" ? "green" : "rgb(217, 53, 53)",
+        backgroundColor: type === "success" ? "green" : "rgb(226, 16, 16)",
       },
     }),
   };
