@@ -105,10 +105,38 @@ function Principal() {
     <div>
       {salas.length === 0 ? (
         <Container sx={styles.container}>
+          <Box sx={styles.header}>
+            <img src={logo} alt="Logo" style={styles.logo} />
+            <Button component={Link} to="/perfil" sx={styles.buttonPerfil}>
+              <PersonIcon sx={styles.IconeToPerfil} />
+            </Button>
+            <Button
+              component={Link}
+              to="/"
+              sx={styles.buttonLogout}
+              onClick={() => {
+                localStorage.removeItem("tokenUsuario");
+                localStorage.removeItem("idUsuario");
+              }}
+            >
+              <ExitToAppIcon sx={styles.IconeLogout} />
+            </Button>
+          </Box>
           <Box>
-            <p style={{ color: "white", fontSize: 55, margin: 365 }}>
+            <Typography
+              style={{ color: "white", fontSize: 55, margin: 350 }}
+              sx={{
+                fontFamily: "'Roboto Mono', monospace",
+              }}
+            >
               Carregando Salas...
-            </p>
+            </Typography>
+          </Box>
+          <Box sx={styles.footer}>
+            <Typography sx={styles.footerText}>
+              &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria
+              Fernanda
+            </Typography>
           </Box>
         </Container>
       ) : (
@@ -329,7 +357,7 @@ function getStyles() {
         fontSize: "15px",
         fontWeight: "bold",
         backgroundColor: "white",
-        borderRadius: 5
+        borderRadius: 5,
       },
       "& .MuiInputLabel-root": {
         color: "rgb(114, 114, 114)",
@@ -343,7 +371,7 @@ function getStyles() {
         "& fieldset": {
           borderColor: "gray", // Cor da borda
           borderWidth: 2,
-          borderRadius: 5
+          borderRadius: 5,
         },
         "&:hover fieldset": {
           borderColor: "gray",
@@ -359,7 +387,7 @@ function getStyles() {
       height: "60%",
       marginRight: 5,
       fontSize: 18,
-      fontWeight: "bold"
+      fontWeight: "bold",
     },
     boxFundoTabela: {
       margin: "25px",

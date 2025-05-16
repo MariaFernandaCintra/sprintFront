@@ -43,11 +43,11 @@ export default function CustomModal({
         <Box sx={styles.box(type)}>
           {renderIcon()}
           <DialogTitle>
-            <Typography variant="h5" component="div">
+            <Typography variant="h5" component="div" sx={styles.title}>
               {title}
             </Typography>
           </DialogTitle>
-          <Typography variant="body1" sx={styles.title}>
+          <Typography variant="body1" sx={styles.message}>
             {message}
           </Typography>
         </Box>
@@ -68,10 +68,16 @@ function getStyles() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
+        backgroundColor: "rgba(70, 70, 70, 0.4)",
+        backdropFilter: "blur(5px)",
       },
       "& .MuiPaper-root": {
         borderRadius: 8,
         boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
+        backgroundColor: "rgba(70, 70, 70, 0.7)",
+        boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
+        backdropFilter: "blur(10px)",
+        border: "1px solid rgba(214, 214, 214, 0.1)",
       },
       "& .MuiDialogContent-root": {
         padding: 2,
@@ -83,10 +89,14 @@ function getStyles() {
     dialogContent: {
       textAlign: "center",
       p: 4,
+      color: "white",
     },
     box: (type) => ({
       minWidth: 300,
-      maxWidth: 400,
+      height: 280,
+      maxWidth: 300,
+      alignItems: "center",
+      justifyContent: "center",
       textAlign: "center",
       p: 2,
       borderRadius: 2,
@@ -94,15 +104,20 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      justifyContent: "center",
       background: "transparent",
     }),
     title: {
       mt: 1,
+      color: "white",
+      fontWeight: 1000,
+      fontSize: 26
+    },
+    message: {
+      color: "white",
+      fontSize: 18
     },
     actions: {
       justifyContent: "center",
-      pb: 2,
     },
     button: (type) => ({
       backgroundColor: type === "success" ? "green" : "rgb(226, 16, 16)",

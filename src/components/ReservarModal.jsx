@@ -50,7 +50,7 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
       hora_inicio: formatarHoraComSegundosZero(horaInicio),
       hora_fim: formatarHoraComSegundosZero(horaFim),
       fk_id_usuario: idUsuario, // Usa diretamente do localStorage
-      fk_id_sala: idSala
+      fk_id_sala: idSala,
     };
 
     try {
@@ -81,7 +81,7 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Modal open={isOpen} onClose={onClose}>
+      <Modal open={isOpen} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
           <Typography variant="h6" sx={styles.title}>
             Reservar Sala
@@ -152,7 +152,7 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
               onClick={onClose}
               sx={styles.buttonCancelar}
             >
-              Cancelar
+              CANCELAR
             </Button>
             <Button
               variant="contained"
@@ -160,7 +160,7 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
               onClick={handleReserva}
               sx={styles.buttonReservar}
             >
-              Reservar
+              RESERVAR
             </Button>
           </Box>
         </Box>
@@ -179,6 +179,10 @@ export default function ModalReservar({ isOpen, onClose, idSala, roomNome }) {
 
 function getStyles() {
   return {
+    modalContainer: {
+      backgroundColor: "rgba(161, 161, 161, 0.4)",
+      backdropFilter: "blur(5px)",
+    },
     modalBox: {
       position: "absolute",
       top: "50%",
@@ -188,51 +192,78 @@ function getStyles() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      width: 350,
-      backgroundColor: "rgb(227, 227, 227)",
-      boxShadow: 24,
+      width: 380,
+      height: "auto",
+      backgroundColor: "rgba(100, 100, 100, 0.5)",
+      boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
+      backdropFilter: "blur(5px)",
+      border: "1px solid rgba(214, 214, 214, 0.1)",
       p: 4,
-      borderRadius: 2,
+      borderRadius: 20,
     },
     title: {
       fontWeight: "bold",
+      color: "white",
       marginBottom: 2,
       fontSize: 32,
     },
     subTitle: {
       fontSize: 22,
-      marginBottom: 1
+      color: "white",
+      marginBottom: 1,
     },
     inputTitle: {
+      color: "white",
       marginTop: 1,
       marginBottom: 1,
       fontSize: 15,
     },
     input: {
-      backgroundColor: "white",
-      borderRadius: 1,
+      borderRadius: 2,
       mb: 0.5,
-      mt: 1
+      mt: 1,
+      backgroundColor: "rgba(255, 255, 255, 0.9)",
+      width: "80%",
+      color: "#fff",
+      "& .MuiInputBase-input": {
+        padding: "12px 16px",
+      },
+      "& .MuiOutlinedInput-notchedOutline": {
+        borderColor: "rgba(80, 80, 80, 0.7)",
+      },
+      "&:hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: "rgba(150, 150, 150, 0.7)",
+      },
+      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+        borderColor: "#64b5f6",
+      },
     },
     buttonContainer: {
       mt: 3,
-      mb:2,
+      mb: 2,
+      gap: 5,
       display: "flex",
       justifyContent: "space-between",
     },
     buttonCancelar: {
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "45%",
-      borderRadius: 1,
-      fontWeight: "bold",
-      fontSize: 16
+      backgroundColor: "rgba(209, 19, 19, 0.7)",
+      color: "#eee",
+      fontWeight: 1000,
+      padding: 1.5,
+      borderRadius: 6,
+      "&:hover": {
+        backgroundColor: "rgba(177, 16, 16, 0.7)",
+      },
     },
     buttonReservar: {
-      backgroundColor: "rgba(177, 16, 16, 1)",
-      width: "45%",
-      borderRadius: 1,
-      fontWeight: "bold",
-      fontSize: 16
+      backgroundColor: "rgba(209, 19, 19, 0.7)",
+      color: "#eee",
+      fontWeight: 500,
+      padding: 1.5,
+      borderRadius: 6,
+      "&:hover": {
+        backgroundColor: "rgba(177, 16, 16, 0.7)",
+      },
     },
   };
 }
