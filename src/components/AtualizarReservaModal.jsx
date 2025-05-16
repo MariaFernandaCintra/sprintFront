@@ -1,8 +1,8 @@
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
 import {
-  DatePicker,
-  LocalizationProvider,
-  TimePicker,
+    DatePicker,
+    LocalizationProvider,
+    TimePicker,
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState } from "react";
@@ -11,7 +11,7 @@ import api from "../services/axios";
 import { getToday } from "../utils/dateUtils";
 import CustomModal from "./CustomModal";
 
-export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
+export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNome }) {
   const styles = getStyles();
 
   const [data, setData] = useState(new Date());

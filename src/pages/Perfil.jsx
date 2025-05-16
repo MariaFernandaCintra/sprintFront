@@ -1,11 +1,5 @@
-// React
-import * as React from "react";
 import { useState, useEffect } from "react";
-
-// React Router
-import { Link } from "react-router-dom";
-
-// MUI - Componentes
+import { useNavigate, Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -15,50 +9,70 @@ import {
   InputAdornment,
   Typography,
 } from "../components";
-
-// MUI - Ícones
 import { Visibility, VisibilityOff, ExitToAppIcon } from "../components";
-
-// Assets e serviços
 import logo from "../../img/logo.png";
 import api from "../services/axios";
-
-// Modal
-import ReservasUsuarioModal from "../components/ReservasUsuarioModal"; // Ajuste o caminho conforme seu projeto
+import ReservasUsuarioModal from "../components/ReservasUsuarioModal";
+import CustomModal from "../components/CustomModal";
 
 function Perfil() {
   const styles = getStyles();
+  const navigate = useNavigate();
 
-  const [usuario, setUsuario] = useState({
-    nome: "",
-    email: "",
-    NIF: "",
-    senha: "",
-  });
-
+  const [usuario, setUsuario] = useState({ nome: "", email: "", NIF: "", senha: "" });
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [reservas, setReservas] = useState([]);
   const [openReservasModal, setOpenReservasModal] = useState(false);
+
+  // Estados para o CustomModal
+  const [customModalOpen, setCustomModalOpen] = useState(false);
+  const [customModalTitle, setCustomModalTitle] = useState("");
+  const [customModalMessage, setCustomModalMessage] = useState("");
+  const [customModalType, setCustomModalType] = useState("info");
 
   useEffect(() => {
     document.title = "Perfil | SENAI";
     const fetchDados = async () => {
       const idUsuario = localStorage.getItem("idUsuario");
       if (!idUsuario) return;
-
       try {
         const responseUsuario = await api.getUsuarioById(idUsuario);
         setUsuario(responseUsuario.data.usuario);
-
         const responseReservas = await api.getUsuarioReservaById(idUsuario);
         setReservas(responseReservas.data.reservas || []);
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
     };
-
     fetchDados();
   }, []);
+
+  const handleApagarReserva = async (idReserva) => {
+    try {
+      const id_usuario = localStorage.getItem("idUsuario");
+      await api.deleteReserva(idReserva, id_usuario);
+      const idUsuario = localStorage.getItem("idUsuario");
+      if (idUsuario) {
+        const responseReservas = await api.getUsuarioReservaById(idUsuario);
+        setReservas(responseReservas.data.reservas || []);
+      }
+      setCustomModalTitle("Sucesso");
+      setCustomModalMessage("Reserva apagada com sucesso!");
+      setCustomModalType("success");
+      setCustomModalOpen(true);
+    } catch (error) {
+      console.error("Erro ao apagar reserva:", error);
+      setCustomModalTitle("Erro");
+      setCustomModalMessage("Erro ao apagar reserva.");
+      setCustomModalType("error");
+      setCustomModalOpen(true);
+    }
+  };
+
+  const handleEditarReserva = (reservaId) => {
+    navigate(`/atualizarReserva/${reservaId}`);
+    setOpenReservasModal(false);
+  };
 
   return (
     <Container component="main" sx={styles.container}>
@@ -69,34 +83,10 @@ function Perfil() {
       </Box>
       <Box component="form" sx={styles.body}>
         <Box component="form" sx={styles.form} noValidate>
-        <img src={logo} alt="Logo" style={styles.logo} />
-          <TextField
-            id="nome"
-            placeholder="nome"
-            name="nome"
-            margin="normal"
-            disabled
-            value={usuario.nome || ""}
-            sx={styles.textField}
-          />
-          <TextField
-            id="email"
-            placeholder="e-mail"
-            name="email"
-            margin="normal"
-            disabled
-            value={usuario.email || ""}
-            sx={styles.textField}
-          />
-          <TextField
-            id="NIF"
-            placeholder="NIF"
-            name="NIF"
-            margin="normal"
-            disabled
-            value={usuario.NIF || ""}
-            sx={styles.textField}
-          />
+          <img src={logo} alt="Logo" style={styles.logo} />
+          <TextField id="nome" placeholder="nome" name="nome" margin="normal" disabled value={usuario.nome || ""} sx={styles.textField} />
+          <TextField id="email" placeholder="e-mail" name="email" margin="normal" disabled value={usuario.email || ""} sx={styles.textField} />
+          <TextField id="NIF" placeholder="NIF" name="NIF" margin="normal" disabled value={usuario.NIF || ""} sx={styles.textField} />
           <TextField
             id="senha"
             type={mostrarSenha ? "text" : "password"}
@@ -126,11 +116,7 @@ function Perfil() {
           <Button variant="contained" sx={styles.buttonAtualizar}>
             Atualizar Perfil
           </Button>
-          <Button
-            variant="outlined"
-            onClick={() => setOpenReservasModal(true)}
-            sx={styles.buttonMinhasReservas}
-          >
+          <Button variant="outlined" onClick={() => setOpenReservasModal(true)} sx={styles.buttonMinhasReservas}>
             Minhas Reservas
           </Button>
         </Box>
@@ -146,8 +132,21 @@ function Perfil() {
           open={openReservasModal}
           onClose={() => setOpenReservasModal(false)}
           reservas={reservas}
+          onApagarReserva={handleApagarReserva}
+          onEditarReserva={handleEditarReserva}
+          setCustomModalOpen={setCustomModalOpen}
+          setCustomModalTitle={setCustomModalTitle}
+          setCustomModalMessage={setCustomModalMessage}
+          setCustomModalType={setCustomModalType}
         />
       )}
+      <CustomModal
+        open={customModalOpen}
+        onClose={() => setCustomModalOpen(false)} // Directly pass the state updater
+        title={customModalTitle}
+        message={customModalMessage}
+        type={customModalType}
+      />
     </Container>
   );
 }
@@ -221,7 +220,7 @@ function getStyles() {
       paddingBottom: 1,
       paddingRight: 3,
       paddingLeft: 3,
-      borderRadius: 10
+      borderRadius: 10,
     },
     textField: {
       "& .MuiOutlinedInput-root": {
@@ -229,10 +228,7 @@ function getStyles() {
         "&:hover fieldset": { border: "none" },
         "&.Mui-focused fieldset": { border: "none" },
       },
-      "& input::placeholder": {
-        fontSize: "17px",
-        color: "black",
-      },
+      "& input::placeholder": { fontSize: "17px", color: "black" },
       width: "35vh",
       height: "5.5vh",
       backgroundColor: "white",
@@ -246,10 +242,7 @@ function getStyles() {
         "&:hover fieldset": { border: "none" },
         "&.Mui-focused fieldset": { border: "none" },
       },
-      "& input::placeholder": {
-        fontSize: "17px",
-        color: "black",
-      },
+      "& input::placeholder": { fontSize: "17px", color: "black" },
       width: "35vh",
       height: "5.5vh",
       backgroundColor: "white",
@@ -274,10 +267,7 @@ function getStyles() {
       "&.MuiButton-root": {
         border: "none",
         boxShadow: "none",
-        "&:hover": {
-          border: "none",
-          backgroundColor: "rgba(255, 0, 0, 0.55)",
-        },
+        "&:hover": { border: "none", backgroundColor: "rgba(255, 0, 0, 0.55)" },
       },
       mt: 4,
       color: "white",

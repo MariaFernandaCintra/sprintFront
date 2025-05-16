@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://10.89.240.83:5000/reservas/v1/",
+  baseURL: "http://192.168.100.253:5000/reservas/v1/",
   headers: { accept: "application/json" },
 });
 
@@ -22,9 +22,10 @@ api.interceptors.request.use(
 const sheets = {
   postLogin: (usuario) => api.post(`login/`, usuario),
   postCadastro: (usuario) => api.post(`cadastro/`, usuario),
-  getUsuarioById: (id) => api.get(`/usuario/perfil/${id}`),
-  getUsuarioReservaById: (id) => api.get(`/usuario/perfil/${id}/reservas`),
+  getUsuarioById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}`),
+  getUsuarioReservaById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}/reservas`),
   postReserva: (reserva) => api.post(`reserva/`, reserva),
+  deleteReserva: (id_reserva, id_usuario) => api.delete(`reserva/${id_reserva}/${id_usuario}`),
   getSalas: () => api.get(`salas/`),
   getSalasDisponivelHorario: (sala) => api.post(`salasdisponivelhorario/`, sala),
 };
