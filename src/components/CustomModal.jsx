@@ -1,15 +1,13 @@
-// React
-import * as React from "react";
 
 // MUI - Componentes
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Typography,
   Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
 } from "../components";
 
 // MUI - Ícones
@@ -79,21 +77,17 @@ function getStyles() {
         backdropFilter: "blur(10px)",
         border: "1px solid rgba(214, 214, 214, 0.1)",
       },
-      "& .MuiDialogContent-root": {
-        padding: 2,
-      },
       "& .MuiDialogActions-root": {
-        padding: 2,
+        mb: 3
       },
     },
     dialogContent: {
       textAlign: "center",
-      p: 4,
       color: "white",
     },
     box: (type) => ({
       minWidth: 300,
-      height: 280,
+      height: 220,
       maxWidth: 300,
       alignItems: "center",
       justifyContent: "center",

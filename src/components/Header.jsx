@@ -1,5 +1,3 @@
-// React
-import * as React from "react";
 
 // React Router
 import { Link } from "react-router-dom";
