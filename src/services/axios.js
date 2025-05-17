@@ -5,12 +5,11 @@ const api = axios.create({
   headers: { accept: "application/json" },
 });
 
-// Interceptor para adicionar o token no cabeçalho de todas as requisições
 api.interceptors.request.use(
   async (config) => {
-    const token = localStorage.getItem("tokenUsuario"); // pega o token armazenado
+    const token = localStorage.getItem("tokenUsuario");
     if (token) {
-      config.headers["Authorization"] = token; // adiciona o token no cabeçalho
+      config.headers["Authorization"] = token;
     }
     return config;
   },
@@ -25,6 +24,7 @@ const sheets = {
   getUsuarioById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}`),
   getUsuarioReservaById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}/reservas`),
   postReserva: (reserva) => api.post(`reserva/`, reserva),
+  updateReserva: (id_reserva, fk_id_usuario, data, hora_inicio, hora_fim) => api.put(`reserva/${id_reserva}`, {fk_id_usuario, data, hora_inicio, hora_fim,}),
   deleteReserva: (id_reserva, id_usuario) => api.delete(`reserva/${id_reserva}/${id_usuario}`),
   getSalas: () => api.get(`salas/`),
   getSalasDisponivelHorario: (sala) => api.post(`salasdisponivelhorario/`, sala),

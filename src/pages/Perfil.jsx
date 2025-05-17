@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -10,16 +10,23 @@ import {
   Typography,
 } from "../components";
 import { Visibility, VisibilityOff, ExitToAppIcon } from "../components";
+
 import logo from "../../img/logo.png";
 import api from "../services/axios";
+
+import AtualizarReservasUsuario from "../components/AtualizarReservasModal";
 import ReservasUsuarioModal from "../components/ReservasUsuarioModal";
 import CustomModal from "../components/CustomModal";
 
 function Perfil() {
   const styles = getStyles();
-  const navigate = useNavigate();
 
-  const [usuario, setUsuario] = useState({ nome: "", email: "", NIF: "", senha: "" });
+  const [usuario, setUsuario] = useState({
+    nome: "",
+    email: "",
+    NIF: "",
+    senha: "",
+  });
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [reservas, setReservas] = useState([]);
   const [openReservasModal, setOpenReservasModal] = useState(false);
@@ -29,6 +36,9 @@ function Perfil() {
   const [customModalTitle, setCustomModalTitle] = useState("");
   const [customModalMessage, setCustomModalMessage] = useState("");
   const [customModalType, setCustomModalType] = useState("info");
+
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+  const [selectedReserva, setSelectedReserva] = useState(null);
 
   useEffect(() => {
     document.title = "Perfil | SENAI";
@@ -49,9 +59,8 @@ function Perfil() {
 
   const handleApagarReserva = async (idReserva) => {
     try {
-      const id_usuario = localStorage.getItem("idUsuario");
-      await api.deleteReserva(idReserva, id_usuario);
       const idUsuario = localStorage.getItem("idUsuario");
+      await api.deleteReserva(idReserva, idUsuario);
       if (idUsuario) {
         const responseReservas = await api.getUsuarioReservaById(idUsuario);
         setReservas(responseReservas.data.reservas || []);
@@ -69,9 +78,10 @@ function Perfil() {
     }
   };
 
-  const handleEditarReserva = (reservaId) => {
-    navigate(`/atualizarReserva/${reservaId}`);
+  const handleEditarReserva = (reserva) => {
+    setSelectedReserva(reserva);
     setOpenReservasModal(false);
+    setOpenUpdateModal(true);
   };
 
   return (
@@ -81,12 +91,36 @@ function Perfil() {
           <ExitToAppIcon sx={styles.IconeLogout} />
         </Button>
       </Box>
-      <Box component="form" sx={styles.body}>
+      <Box sx={styles.body}>
         <Box component="form" sx={styles.form} noValidate>
           <img src={logo} alt="Logo" style={styles.logo} />
-          <TextField id="nome" placeholder="nome" name="nome" margin="normal" disabled value={usuario.nome || ""} sx={styles.textField} />
-          <TextField id="email" placeholder="e-mail" name="email" margin="normal" disabled value={usuario.email || ""} sx={styles.textField} />
-          <TextField id="NIF" placeholder="NIF" name="NIF" margin="normal" disabled value={usuario.NIF || ""} sx={styles.textField} />
+          <TextField
+            id="nome"
+            placeholder="nome"
+            name="nome"
+            margin="normal"
+            disabled
+            value={usuario.nome || ""}
+            sx={styles.textField}
+          />
+          <TextField
+            id="email"
+            placeholder="e-mail"
+            name="email"
+            margin="normal"
+            disabled
+            value={usuario.email || ""}
+            sx={styles.textField}
+          />
+          <TextField
+            id="NIF"
+            placeholder="NIF"
+            name="NIF"
+            margin="normal"
+            disabled
+            value={usuario.NIF || ""}
+            sx={styles.textField}
+          />
           <TextField
             id="senha"
             type={mostrarSenha ? "text" : "password"}
@@ -116,7 +150,11 @@ function Perfil() {
           <Button variant="contained" sx={styles.buttonAtualizar}>
             Atualizar Perfil
           </Button>
-          <Button variant="outlined" onClick={() => setOpenReservasModal(true)} sx={styles.buttonMinhasReservas}>
+          <Button
+            variant="outlined"
+            onClick={() => setOpenReservasModal(true)}
+            sx={styles.buttonMinhasReservas}
+          >
             Minhas Reservas
           </Button>
         </Box>
@@ -140,6 +178,23 @@ function Perfil() {
           setCustomModalType={setCustomModalType}
         />
       )}
+      {openUpdateModal && selectedReserva && (
+        <AtualizarReservasUsuario
+          open={openUpdateModal}
+          onClose={() => setOpenUpdateModal(false)}
+          reserva={selectedReserva}
+          onSuccess={async () => {
+            const idUsuario = localStorage.getItem("idUsuario");
+            const response = await api.getUsuarioReservaById(idUsuario);
+            setReservas(response.data.reservas || []);
+          }}
+          setCustomModalOpen={setCustomModalOpen}
+          setCustomModalTitle={setCustomModalTitle}
+          setCustomModalMessage={setCustomModalMessage}
+          setCustomModalType={setCustomModalType}
+        />
+      )}
+
       <CustomModal
         open={customModalOpen}
         onClose={() => setCustomModalOpen(false)} // Directly pass the state updater
