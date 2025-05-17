@@ -11,6 +11,9 @@ import api from "../services/axios";
 import { getToday } from "../utils/dateUtils";
 import CustomModal from "./CustomModal";
 
+import { format, addHours } from "date-fns";
+import { ptBR } from "date-fns/locale";
+
 export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
   const styles = getStyles();
 
