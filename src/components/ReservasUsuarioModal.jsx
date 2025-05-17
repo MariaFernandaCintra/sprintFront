@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+
 import {
   Modal,
   Box,
@@ -10,6 +10,7 @@ import {
   ListItemText,
   Button,
 } from "@mui/material";
+
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,8 +31,8 @@ export default function ReservasUsuarioModal({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [reservaToDeleteId, setReservaToDeleteId] = useState(null);
 
-  const handleEditarClick = (id_reserva) => {
-    onEditarReserva(id_reserva);
+  const handleEditarClick = (reserva) => {
+    onEditarReserva(reserva);
   };
 
   const handleApagarClick = (id_reserva) => {
@@ -79,7 +80,7 @@ export default function ReservasUsuarioModal({
                         <IconButton
                           edge="end"
                           aria-label="editar"
-                          onClick={() => handleEditarClick(reserva.id_reserva)}
+                          onClick={() => handleEditarClick(reserva)}
                           sx={{ color: "#ccc" }}
                         >
                           <EditIcon />

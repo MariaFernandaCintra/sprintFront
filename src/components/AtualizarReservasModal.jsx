@@ -1,106 +1,114 @@
-import { Box, Button, Modal, TextField, Typography } from "@mui/material";
+import { useState, useEffect } from "react";
 import {
-    DatePicker,
-    LocalizationProvider,
-    TimePicker,
+  Modal,
+  Box,
+  Typography,
+  Button,
+  TextField,
+} from "@mui/material";
+import {
+  DatePicker,
+  TimePicker,
+  LocalizationProvider,
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../services/axios";
-import { getToday } from "../utils/dateUtils";
-import CustomModal from "./CustomModal";
 
-export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNome }) {
+export default function AtualizarReservasUsuario({
+  open,
+  onClose,
+  reserva,
+  onSuccess,
+  setCustomModalOpen,
+  setCustomModalTitle,
+  setCustomModalMessage,
+  setCustomModalType,
+}) {
   const styles = getStyles();
 
-  const [data, setData] = useState(new Date());
+  const [date, setDate] = useState(new Date());
   const [horaInicio, setHoraInicio] = useState(new Date());
-  const [horaFim, setHoraFim] = useState(
-    new Date(new Date().getTime() + 60 * 60 * 1000)
-  );
-  const [modalVisible, setModalVisible] = useState(false);
-  const [modalInfo, setModalInfo] = useState({
-    type: "success",
-    title: "",
-    message: "",
-  });
-  const [idUsuario] = useState(localStorage.getItem("idUsuario")); // Pega diretamente do localStorage
-  const navigate = useNavigate();
+  const [horaFim, setHoraFim] = useState(new Date());
 
-  function ajustarHoraFim() {
-    const novaHoraFim = new Date(horaInicio.getTime() + 60 * 60 * 1000);
-    setHoraFim(novaHoraFim);
-    setHoraFim(novaHoraFim);
-  }
+  useEffect(() => {
+    if (reserva) {
+      const [day, month, year] = reserva.data.split("-");
+      const parsedDate = new Date(`${year}-${month}-${day}`);
+      setDate(parsedDate);
 
-  function formatarHoraComSegundosZero(date) {
+      const [hiHour, hiMin, hiSec] = reserva.hora_inicio.split(":");
+      const [hfHour, hfMin, hfSec] = reserva.hora_fim.split(":");
+
+      const now = new Date();
+      const startTime = new Date(now);
+      const endTime = new Date(now);
+      startTime.setHours(+hiHour, +hiMin, +hiSec || 0);
+      endTime.setHours(+hfHour, +hfMin, +hfSec || 0);
+      setHoraInicio(startTime);
+      setHoraFim(endTime);
+    }
+  }, [reserva]);
+
+  const formatarHoraComSegundosZero = (date) => {
     const hora = date.getHours().toString().padStart(2, "0");
     const minuto = date.getMinutes().toString().padStart(2, "0");
     return `${hora}:${minuto}:00`;
-  }
+  };
 
-  async function handleReserva() {
-    if (horaFim <= horaInicio) {
-      ajustarHoraFim();
-    }
+  const handleSubmit = async () => {
+    const fk_id_usuario = Number(localStorage.getItem("idUsuario"));
 
-    const reserva = {
-      data: data.toISOString().split("T")[0],
+    const reservaAtualizada = {
+      data: date.toISOString().split("T")[0],
       hora_inicio: formatarHoraComSegundosZero(horaInicio),
       hora_fim: formatarHoraComSegundosZero(horaFim),
-      fk_id_usuario: idUsuario, // Usa diretamente do localStorage
-      fk_id_sala: idSala,
+      fk_id_usuario,
     };
 
     try {
-      const response = await api.postReserva(reserva);
-      setModalInfo({
-        type: "success",
-        title: "Sucesso",
-        message: response.data.message,
-      });
-      setModalVisible(true);
-    } catch (error) {
-      setModalInfo({
-        type: "error",
-        title: "Erro",
-        message: error.response?.data?.error || "Erro desconhecido",
-      });
-      setModalVisible(true);
-    }
-  }
+      const response = await api.updateReserva(
+        reserva.id_reserva,
+        reservaAtualizada.fk_id_usuario,
+        reservaAtualizada.data,
+        reservaAtualizada.hora_inicio,
+        reservaAtualizada.hora_fim
+      );
 
-  function handleModalClose() {
-    setModalVisible(false);
-    if (modalInfo.type === "success") {
-      navigate("/principal");
+      setCustomModalTitle("Sucesso");
+      setCustomModalMessage(
+        response.data?.message || "Reserva atualizada com sucesso!"
+      );
+      setCustomModalType("success");
+      setCustomModalOpen(true);
+      onSuccess();
       onClose();
+    } catch (error) {
+      const msg =
+        error.response?.data?.error || "Não foi possível atualizar a reserva.";
+      setCustomModalTitle("Erro");
+      setCustomModalMessage(msg);
+      setCustomModalType("error");
+      setCustomModalOpen(true);
     }
-  }
+  };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Modal open={isOpen} onClose={onClose} sx={styles.modalContainer}>
+      <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
           <Typography variant="h6" sx={styles.title}>
-            Reservar Sala
-          </Typography>
-
-          <Typography variant="subtitle2" sx={styles.subTitle}>
-            {roomNome}
+            Atualizar Reserva
           </Typography>
 
           <Typography variant="subtitle2" sx={styles.inputTitle}>
             Data
           </Typography>
           <DatePicker
-            value={data}
-            sx={styles.input}
+            value={date}
             onChange={(newValue) => {
-              if (newValue) setData(newValue);
+              if (newValue) setDate(newValue);
             }}
-            minDate={getToday()}
+            sx={styles.input}
             renderInput={(params) => (
               <TextField fullWidth margin="normal" {...params} />
             )}
@@ -111,16 +119,11 @@ export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNom
           </Typography>
           <TimePicker
             value={horaInicio}
-            sx={styles.input}
             onChange={(newValue) => {
-              if (newValue) {
-                const ajustada = new Date(newValue);
-                ajustada.setSeconds(0);
-                setHoraInicio(ajustada);
-                ajustarHoraFim();
-              }
+              if (newValue) setHoraInicio(newValue);
             }}
             ampm={false}
+            sx={styles.input}
             renderInput={(params) => (
               <TextField fullWidth margin="normal" {...params} />
             )}
@@ -131,15 +134,11 @@ export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNom
           </Typography>
           <TimePicker
             value={horaFim}
-            sx={styles.input}
             onChange={(newValue) => {
-              if (newValue) {
-                const ajustada = new Date(newValue);
-                ajustada.setSeconds(0);
-                setHoraFim(ajustada);
-              }
+              if (newValue) setHoraFim(newValue);
             }}
             ampm={false}
+            sx={styles.input}
             renderInput={(params) => (
               <TextField fullWidth margin="normal" {...params} />
             )}
@@ -148,7 +147,6 @@ export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNom
           <Box sx={styles.buttonContainer}>
             <Button
               variant="contained"
-              color="primary"
               onClick={onClose}
               sx={styles.buttonCancelar}
             >
@@ -156,23 +154,14 @@ export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNom
             </Button>
             <Button
               variant="contained"
-              color="primary"
-              onClick={handleReserva}
+              onClick={handleSubmit}
               sx={styles.buttonReservar}
             >
-              RESERVAR
+              SALVAR
             </Button>
           </Box>
         </Box>
       </Modal>
-
-      <CustomModal
-        open={modalVisible}
-        onClose={handleModalClose}
-        title={modalInfo.title}
-        message={modalInfo.message}
-        type={modalInfo.type}
-      />
     </LocalizationProvider>
   );
 }
@@ -180,8 +169,8 @@ export default function AtualizarReservaModal({ isOpen, onClose, idSala, roomNom
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(161, 161, 161, 0.4)",
-      backdropFilter: "blur(5px)",
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      backdropFilter: "blur(10px)",
     },
     modalBox: {
       position: "absolute",
@@ -192,12 +181,11 @@ function getStyles() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      width: 380,
-      height: "auto",
-      backgroundColor: "rgba(100, 100, 100, 0.5)",
-      boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
-      backdropFilter: "blur(5px)",
-      border: "1px solid rgba(214, 214, 214, 0.1)",
+      width: 320,
+      height: 500,
+      backgroundColor: "rgba(44, 44, 44, 0.8)",
+      boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.8)",
+      border: "1px solid rgba(255, 255, 255, 0.1)",
       p: 4,
       borderRadius: 20,
     },
@@ -205,12 +193,7 @@ function getStyles() {
       fontWeight: "bold",
       color: "white",
       marginBottom: 2,
-      fontSize: 32,
-    },
-    subTitle: {
-      fontSize: 22,
-      color: "white",
-      marginBottom: 1,
+      fontSize: 29,
     },
     inputTitle: {
       color: "white",
