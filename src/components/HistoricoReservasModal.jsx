@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Importe useEffect
+import api from "../services/axios"; // Ajuste o caminho conforme a sua estrutura
 
 import {
   Modal,
@@ -9,19 +10,16 @@ import {
   ListItem,
   ListItemText,
   Button,
+  CircularProgress, // Para exibir um spinner de carregamento
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Importe o novo modal
-import HistoricoReservasModal from "./HistoricoReservasModal";
-
-export default function ReservasUsuarioModal({
+export default function HistoricoReservasModal({
   open,
   onClose,
-  reservas,
   onApagarReserva,
   onEditarReserva,
   setCustomModalOpen,
@@ -33,9 +31,39 @@ export default function ReservasUsuarioModal({
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [reservaToDeleteId, setReservaToDeleteId] = useState(null);
+  const [reservas, setReservas] = useState([]); // Estado para armazenar as reservas
+  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
+  const [error, setError] = useState(null); // Estado para erros
 
-  // Estado para controlar a abertura do modal de histórico
-  const [openHistoricoModal, setOpenHistoricoModal] = useState(false);
+  // Função para buscar o histórico de reservas
+  const fetchHistoricoReservas = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const idUsuario = localStorage.getItem("idUsuario");
+      if (!idUsuario) {
+        console.error("ID do usuário não encontrado no localStorage.");
+        setError("ID do usuário não encontrado.");
+        setLoading(false);
+        return;
+      }
+      const response = await api.getUsuarioHistoricoReservasbyId(idUsuario);
+      // A API retorna um objeto com a chave "historico", então acessamos response.data.historico
+      setReservas(response.data.historico || []);
+    } catch (err) {
+      console.error("Erro ao buscar histórico de reservas:", err);
+      setError("Não foi possível carregar as reservas.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Chama a função de busca quando o modal é aberto
+  useEffect(() => {
+    if (open) {
+      fetchHistoricoReservas();
+    }
+  }, [open]);
 
   const handleEditarClick = (reserva) => {
     onEditarReserva(reserva);
@@ -46,13 +74,23 @@ export default function ReservasUsuarioModal({
     setConfirmDeleteOpen(true);
   };
 
-  const handleConfirmApagar = () => {
+  const handleConfirmApagar = async () => { // Marque como async
     if (reservaToDeleteId) {
-      onApagarReserva(reservaToDeleteId);
-      setCustomModalOpen(true);
-      setCustomModalTitle("Sucesso");
-      setCustomModalMessage("Reserva apagada com sucesso!");
-      setCustomModalType("success");
+      try {
+        const idUsuario = localStorage.getItem("idUsuario");
+        await onApagarReserva(reservaToDeleteId, idUsuario); // Passe o idUsuario
+        setCustomModalOpen(true);
+        setCustomModalTitle("Sucesso");
+        setCustomModalMessage("Reserva apagada com sucesso!");
+        setCustomModalType("success");
+        fetchHistoricoReservas(); // Atualiza a lista após apagar
+      } catch (err) {
+        console.error("Erro ao apagar reserva:", err);
+        setCustomModalOpen(true);
+        setCustomModalTitle("Erro");
+        setCustomModalMessage("Não foi possível apagar a reserva.");
+        setCustomModalType("error");
+      }
     }
     setConfirmDeleteOpen(false);
     setReservaToDeleteId(null);
@@ -67,50 +105,59 @@ export default function ReservasUsuarioModal({
     <>
       <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
-          {/* Header do Modal */}
           <Box sx={styles.header}>
-            <Typography sx={styles.title}>Minhas Reservas</Typography>
+            <Typography sx={styles.title}>Histórico</Typography>
             <IconButton onClick={onClose} sx={styles.closeButton}>
               <CloseIcon />
             </IconButton>
           </Box>
 
-          {/* Área de Conteúdo Rolável (Lista de Reservas) */}
-          {reservas.length > 0 ? (
+          {loading ? (
+            <Box sx={styles.loadingContainer}>
+              <CircularProgress sx={{ color: "#ccc" }} />
+              <Typography sx={{ mt: 2, color: "#ccc" }}>Carregando reservas...</Typography>
+            </Box>
+          ) : error ? (
+            <Typography sx={styles.errorMessage}>{error}</Typography>
+          ) : reservas.length > 0 ? (
             <Box sx={styles.scrollArea}>
               <List>
-                {reservas.map((reserva) => (
+                {reservas.map((reserva, index) => ( // Use index para a key se não tiver um id_reserva único diretamente
                   <ListItem
-                    key={reserva.id_reserva}
+                    key={reserva.id_reserva || `reserva-${index}`} // Use id_reserva se disponível, senão index
                     sx={styles.listItem}
                     secondaryAction={
                       <Box>
-                        <IconButton
-                          edge="end"
-                          aria-label="editar"
-                          onClick={() => handleEditarClick(reserva)}
-                          sx={{ color: "#ccc" }}
-                        >
-                          <EditIcon />
-                        </IconButton>
-                        <IconButton
-                          edge="end"
-                          aria-label="apagar"
-                          onClick={() => handleApagarClick(reserva.id_reserva)}
-                          sx={{ color: "#ccc" }}
-                        >
-                          <DeleteIcon />
-                        </IconButton>
+                        {/* Verifique se a API retorna um ID para edição/deleção */}
+                        {reserva.id_reserva && (
+                          <>
+                            <IconButton
+                              edge="end"
+                              aria-label="editar"
+                              onClick={() => handleEditarClick(reserva)}
+                              sx={{ color: "#ccc" }}
+                            >
+                              <EditIcon />
+                            </IconButton>
+                            <IconButton
+                              edge="end"
+                              aria-label="apagar"
+                              onClick={() => handleApagarClick(reserva.id_reserva)}
+                              sx={{ color: "#ccc" }}
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </>
+                        )}
                       </Box>
                     }
                   >
                     <ListItemText
-                      primary={`Reserva ${reserva.id_reserva + 1}`}
+                      primary={`Reserva ${index + 1}`}
                       sx={styles.listItemText}
                       secondary={
                         <>
-                          Sala: {reserva.sala} <br />
-                          Data: {reserva.data} <br />
+                          Data: {new Date(reserva.data).toLocaleDateString()} <br />
                           Hora Início: {reserva.hora_inicio} | Hora Fim:{" "}
                           {reserva.hora_fim}
                         </>
@@ -125,13 +172,6 @@ export default function ReservasUsuarioModal({
               Nenhuma reserva encontrada.
             </Typography>
           )}
-
-          {/* Footer do Modal (Botão Histórico) */}
-          <Box sx={styles.modalFooter}> {/* Novo estilo para o footer */}
-            <Button onClick={() => setOpenHistoricoModal(true)} sx={styles.historicoButton}>
-              Histórico
-            </Button>
-          </Box>
         </Box>
       </Modal>
 
@@ -165,16 +205,6 @@ export default function ReservasUsuarioModal({
           </Box>
         </Box>
       </Modal>
-
-      {/* Renderiza o modal de histórico */}
-      <HistoricoReservasModal
-        open={openHistoricoModal}
-        onClose={() => setOpenHistoricoModal(false)}
-        setCustomModalOpen={setCustomModalOpen}
-        setCustomModalTitle={setCustomModalTitle}
-        setCustomModalMessage={setCustomModalMessage}
-        setCustomModalType={setCustomModalType}
-      />
     </>
   );
 }
@@ -182,8 +212,8 @@ export default function ReservasUsuarioModal({
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.6)",
-      backdropFilter: "blur(10px)",
+      backgroundColor: "rgb(0, 0, 0)",
+      backdropFilter: "blur(1px)",
     },
     modalBox: {
       position: "absolute",
@@ -198,15 +228,13 @@ function getStyles() {
       p: 4,
       borderRadius: 12,
       display: "flex",
-      flexDirection: "column", // Importante para organizar os filhos verticalmente
+      flexDirection: "column",
     },
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
       borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-      paddingBottom: 1, // Espaçamento abaixo do header
-      marginBottom: 2, // Espaçamento entre o header e o conteúdo
     },
     title: {
       fontWeight: 600,
@@ -221,7 +249,7 @@ function getStyles() {
     },
     scrollArea: {
       overflowY: "auto",
-      flexGrow: 1, // Permite que esta área ocupe o espaço disponível e seja rolada
+      flexGrow: 2,
       "&::-webkit-scrollbar": {
         width: "8px",
       },
@@ -232,7 +260,6 @@ function getStyles() {
       "&::-webkit-scrollbar-track": {
         backgroundColor: "transparent",
       },
-      paddingRight: 1, // Para evitar que a barra de rolagem se sobreponha ao conteúdo
     },
     listItem: {
       borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
@@ -252,27 +279,21 @@ function getStyles() {
       textAlign: "center",
       color: "#aaa",
       fontSize: 16,
-      marginTop: 20, // Centraliza a mensagem quando não há reservas
-      flexGrow: 1, // Faz com que o texto ocupe o espaço para centralizá-lo
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      marginTop: 20,
     },
-    modalFooter: { // Novo estilo para o rodapé do modal
-      display: "flex",
-      justifyContent: "center", // Centraliza o botão
-      alignItems: "center",
-      borderTop: "1px solid rgba(255, 255, 255, 0.1)", // Linha acima do footer
-      paddingTop: 2, // Espaçamento acima do footer
-      marginTop: 2, // Espaçamento entre o conteúdo e o footer
+    loadingContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: 150, // Garante que o spinner e a mensagem não fiquem colados
+        color: '#ccc',
     },
-    historicoButton: {
-      color: "rgba(39, 39, 39, 0.75)",
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      "&:hover": {
-        color: "rgba(107, 107, 107, 0.75)",
-        backgroundColor: "rgba(255, 255, 255, 0.9)", // Leve mudança no hover
-      },
+    errorMessage: {
+        textAlign: 'center',
+        color: 'red',
+        fontSize: 16,
+        marginTop: 20,
     },
   };
 }
