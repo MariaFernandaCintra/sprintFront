@@ -13,6 +13,7 @@ import { Visibility, VisibilityOff, ExitToAppIcon } from "../components";
 
 import logo from "../../img/logo.png";
 import api from "../services/axios";
+import { getIdFromToken } from "../auth/auth";
 
 import AtualizarReservasUsuario from "../components/AtualizarReservasModal";
 import ReservasUsuarioModal from "../components/ReservasUsuarioModal";
@@ -43,10 +44,12 @@ function Perfil() {
   useEffect(() => {
     document.title = "Perfil | SENAI";
     const fetchDados = async () => {
-      const idUsuario = localStorage.getItem("idUsuario");
+      const idUsuario = getIdFromToken();
+      console.log("ID do usuário:", idUsuario);
       if (!idUsuario) return;
       try {
         const responseUsuario = await api.getUsuarioById(idUsuario);
+        console.log("Usuário retornado:", responseUsuario.data);
         setUsuario(responseUsuario.data.usuario);
         const responseReservas = await api.getUsuarioReservaById(idUsuario);
         setReservas(responseReservas.data.reservas || []);
@@ -59,7 +62,7 @@ function Perfil() {
 
   const handleApagarReserva = async (idReserva) => {
     try {
-      const idUsuario = localStorage.getItem("idUsuario");
+      const idUsuario = getIdFromToken();
       await api.deleteReserva(idReserva, idUsuario);
       if (idUsuario) {
         const responseReservas = await api.getUsuarioReservaById(idUsuario);
@@ -184,7 +187,7 @@ function Perfil() {
           onClose={() => setOpenUpdateModal(false)}
           reserva={selectedReserva}
           onSuccess={async () => {
-            const idUsuario = localStorage.getItem("idUsuario");
+            const idUsuario = getIdFromToken();
             const response = await api.getUsuarioReservaById(idUsuario);
             setReservas(response.data.reservas || []);
           }}

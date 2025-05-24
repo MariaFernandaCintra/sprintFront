@@ -1,18 +1,20 @@
 import { Box, Button, Modal, TextField, Typography } from "@mui/material";
+
 import {
   DatePicker,
   LocalizationProvider,
   TimePicker,
 } from "@mui/x-date-pickers";
+
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/axios";
-import { getToday } from "../utils/dateUtils";
-import CustomModal from "./CustomModal";
 
-import { format, addHours } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import api from "../services/axios";
+import { getIdFromToken } from "../auth/auth";
+import { getToday } from "../utils/dateUtils";
+
+import CustomModal from "./CustomModal";
 
 export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
   const styles = getStyles();
@@ -28,7 +30,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
     title: "",
     message: "",
   });
-  const [idUsuario] = useState(localStorage.getItem("idUsuario")); // Pega diretamente do localStorage
+  const idUsuario = getIdFromToken();
   const navigate = useNavigate();
 
   function ajustarHoraFim() {
@@ -52,7 +54,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
       data: data.toISOString().split("T")[0],
       hora_inicio: formatarHoraComSegundosZero(horaInicio),
       hora_fim: formatarHoraComSegundosZero(horaFim),
-      fk_id_usuario: idUsuario, // Usa diretamente do localStorage
+      fk_id_usuario: idUsuario,
       fk_id_sala: idSala,
     };
 

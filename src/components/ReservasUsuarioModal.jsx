@@ -197,7 +197,7 @@ export default function ReservasUsuarioModal({
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
       backdropFilter: "blur(10px)",
     },
     modalBox: {
@@ -205,11 +205,11 @@ function getStyles() {
       top: "50%",
       left: "50%",
       transform: "translate(-50%, -50%)",
-      width: 400,
+      width: 450,
       maxHeight: "60%",
       bgcolor: "rgba(44, 44, 44, 0.8)",
       boxShadow: 24,
-      borderRadius: 8,
+      borderRadius: 12,
       p: 4,
       display: "flex",
       flexDirection: "column",

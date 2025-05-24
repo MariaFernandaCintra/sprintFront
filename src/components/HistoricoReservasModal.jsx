@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react"; // Importe useEffect
-import api from "../services/axios"; // Ajuste o caminho conforme a sua estrutura
+import { useState, useEffect } from "react";
+import api from "../services/axios";
+import { getIdFromToken } from "../auth/auth";
 
 import {
   Modal,
@@ -10,7 +11,7 @@ import {
   ListItem,
   ListItemText,
   Button,
-  CircularProgress, // Para exibir um spinner de carregamento
+  CircularProgress,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -40,7 +41,7 @@ export default function HistoricoReservasModal({
     setLoading(true);
     setError(null);
     try {
-      const idUsuario = localStorage.getItem("idUsuario");
+      const idUsuario = getIdFromToken();
       if (!idUsuario) {
         console.error("ID do usuário não encontrado no localStorage.");
         setError("ID do usuário não encontrado.");
@@ -48,7 +49,6 @@ export default function HistoricoReservasModal({
         return;
       }
       const response = await api.getUsuarioHistoricoReservasbyId(idUsuario);
-      // A API retorna um objeto com a chave "historico", então acessamos response.data.historico
       setReservas(response.data.historico || []);
     } catch (err) {
       console.error("Erro ao buscar histórico de reservas:", err);
@@ -77,7 +77,7 @@ export default function HistoricoReservasModal({
   const handleConfirmApagar = async () => { // Marque como async
     if (reservaToDeleteId) {
       try {
-        const idUsuario = localStorage.getItem("idUsuario");
+        const idUsuario = getIdFromToken();
         await onApagarReserva(reservaToDeleteId, idUsuario); // Passe o idUsuario
         setCustomModalOpen(true);
         setCustomModalTitle("Sucesso");
@@ -286,7 +286,7 @@ function getStyles() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: 150, // Garante que o spinner e a mensagem não fiquem colados
+        minHeight: 150,
         color: '#ccc',
     },
     errorMessage: {
