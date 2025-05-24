@@ -106,7 +106,7 @@ export default function HistoricoReservasModal({
       <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
           <Box sx={styles.header}>
-            <Typography sx={styles.title}>Histórico</Typography>
+            <Typography sx={styles.title}>Histórico de Reservas</Typography>
             <IconButton onClick={onClose} sx={styles.closeButton}>
               <CloseIcon />
             </IconButton>
@@ -212,8 +212,8 @@ export default function HistoricoReservasModal({
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgb(0, 0, 0)",
-      backdropFilter: "blur(1px)",
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      backdropFilter: "blur(2px)",
     },
     modalBox: {
       position: "absolute",

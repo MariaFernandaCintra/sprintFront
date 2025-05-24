@@ -15,8 +15,9 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Importe o novo modal
+// Importe os dois modais
 import HistoricoReservasModal from "./HistoricoReservasModal";
+import HistoricoDelecaoReservasModal from "./HistoricoDelecaoReservasModal";
 
 export default function ReservasUsuarioModal({
   open,
@@ -34,8 +35,9 @@ export default function ReservasUsuarioModal({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [reservaToDeleteId, setReservaToDeleteId] = useState(null);
 
-  // Estado para controlar a abertura do modal de histórico
-  const [openHistoricoModal, setOpenHistoricoModal] = useState(false);
+  // Estados para controlar a abertura dos modais
+  const [openHistorico, setOpenHistorico] = useState(false);
+  const [openDelecao, setOpenDelecao] = useState(false);
 
   const handleEditarClick = (reserva) => {
     onEditarReserva(reserva);
@@ -67,7 +69,7 @@ export default function ReservasUsuarioModal({
     <>
       <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
-          {/* Header do Modal */}
+          {/* Header */}
           <Box sx={styles.header}>
             <Typography sx={styles.title}>Minhas Reservas</Typography>
             <IconButton onClick={onClose} sx={styles.closeButton}>
@@ -75,7 +77,7 @@ export default function ReservasUsuarioModal({
             </IconButton>
           </Box>
 
-          {/* Área de Conteúdo Rolável (Lista de Reservas) */}
+          {/* Conteúdo */}
           {reservas.length > 0 ? (
             <Box sx={styles.scrollArea}>
               <List>
@@ -105,7 +107,7 @@ export default function ReservasUsuarioModal({
                     }
                   >
                     <ListItemText
-                      primary={`Reserva ${reserva.id_reserva + 1}`}
+                      primary={`Reserva ${reserva.id_reserva}`}
                       sx={styles.listItemText}
                       secondary={
                         <>
@@ -126,10 +128,19 @@ export default function ReservasUsuarioModal({
             </Typography>
           )}
 
-          {/* Footer do Modal (Botão Histórico) */}
-          <Box sx={styles.modalFooter}> {/* Novo estilo para o footer */}
-            <Button onClick={() => setOpenHistoricoModal(true)} sx={styles.historicoButton}>
+          {/* Footer com botões */}
+          <Box sx={styles.modalFooter}>
+            <Button
+              onClick={() => setOpenHistorico(true)}
+              sx={styles.actionButton}
+            >
               Histórico
+            </Button>
+            <Button
+              onClick={() => setOpenDelecao(true)}
+              sx={{ ...styles.actionButton, ml: 2 }}
+            >
+              Deletadas
             </Button>
           </Box>
         </Box>
@@ -166,14 +177,18 @@ export default function ReservasUsuarioModal({
         </Box>
       </Modal>
 
-      {/* Renderiza o modal de histórico */}
+      {/* Modais auxiliares */}
       <HistoricoReservasModal
-        open={openHistoricoModal}
-        onClose={() => setOpenHistoricoModal(false)}
+        open={openHistorico}
+        onClose={() => setOpenHistorico(false)}
         setCustomModalOpen={setCustomModalOpen}
         setCustomModalTitle={setCustomModalTitle}
         setCustomModalMessage={setCustomModalMessage}
         setCustomModalType={setCustomModalType}
+      />
+      <HistoricoDelecaoReservasModal
+        open={openDelecao}
+        onClose={() => setOpenDelecao(false)}
       />
     </>
   );
@@ -191,88 +206,60 @@ function getStyles() {
       left: "50%",
       transform: "translate(-50%, -50%)",
       width: 400,
-      maxHeight: "50%",
-      backgroundColor: "rgba(44, 44, 44, 0.8)",
-      boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.8)",
-      border: "1px solid rgba(255, 255, 255, 0.1)",
+      maxHeight: "60%",
+      bgcolor: "rgba(44, 44, 44, 0.8)",
+      boxShadow: 24,
+      borderRadius: 8,
       p: 4,
-      borderRadius: 12,
       display: "flex",
-      flexDirection: "column", // Importante para organizar os filhos verticalmente
+      flexDirection: "column",
     },
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-      paddingBottom: 1, // Espaçamento abaixo do header
-      marginBottom: 2, // Espaçamento entre o header e o conteúdo
+      borderBottom: "1px solid rgba(255,255,255,0.1)",
+      mb: 2,
+      pb: 1,
     },
-    title: {
-      fontWeight: 600,
-      color: "#eee",
-      fontSize: 22,
-    },
-    closeButton: {
-      color: "#ccc",
-      "&:hover": {
-        color: "#eee",
-      },
-    },
+    title: { color: "#eee", fontSize: 22, fontWeight: 600 },
+    closeButton: { color: "#ccc", "&:hover": { color: "#eee" } },
     scrollArea: {
       overflowY: "auto",
-      flexGrow: 1, // Permite que esta área ocupe o espaço disponível e seja rolada
-      "&::-webkit-scrollbar": {
-        width: "8px",
-      },
+      flexGrow: 1,
+      "&::-webkit-scrollbar": { width: "8px" },
       "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        borderRadius: "4px",
+        backgroundColor: "rgba(255,255,255,0.2)",
+        borderRadius: "10px",
       },
-      "&::-webkit-scrollbar-track": {
-        backgroundColor: "transparent",
-      },
-      paddingRight: 1, // Para evitar que a barra de rolagem se sobreponha ao conteúdo
+      "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
+      pr: 1,
     },
-    listItem: {
-      borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-      color: "#ddd",
-      padding: "12px 0px",
-    },
+    listItem: { borderBottom: "1px solid rgba(255,255,255,0.05)" },
     listItemText: {
       color: "#ddd",
-      "& .MuiListItemText-primary": {
-        fontWeight: 500,
-      },
-      "& .MuiListItemText-secondary": {
-        color: "#aaa",
-      },
+      "& .MuiListItemText-secondary": { color: "#aaa" },
     },
     noReservas: {
-      textAlign: "center",
       color: "#aaa",
-      fontSize: 16,
-      marginTop: 20, // Centraliza a mensagem quando não há reservas
-      flexGrow: 1, // Faz com que o texto ocupe o espaço para centralizá-lo
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    modalFooter: { // Novo estilo para o rodapé do modal
+      textAlign: "center",
+      mt: 3,
+      flexGrow: 1,
       display: "flex",
-      justifyContent: "center", // Centraliza o botão
       alignItems: "center",
-      borderTop: "1px solid rgba(255, 255, 255, 0.1)", // Linha acima do footer
-      paddingTop: 2, // Espaçamento acima do footer
-      marginTop: 2, // Espaçamento entre o conteúdo e o footer
+      justifyContent: "center",
     },
-    historicoButton: {
-      color: "rgba(39, 39, 39, 0.75)",
-      backgroundColor: "rgba(255, 255, 255, 0.8)",
-      "&:hover": {
-        color: "rgba(107, 107, 107, 0.75)",
-        backgroundColor: "rgba(255, 255, 255, 0.9)", // Leve mudança no hover
-      },
+    modalFooter: {
+      display: "flex",
+      justifyContent: "center",
+      mt: 2,
+      borderTop: "1px solid rgba(255,255,255,0.1)",
+      pt: 2,
+    },
+    actionButton: {
+      color: "rgba(39,39,39,0.75)",
+      backgroundColor: "rgba(255,255,255,0.8)",
+      "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
     },
   };
 }
