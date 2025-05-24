@@ -68,10 +68,7 @@ export default function AtualizarReservasUsuario({
     try {
       const response = await api.updateReserva(
         reserva.id_reserva,
-        reservaAtualizada.fk_id_usuario,
-        reservaAtualizada.data,
-        reservaAtualizada.hora_inicio,
-        reservaAtualizada.hora_fim
+        reservaAtualizada
       );
 
       setCustomModalTitle("Sucesso");
