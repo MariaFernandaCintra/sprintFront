@@ -111,9 +111,9 @@ function getStyles() {
       transform: "translate(-50%, -50%)",
       width: 400,
       maxHeight: "50%",
-      backgroundColor: "rgba(44, 44, 44, 0.8)",
+      backgroundColor: "rgba(255, 255, 255, 0.99)",
       boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.8)",
-      border: "1px solid rgba(255, 255, 255, 0.1)",
+      border: "1px solid rgba(250, 250, 250, 0.1)",
       p: 4,
       borderRadius: 12,
       display: "flex",
@@ -127,9 +127,9 @@ function getStyles() {
       borderBottom: "1px solid rgba(255,255,255,0.2)",
       pb: 1,
     },
-    title: { color: "#eee", fontSize: 20, fontWeight: 600 },
+    title: { color: "blac", fontSize: 20, fontWeight: 600 },
 
-    closeButton: { color: "#ccc", "&:hover": { color: "#fff" } },
+    closeButton: { color: "red", "&:hover": { color: "red" } },
 
     scrollArea: {
       overflowY: "auto",
@@ -138,7 +138,7 @@ function getStyles() {
         width: "8px",
       },
       "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        backgroundColor: "rgba(0, 0, 0, 0.57)",
         borderRadius: "4px",
       },
       "&::-webkit-scrollbar-track": {
@@ -146,15 +146,15 @@ function getStyles() {
       },
     },
 
-    listItem: { borderBottom: "1px solid rgba(255,255,255,0.1)" },
+    listItem: { borderBottom: "1px solid rgba(0, 0, 0, 0.57)" },
 
     listItemText: {
-      color: "#ddd",
+      color: "black",
       "& .MuiListItemText-primary": {
         fontWeight: 500,
       },
       "& .MuiListItemText-secondary": {
-        color: "#aaa",
+        color: "black",
       },
     },
 

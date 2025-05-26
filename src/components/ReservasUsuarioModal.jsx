@@ -91,7 +91,7 @@ export default function ReservasUsuarioModal({
                           edge="end"
                           aria-label="editar"
                           onClick={() => handleEditarClick(reserva)}
-                          sx={{ color: "#ccc" }}
+                          sx={{ color: "black" }}
                         >
                           <EditIcon />
                         </IconButton>
@@ -99,7 +99,7 @@ export default function ReservasUsuarioModal({
                           edge="end"
                           aria-label="apagar"
                           onClick={() => handleApagarClick(reserva.id_reserva)}
-                          sx={{ color: "#ccc" }}
+                          sx={{ color: "black" }}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -152,17 +152,17 @@ export default function ReservasUsuarioModal({
           <Typography
             variant="h6"
             component="div"
-            sx={{ mt: 2, mb: 2, color: "#eee" }}
+            sx={{ mt: 2, mb: 2, color: "balck" }}
           >
             Confirmar Exclusão
           </Typography>
-          <Typography sx={{ mb: 2, color: "#ddd" }}>
+          <Typography sx={{ mb: 2, color: "black" }}>
             Tem certeza que deseja apagar esta reserva?
           </Typography>
           <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
             <Button
               onClick={handleCloseConfirmDelete}
-              sx={{ mr: 2, color: "#ccc" }}
+              sx={{ mr: 2, color: "black" }}
             >
               Cancelar
             </Button>
@@ -197,7 +197,7 @@ export default function ReservasUsuarioModal({
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      backgroundColor: "rgba(0, 0, 0, 0.42)",
       backdropFilter: "blur(10px)",
     },
     modalBox: {
@@ -207,7 +207,7 @@ function getStyles() {
       transform: "translate(-50%, -50%)",
       width: 450,
       maxHeight: "60%",
-      bgcolor: "rgba(44, 44, 44, 0.8)",
+      bgcolor: "rgb(255, 253, 253)",
       boxShadow: 24,
       borderRadius: 12,
       p: 4,
@@ -218,30 +218,30 @@ function getStyles() {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      borderBottom: "1px solid rgba(255,255,255,0.1)",
+      borderBottom: "1px solid rgba(0, 0, 0, 0)",
       mb: 2,
       pb: 1,
     },
-    title: { color: "#eee", fontSize: 22, fontWeight: 600 },
-    closeButton: { color: "#ccc", "&:hover": { color: "#eee" } },
+    title: { color: "black", fontSize: 22, fontWeight: 600 },
+    closeButton: { color: "red", "&:hover": { color: "red" } },
     scrollArea: {
       overflowY: "auto",
       flexGrow: 1,
       "&::-webkit-scrollbar": { width: "8px" },
       "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(255,255,255,0.2)",
+        backgroundColor: "rgba(0, 0, 0, 0.57)",
         borderRadius: "10px",
       },
       "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
       pr: 1,
     },
-    listItem: { borderBottom: "1px solid rgba(255,255,255,0.05)" },
+    listItem: { borderBottom: "1px solid rgb(0, 0, 0)" },
     listItemText: {
-      color: "#ddd",
-      "& .MuiListItemText-secondary": { color: "#aaa" },
+      color: "black",
+      "& .MuiListItemText-secondary": { color: "black" },
     },
     noReservas: {
-      color: "#aaa",
+      color: "black",
       textAlign: "center",
       mt: 3,
       flexGrow: 1,
@@ -253,12 +253,12 @@ function getStyles() {
       display: "flex",
       justifyContent: "center",
       mt: 2,
-      borderTop: "1px solid rgba(255,255,255,0.1)",
+      borderTop: "1px solid rgba(12, 11, 11, 0)",
       pt: 2,
     },
     actionButton: {
-      color: "rgba(39,39,39,0.75)",
-      backgroundColor: "rgba(255,255,255,0.8)",
+      color: "rgba(255, 255, 255, 0.9)",
+      backgroundColor: "rgba(145, 4, 4, 0.86)",
       "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
     },
   };

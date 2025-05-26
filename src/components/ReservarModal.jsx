@@ -185,8 +185,8 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(161, 161, 161, 0.4)",
-      backdropFilter: "blur(5px)",
+      backgroundColor: "rgba(0, 0, 0, 0.7)",
+      backdropFilter: "blur(10px)",
     },
     modalBox: {
       position: "absolute",
@@ -199,7 +199,7 @@ function getStyles() {
       justifyContent: "center",
       width: 380,
       height: "auto",
-      backgroundColor: "rgba(100, 100, 100, 0.5)",
+      backgroundColor: "rgba(255, 255, 255, 0.5)",
       boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
       backdropFilter: "blur(5px)",
       border: "1px solid rgba(214, 214, 214, 0.1)",
