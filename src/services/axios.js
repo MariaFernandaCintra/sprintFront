@@ -21,6 +21,7 @@ api.interceptors.request.use(
 const sheets = {
   postLogin: (usuario) => api.post(`login/`, usuario),
   postCadastro: (usuario) => api.post(`cadastro/`, usuario),
+  updateUsuario: (usuario, id_usuario) => api.put(`usuario/${id_usuario}`, usuario),
   getUsuarioById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}`),
   getUsuarioReservaById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}/reservas`),
   getUsuarioHistoricoReservasbyId: (id_usuario) => api.get(`/usuario/historico/${id_usuario}`),
