@@ -1,5 +1,4 @@
 // React
-import * as React from "react";
 import { useState, useEffect } from "react";
 
 // React Router
@@ -68,9 +67,7 @@ function Login() {
           type: "success",
         });
         setModalOpen(true);
-        const idUsuario = response.data.usuario.id_usuario;
         const tokenUsuario = response.data.token;
-        localStorage.setItem("idUsuario", idUsuario);
         localStorage.setItem("tokenUsuario", tokenUsuario);
       },
       (error) => {

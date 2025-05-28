@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react"; // Importe useEffect
-import api from "../services/axios"; // Ajuste o caminho conforme a sua estrutura
+import { useState, useEffect } from "react";
+import api from "../services/axios";
+import { getIdFromToken } from "../auth/auth";
 
 import {
   Modal,
@@ -10,7 +11,7 @@ import {
   ListItem,
   ListItemText,
   Button,
-  CircularProgress, // Para exibir um spinner de carregamento
+  CircularProgress,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -40,7 +41,7 @@ export default function HistoricoReservasModal({
     setLoading(true);
     setError(null);
     try {
-      const idUsuario = localStorage.getItem("idUsuario");
+      const idUsuario = getIdFromToken();
       if (!idUsuario) {
         console.error("ID do usuário não encontrado no localStorage.");
         setError("ID do usuário não encontrado.");
@@ -48,7 +49,6 @@ export default function HistoricoReservasModal({
         return;
       }
       const response = await api.getUsuarioHistoricoReservasbyId(idUsuario);
-      // A API retorna um objeto com a chave "historico", então acessamos response.data.historico
       setReservas(response.data.historico || []);
     } catch (err) {
       console.error("Erro ao buscar histórico de reservas:", err);
@@ -77,7 +77,7 @@ export default function HistoricoReservasModal({
   const handleConfirmApagar = async () => { // Marque como async
     if (reservaToDeleteId) {
       try {
-        const idUsuario = localStorage.getItem("idUsuario");
+        const idUsuario = getIdFromToken();
         await onApagarReserva(reservaToDeleteId, idUsuario); // Passe o idUsuario
         setCustomModalOpen(true);
         setCustomModalTitle("Sucesso");
@@ -213,7 +213,7 @@ function getStyles() {
   return {
     modalContainer: {
       backgroundColor: "rgba(0, 0, 0, 0.7)",
-      backdropFilter: "blur(2px)",
+      backdropFilter: "blur(10px)",
     },
     modalBox: {
       position: "absolute",
@@ -222,7 +222,7 @@ function getStyles() {
       transform: "translate(-50%, -50%)",
       width: 400,
       maxHeight: "50%",
-      backgroundColor: "rgba(44, 44, 44, 0.8)",
+      backgroundColor: "rgb(255, 255, 255)",
       boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.8)",
       border: "1px solid rgba(255, 255, 255, 0.1)",
       p: 4,
@@ -234,17 +234,17 @@ function getStyles() {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
+      borderBottom: "1px solid rgba(0, 0, 0, 0.8)",
     },
     title: {
       fontWeight: 600,
-      color: "#eee",
+      color: "balck",
       fontSize: 22,
     },
     closeButton: {
-      color: "#ccc",
+      color: "red",
       "&:hover": {
-        color: "#eee",
+        color: "red",
       },
     },
     scrollArea: {
@@ -254,7 +254,7 @@ function getStyles() {
         width: "8px",
       },
       "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        backgroundColor: "rgba(0, 0, 0, 0.57)",
         borderRadius: "4px",
       },
       "&::-webkit-scrollbar-track": {
@@ -262,22 +262,22 @@ function getStyles() {
       },
     },
     listItem: {
-      borderBottom: "1px solid rgba(255, 255, 255, 0.05)",
-      color: "#ddd",
+      borderBottom: "1px solid rgba(0, 0, 0, 0.74)",
+      color: "black",
       padding: "12px 0px",
     },
     listItemText: {
-      color: "#ddd",
+      color: "black",
       "& .MuiListItemText-primary": {
         fontWeight: 500,
       },
       "& .MuiListItemText-secondary": {
-        color: "#aaa",
+        color: "black",
       },
     },
     noReservas: {
       textAlign: "center",
-      color: "#aaa",
+      color: "black",
       fontSize: 16,
       marginTop: 20,
     },
@@ -286,7 +286,7 @@ function getStyles() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: 150, // Garante que o spinner e a mensagem não fiquem colados
+        minHeight: 150,
         color: '#ccc',
     },
     errorMessage: {

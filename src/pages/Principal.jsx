@@ -136,7 +136,6 @@ function Principal() {
                 sx={styles.buttonLogout}
                 onClick={() => {
                   localStorage.removeItem("tokenUsuario");
-                  localStorage.removeItem("idUsuario");
                 }}
               >
                 <ExitToAppIcon sx={styles.IconeLogout} />
@@ -172,7 +171,6 @@ function Principal() {
                 sx={styles.buttonLogout}
                 onClick={() => {
                   localStorage.removeItem("tokenUsuario");
-                  localStorage.removeItem("idUsuario");
                 }}
               >
                 <ExitToAppIcon sx={styles.IconeLogout} />

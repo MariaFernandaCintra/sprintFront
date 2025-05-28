@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
+
 import api from "../services/axios";
+import { getIdFromToken } from "../auth/auth";
+
 import {
   Modal,
   Box,
@@ -22,7 +25,7 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
     setLoading(true);
     setError(null);
     try {
-      const idUsuario = localStorage.getItem("idUsuario");
+      const idUsuario = getIdFromToken();
       if (!idUsuario) throw new Error("ID do usuário não encontrado.");
       const { data } = await api.getUsuarioHistoricoReservasDelecaobyId(
         idUsuario
@@ -99,7 +102,7 @@ function getStyles() {
   return {
     modalContainer: {
       backgroundColor: "rgba(0, 0, 0, 0.7)",
-      backdropFilter: "blur(2px)",
+      backdropFilter: "blur(5px)",
     },
     modalBox: {
       position: "absolute",
@@ -107,11 +110,12 @@ function getStyles() {
       left: "50%",
       transform: "translate(-50%, -50%)",
       width: 400,
-      maxHeight: "60%",
-      bgcolor: "rgba(44, 44, 44, 0.9)",
-      boxShadow: 24,
+      maxHeight: "50%",
+      backgroundColor: "rgba(255, 255, 255, 0.99)",
+      boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.8)",
+      border: "1px solid rgba(250, 250, 250, 0.1)",
+      p: 4,
       borderRadius: 12,
-      p: 3,
       display: "flex",
       flexDirection: "column",
     },
@@ -123,21 +127,51 @@ function getStyles() {
       borderBottom: "1px solid rgba(255,255,255,0.2)",
       pb: 1,
     },
-    title: { color: "#eee", fontSize: 20, fontWeight: 600 },
-    closeButton: { color: "#ccc", "&:hover": { color: "#fff" } },
-    scrollArea: { overflowY: "auto", flexGrow: 1 },
-    listItem: { borderBottom: "1px solid rgba(255,255,255,0.1)" },
-    listItemText: {
-      color: "#ddd",
-      "& .MuiListItemText-secondary": { color: "#aaa" },
+    title: { color: "blac", fontSize: 20, fontWeight: 600 },
+
+    closeButton: { color: "red", "&:hover": { color: "red" } },
+
+    scrollArea: {
+      overflowY: "auto",
+      flexGrow: 2,
+      "&::-webkit-scrollbar": {
+        width: "8px",
+      },
+      "&::-webkit-scrollbar-thumb": {
+        backgroundColor: "rgba(0, 0, 0, 0.57)",
+        borderRadius: "4px",
+      },
+      "&::-webkit-scrollbar-track": {
+        backgroundColor: "transparent",
+      },
     },
+
+    listItem: { borderBottom: "1px solid rgba(0, 0, 0, 0.57)" },
+
+    listItemText: {
+      color: "black",
+      "& .MuiListItemText-primary": {
+        fontWeight: 500,
+      },
+      "& .MuiListItemText-secondary": {
+        color: "black",
+      },
+    },
+
     loadingContainer: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       mt: 4,
     },
-    errorMessage: { color: "#f66", textAlign: "center", mt: 3 },
+
+        errorMessage: {
+        textAlign: 'center',
+        color: 'red',
+        fontSize: 16,
+        marginTop: "40%",
+    },
+
     noData: { color: "#aaa", textAlign: "center", mt: 3 },
   };
 }

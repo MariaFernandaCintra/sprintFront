@@ -72,7 +72,7 @@ function getStyles() {
       "& .MuiPaper-root": {
         borderRadius: 8,
         boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
-        backgroundColor: "rgba(70, 70, 70, 0.7)",
+        backgroundColor: "rgb(255, 255, 255)",
         boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
         backdropFilter: "blur(10px)",
         border: "1px solid rgba(214, 214, 214, 0.1)",
@@ -83,7 +83,7 @@ function getStyles() {
     },
     dialogContent: {
       textAlign: "center",
-      color: "white",
+      color: "balck",
     },
     box: (type) => ({
       minWidth: 300,
@@ -102,12 +102,12 @@ function getStyles() {
     }),
     title: {
       mt: 1,
-      color: "white",
+      color: "balck",
       fontWeight: 1000,
       fontSize: 26
     },
     message: {
-      color: "white",
+      color: "balck",
       fontSize: 18
     },
     actions: {
