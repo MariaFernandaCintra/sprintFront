@@ -91,7 +91,7 @@ export default function ReservasUsuarioModal({
                           edge="end"
                           aria-label="editar"
                           onClick={() => handleEditarClick(reserva)}
-                          sx={{ color: "black" }}
+                          sx={{ color: "rgba(0, 0, 0, 0.45)" }}
                         >
                           <EditIcon />
                         </IconButton>
@@ -99,7 +99,7 @@ export default function ReservasUsuarioModal({
                           edge="end"
                           aria-label="apagar"
                           onClick={() => handleApagarClick(reserva.id_reserva)}
-                          sx={{ color: "black" }}
+                          sx={{ color: "rgba(0, 0, 0, 0.45)" }}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -147,29 +147,29 @@ export default function ReservasUsuarioModal({
       </Modal>
 
       {/* Modal de confirmação de exclusão */}
-      <Modal open={confirmDeleteOpen} onClose={handleCloseConfirmDelete}>
-        <Box sx={{ ...styles.modalBox, width: 300 }}>
+      <Modal open={confirmDeleteOpen} onClose={handleCloseConfirmDelete} sx={styles.modalContainer}>
+        <Box sx={styles.confirmDeleteModalBox}>
           <Typography
             variant="h6"
             component="div"
-            sx={{ mt: 2, mb: 2, color: "balck" }}
+            sx={styles.confirmDeleteTitle}
           >
             Confirmar Exclusão
           </Typography>
-          <Typography sx={{ mb: 2, color: "black" }}>
+          <Typography sx={styles.confirmDeleteText}>
             Tem certeza que deseja apagar esta reserva?
           </Typography>
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box sx={styles.confirmDeleteButtonContainer}>
             <Button
               onClick={handleCloseConfirmDelete}
-              sx={{ mr: 2, color: "black" }}
+              sx={styles.cancelButton}
             >
               Cancelar
             </Button>
             <Button
               onClick={handleConfirmApagar}
               variant="contained"
-              color="error"
+              sx={styles.deleteButton}
             >
               Apagar
             </Button>
@@ -197,69 +197,167 @@ export default function ReservasUsuarioModal({
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.42)",
-      backdropFilter: "blur(10px)",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      backdropFilter: "blur(6px)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
     modalBox: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: 450,
-      maxHeight: "60%",
-      bgcolor: "rgb(255, 253, 253)",
-      boxShadow: 24,
-      borderRadius: 12,
-      p: 4,
       display: "flex",
       flexDirection: "column",
+      width: 450,
+      maxWidth: "90%",
+      maxHeight: "65%",
+      padding: 4,
+      backgroundColor: "#FFFFFF",
+      borderRadius: 10,
+      boxShadow: "0 6px 20px rgba(0, 0, 0, 0.07)",
+      outline: "none",
     },
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      borderBottom: "1px solid rgba(0, 0, 0, 0)",
-      mb: 2,
-      pb: 1,
+      marginBottom: 2,
     },
-    title: { color: "black", fontSize: 22, fontWeight: 600 },
-    closeButton: { color: "red", "&:hover": { color: "red" } },
+    title: {
+      fontWeight: 600,
+      color: "#263238",
+      fontSize: "28px",
+      textAlign: "center",
+      flexGrow: 1,
+    },
+    closeButton: {
+      color: "#EF5350",
+      "&:hover": {
+        backgroundColor: "rgba(239, 83, 80, 0.1)",
+      },
+    },
     scrollArea: {
       overflowY: "auto",
       flexGrow: 1,
-      "&::-webkit-scrollbar": { width: "8px" },
+      paddingRight: 1,
+      "&::-webkit-scrollbar": {
+        width: "6px",
+      },
       "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(0, 0, 0, 0.57)",
+        backgroundColor: "#E0E0E0",
         borderRadius: "10px",
       },
-      "&::-webkit-scrollbar-track": { backgroundColor: "transparent" },
-      pr: 1,
+      "&::-webkit-scrollbar-track": {
+        backgroundColor: "transparent",
+      },
     },
-    listItem: { borderBottom: "1px solid rgb(0, 0, 0)" },
+    listItem: {
+      borderBottom: "1px solid #ECEFF1",
+      paddingY: 1.5,
+      "&:last-child": {
+        borderBottom: "none",
+      },
+    },
     listItemText: {
-      color: "black",
-      "& .MuiListItemText-secondary": { color: "black" },
+      color: "rgba(0, 0, 0, 0.79)",
+      "& .MuiListItemText-primary": {
+        fontWeight: 500,
+        fontSize: "16px",
+        marginBottom: 0.5,
+      },
+      "& .MuiListItemText-secondary": {
+        color: "rgba(0, 0, 0, 0.63)",
+        fontSize: "14px",
+        lineHeight: 1.5,
+      },
     },
     noReservas: {
-      color: "black",
+      color: "#607D8B",
       textAlign: "center",
-      mt: 3,
+      marginTop: 3,
       flexGrow: 1,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      fontSize: "18px",
     },
     modalFooter: {
       display: "flex",
       justifyContent: "center",
-      mt: 2,
-      borderTop: "1px solid rgba(12, 11, 11, 0)",
-      pt: 2,
+      marginTop: 3,
+      paddingTop: 2,
+      borderTop: "1px solid #ECEFF1",
     },
     actionButton: {
-      color: "rgba(255, 255, 255, 0.9)",
-      backgroundColor: "rgba(145, 4, 4, 0.86)",
-      "&:hover": { backgroundColor: "rgba(255,255,255,0.9)" },
+      backgroundColor: "#EF5350",
+      color: "#FFFFFF",
+      fontWeight: 500,
+      padding: "10px 20px",
+      borderRadius: 8,
+      textTransform: "none",
+      boxShadow: "0 4px 12px rgba(239, 83, 80, 0.3)",
+    },
+    confirmDeleteModalBox: {
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: 300,
+      padding: 4,
+      backgroundColor: "#FFFFFF",
+      borderRadius: 12,
+      boxShadow: "0 8px 25px rgba(0, 0, 0, 0.08)",
+      outline: "none",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    confirmDeleteTitle: {
+      fontWeight: 600,
+      color: "#263238",
+      fontSize: "20px",
+      marginBottom: 2,
+      textAlign: "center",
+    },
+    confirmDeleteText: {
+      color: "#455A64",
+      fontSize: "16px",
+      marginBottom: 3,
+      textAlign: "center",
+    },
+    confirmDeleteButtonContainer: {
+      display: "flex",
+      justifyContent: "center",
+      gap: 2,
+      width: "100%",
+    },
+    cancelButton: {
+      backgroundColor: "#ECEFF1",
+      color: "#546E7A",
+      fontWeight: 500,
+      padding: "8px 18px",
+      borderRadius: 8,
+      textTransform: "none",
+      boxShadow: "none",
+      "&:hover": {
+        backgroundColor: "#CFD8DC",
+        boxShadow: "none",
+      },
+    },
+    deleteButton: {
+      backgroundColor: "#EF5350",
+      color: "#FFFFFF",
+      fontWeight: 500,
+      padding: "8px 18px",
+      borderRadius: 8,
+      textTransform: "none",
+      boxShadow: "0 4px 10px rgba(239, 83, 80, 0.3)",
+      "&:hover": {
+        backgroundColor: "#E53935",
+        boxShadow: "0 6px 15px rgba(239, 83, 80, 0.4)",
+      },
+      "&:active": {
+        backgroundColor: "#D32F2F",
+      },
     },
   };
 }
