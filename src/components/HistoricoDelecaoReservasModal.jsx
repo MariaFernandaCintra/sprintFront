@@ -101,77 +101,101 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.7)",
-      backdropFilter: "blur(5px)",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      backdropFilter: "blur(6px)",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
     },
     modalBox: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
-      width: 400,
-      maxHeight: "50%",
-      backgroundColor: "rgba(255, 255, 255, 0.99)",
-      boxShadow: "0px 12px 32px rgba(0, 0, 0, 0.8)",
-      border: "1px solid rgba(250, 250, 250, 0.1)",
-      p: 4,
-      borderRadius: 12,
       display: "flex",
       flexDirection: "column",
+      width: 450,
+      maxWidth: "90%",
+      maxHeight: "65%",
+      padding: 4,
+      backgroundColor: "#FFFFFF",
+      borderRadius: 10,
+      boxShadow: "0 6px 20px rgba(0, 0, 0, 0.07)",
+      outline: "none",
     },
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      mb: 2,
-      borderBottom: "1px solid rgba(255,255,255,0.2)",
-      pb: 1,
+      marginBottom: 2,
     },
-    title: { color: "blac", fontSize: 20, fontWeight: 600 },
-
-    closeButton: { color: "red", "&:hover": { color: "red" } },
-
+    title: {
+      fontWeight: 600,
+      color: "#263238",
+      fontSize: "24px",
+      textAlign: "center",
+      flexGrow: 1,
+    },
+    closeButton: {
+      color: "#EF5350",
+      "&:hover": {
+        backgroundColor: "rgba(239, 83, 80, 0.1)",
+      },
+    },
     scrollArea: {
       overflowY: "auto",
-      flexGrow: 2,
+      flexGrow: 1,
+      paddingRight: 1,
       "&::-webkit-scrollbar": {
-        width: "8px",
+        width: "6px",
       },
       "&::-webkit-scrollbar-thumb": {
-        backgroundColor: "rgba(0, 0, 0, 0.57)",
-        borderRadius: "4px",
+        backgroundColor: "#E0E0E0",
+        borderRadius: "10px",
       },
       "&::-webkit-scrollbar-track": {
         backgroundColor: "transparent",
       },
     },
-
-    listItem: { borderBottom: "1px solid rgba(0, 0, 0, 0.57)" },
-
-    listItemText: {
-      color: "black",
-      "& .MuiListItemText-primary": {
-        fontWeight: 500,
-      },
-      "& .MuiListItemText-secondary": {
-        color: "black",
+    listItem: {
+      borderBottom: "1px solid #ECEFF1",
+      paddingY: 1.5,
+      "&:last-child": {
+        borderBottom: "none",
       },
     },
-
+    listItemText: {
+      color: "rgba(0, 0, 0, 0.79)",
+      "& .MuiListItemText-primary": {
+        fontWeight: 500,
+        fontSize: "16px",
+        marginBottom: 0.5,
+      },
+      "& .MuiListItemText-secondary": {
+        color: "rgba(0, 0, 0, 0.63)",
+        fontSize: "14px",
+        lineHeight: 1.5,
+      },
+    },
+    noData: {
+      color: "#607D8B",
+      textAlign: "center",
+      marginTop: 3,
+      flexGrow: 1,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontSize: "18px",
+    },
     loadingContainer: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      mt: 4,
+      justifyContent: "center",
+      minHeight: 150,
+      color: '#90A4AE',
     },
-
-        errorMessage: {
-        textAlign: 'center',
-        color: 'red',
-        fontSize: 16,
-        marginTop: "40%",
+    errorMessage: {
+      textAlign: 'center',
+      color: '#D32F2F',
+      fontSize: "16px",
+      marginTop: 20,
     },
-
-    noData: { color: "#aaa", textAlign: "center", mt: 3 },
   };
 }
