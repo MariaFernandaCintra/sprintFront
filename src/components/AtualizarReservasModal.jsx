@@ -1,12 +1,6 @@
 import { useState, useEffect } from "react";
 
-import {
-  Modal,
-  Box,
-  Typography,
-  Button,
-  TextField,
-} from "@mui/material";
+import { Modal, Box, Typography, Button, TextField } from "@mui/material";
 
 import {
   DatePicker,
@@ -112,6 +106,7 @@ export default function AtualizarReservasUsuario({
               if (newValue) setDate(newValue);
             }}
             sx={styles.input}
+            format="dd/MM/yyyy"
             renderInput={(params) => (
               <TextField fullWidth margin="normal" {...params} />
             )}

@@ -32,7 +32,6 @@ import { useState, useEffect } from "react";
    const [reservas, setReservas] = useState([]);
    const [openReservasModal, setOpenReservasModal] = useState(false);
 
-   // Estados para o CustomModal
    const [customModalOpen, setCustomModalOpen] = useState(false);
    const [customModalTitle, setCustomModalTitle] = useState("");
    const [customModalMessage, setCustomModalMessage] = useState("");
@@ -45,11 +44,9 @@ import { useState, useEffect } from "react";
      document.title = "Perfil | SENAI";
      const fetchDados = async () => {
        const idUsuario = getIdFromToken();
-       console.log("ID do usuário:", idUsuario);
        if (!idUsuario) return;
        try {
          const responseUsuario = await api.getUsuarioById(idUsuario);
-         console.log("Usuário retornado:", responseUsuario.data);
          setUsuario(responseUsuario.data.usuario);
          const responseReservas = await api.getUsuarioReservaById(idUsuario);
          setReservas(responseReservas.data.reservas || []);
