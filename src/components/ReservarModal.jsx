@@ -106,6 +106,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
               if (newValue) setData(newValue);
             }}
             minDate={getToday()}
+            format="dd/MM/yyyy"
             renderInput={(params) => (
               <TextField fullWidth margin="normal" {...params} />
             )}
