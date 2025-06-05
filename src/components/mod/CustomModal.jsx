@@ -72,7 +72,6 @@ function getStyles() {
         borderRadius: 8,
         boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
         backgroundColor: "rgb(255, 255, 255)",
-        boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
         backdropFilter: "blur(10px)",
         border: "1px solid rgba(214, 214, 214, 0.1)",
       },
@@ -96,7 +95,6 @@ function getStyles() {
       backgroundColor: type === "success" ? "#e8f5e9" : "#ffebee",
       display: "flex",
       flexDirection: "column",
-      alignItems: "center",
       background: "transparent",
     }),
     title: {
