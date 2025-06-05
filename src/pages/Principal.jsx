@@ -390,7 +390,7 @@ function getStyles() {
         borderRadius: "20px",
         color: "gray",
         fontSize: 16,
-                fontWeight: 1000,
+        fontWeight: 1000,
       },
       "& .MuiInputLabel-root": {
         fontWeight: 1000,
@@ -401,6 +401,7 @@ function getStyles() {
     },
     buttonFiltrar: {
       backgroundColor: "rgba(177, 16, 16, 1)",
+      textTransform: "none",
       width: "8%",
       height: "60%",
       marginRight: 5,
