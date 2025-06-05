@@ -1,6 +1,6 @@
 
-// Componentes
-import { Header, Footer } from "../components";
+import Footer from "./Footer";
+import Header from "./Header";
 
 const DefaultLayout = ({ children }) => {
   return (

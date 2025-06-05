@@ -1,10 +1,9 @@
-// React
+
 import { useState, useEffect } from "react";
-
-// React Router
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../../img/logo.png";
+import api from "../services/axios";
 
-// MUI - Componentes
 import {
   Box,
   Button,
@@ -12,17 +11,11 @@ import {
   TextField,
   InputAdornment,
   IconButton,
-} from "../components";
+} from "@mui/material";
 
-// MUI - Ícones
-import { Visibility, VisibilityOff } from "../components";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-// Componentes
-import CustomModal from "../components/CustomModal";
-
-// Assets e serviços
-import logo from "../../img/logo.png";
-import api from "../services/axios";
+import CustomModal from "../components/mod/CustomModal";
 
 function Login() {
   const styles = getStyles();

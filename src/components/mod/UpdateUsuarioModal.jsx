@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from "react";
+
+import { useState, useEffect } from "react";
+import { getIdFromToken } from "../../auth/auth";
+import api from "../../services/axios";
+
 import {
   Modal,
   Box,
@@ -8,10 +12,9 @@ import {
   IconButton,
   InputAdornment,
 } from "@mui/material";
+
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
-import api from "../services/axios";
-import { getIdFromToken } from "../auth/auth";
 
 function UpdateUsuarioModal({
   open,

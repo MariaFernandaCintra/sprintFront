@@ -1,17 +1,18 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
-import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
-
 import logo from "../../img/logo.png";
 import api from "../services/axios";
 import { getIdFromToken } from "../auth/auth";
 
-import AtualizarReservasUsuario from "../components/AtualizarReservasModal";
-import ReservasUsuarioModal from "../components/ReservasUsuarioModal";
-import CustomModal from "../components/CustomModal";
-import ConfirmarSenhaModal from "../components/ConfirmarSenhaModal";
-import UpdateUsuarioModal from "../components/UpdateUsuarioModal";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
+import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
+
+import AtualizarReservasModal from "../components/mod/AtualizarReservasModal";
+import ReservasUsuarioModal from "../components/mod/ReservasUsuarioModal";
+import CustomModal from "../components/mod/CustomModal";
+import ConfirmarSenhaModal from "../components/mod/ConfirmarSenhaModal";
+import UpdateUsuarioModal from "../components/mod/UpdateUsuarioModal";
 
 function Perfil() {
   const styles = getStyles();
@@ -264,7 +265,7 @@ function Perfil() {
         />
       )}
       {openUpdateModal && selectedReserva && (
-        <AtualizarReservasUsuario
+        <AtualizarReservasModal
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
           reserva={selectedReserva}

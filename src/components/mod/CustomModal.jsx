@@ -1,5 +1,4 @@
 
-// MUI - Componentes
 import {
   Box,
   Button,
@@ -8,10 +7,10 @@ import {
   DialogContent,
   DialogTitle,
   Typography,
-} from "../components";
+} from "@mui/material";
 
-// MUI - Ícones
-import { CheckCircleIcon, ErrorIcon } from "../components";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ErrorIcon from "@mui/icons-material/Error";
 
 export default function CustomModal({
   open,

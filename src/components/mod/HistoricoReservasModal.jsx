@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
-import api from "../services/axios";
-import { getIdFromToken } from "../auth/auth";
+import { getIdFromToken } from "../../auth/auth";
+import api from "../../services/axios";
 
 import {
   Modal,

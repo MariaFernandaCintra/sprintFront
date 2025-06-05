@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 import {
@@ -15,7 +16,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Importe os dois modais
 import HistoricoReservasModal from "./HistoricoReservasModal";
 import HistoricoDelecaoReservasModal from "./HistoricoDelecaoReservasModal";
 

@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+
+import { useState } from 'react';
+
 import {
   Modal,
   Box,
@@ -8,7 +10,9 @@ import {
   IconButton,
   InputAdornment
 } from "@mui/material";
+
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+
 import CloseIcon from "@mui/icons-material/Close";
 
 function ConfirmarSenhaModal({ open, onClose, onConfirm }) {

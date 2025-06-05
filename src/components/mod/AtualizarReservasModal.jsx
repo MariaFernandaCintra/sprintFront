@@ -1,4 +1,7 @@
+
 import { useState, useEffect } from "react";
+import { getIdFromToken } from "../../auth/auth";
+import api from "../../services/axios";
 
 import { Modal, Box, Typography, Button, TextField } from "@mui/material";
 
@@ -9,9 +12,6 @@ import {
 } from "@mui/x-date-pickers";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
-import { getIdFromToken } from "../auth/auth";
-import api from "../services/axios";
 
 export default function AtualizarReservasUsuario({
   open,
