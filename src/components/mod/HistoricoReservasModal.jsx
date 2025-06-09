@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
-import api from "../services/axios";
-import { getIdFromToken } from "../auth/auth";
+import { getIdFromToken } from "../../auth/auth";
+import api from "../../services/axios";
 
 import {
   Modal,
@@ -74,16 +75,16 @@ export default function HistoricoReservasModal({
     setConfirmDeleteOpen(true);
   };
 
-  const handleConfirmApagar = async () => { // Marque como async
+  const handleConfirmApagar = async () => {
     if (reservaToDeleteId) {
       try {
         const idUsuario = getIdFromToken();
-        await onApagarReserva(reservaToDeleteId, idUsuario); // Passe o idUsuario
+        await onApagarReserva(reservaToDeleteId, idUsuario);
         setCustomModalOpen(true);
         setCustomModalTitle("Sucesso");
         setCustomModalMessage("Reserva apagada com sucesso!");
         setCustomModalType("success");
-        fetchHistoricoReservas(); // Atualiza a lista após apagar
+        fetchHistoricoReservas();
       } catch (err) {
         console.error("Erro ao apagar reserva:", err);
         setCustomModalOpen(true);
@@ -122,13 +123,12 @@ export default function HistoricoReservasModal({
           ) : reservas.length > 0 ? (
             <Box sx={styles.scrollArea}>
               <List>
-                {reservas.map((reserva, index) => ( // Use index para a key se não tiver um id_reserva único diretamente
+                {reservas.map((reserva, index) => (
                   <ListItem
-                    key={reserva.id_reserva || `reserva-${index}`} // Use id_reserva se disponível, senão index
+                    key={reserva.id_reserva || `reserva-${index}`}
                     sx={styles.listItem}
                     secondaryAction={
                       <Box>
-                        {/* Verifique se a API retorna um ID para edição/deleção */}
                         {reserva.id_reserva && (
                           <>
                             <IconButton
@@ -174,8 +174,7 @@ export default function HistoricoReservasModal({
           )}
         </Box>
       </Modal>
-
-      {/* Modal de confirmação de exclusão */}
+      
       <Modal open={confirmDeleteOpen} onClose={handleCloseConfirmDelete}>
         <Box sx={{ ...styles.modalBox, width: 300 }}>
           <Typography

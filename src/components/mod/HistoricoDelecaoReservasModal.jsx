@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
 
-import api from "../services/axios";
-import { getIdFromToken } from "../auth/auth";
+import { useState, useEffect } from "react";
+import { getIdFromToken } from "../../auth/auth";
+import api from "../../services/axios";
 
 import {
   Modal,
@@ -13,6 +13,7 @@ import {
   ListItemText,
   CircularProgress,
 } from "@mui/material";
+
 import CloseIcon from "@mui/icons-material/Close";
 
 export default function HistoricoDelecaoReservasModal({ open, onClose }) {

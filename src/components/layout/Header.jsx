@@ -1,13 +1,12 @@
 
-// React Router
 import { Link } from "react-router-dom";
 
-// MUI - Componentes e Ícones
 import {
   Box,
   Button,
-  HomeIcon,
-} from "../components";
+} from "@mui/material";
+
+import HomeIcon from "@mui/icons-material/Home";
 
 const Header = ({}) => {
   const styles = getStyles();

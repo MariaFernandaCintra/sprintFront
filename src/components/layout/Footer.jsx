@@ -1,9 +1,8 @@
 
-// MUI - Componentes
 import {
   Box,
   Typography,
-} from "../components";
+} from "@mui/material";
 
 const Footer = () => {
   const styles = getStyles();

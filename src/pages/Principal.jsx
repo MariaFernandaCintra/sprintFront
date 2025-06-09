@@ -1,5 +1,9 @@
+
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../../img/logo.png";
+import api from "../services/axios";
+
 import {
   Box,
   Button,
@@ -11,12 +15,13 @@ import {
   TableHead,
   TableRow,
   Typography,
-} from "../components";
-import { PersonIcon, ExitToAppIcon } from "../components";
-import logo from "../../img/logo.png";
-import api from "../services/axios";
-import ReservarModal from "../components/ReservarModal";
-import CustomModal from "../components/CustomModal";
+} from "@mui/material";
+
+import PersonIcon from "@mui/icons-material/Person";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+
+import ReservarModal from "../components/mod/ReservarModal";
+import CustomModal from "../components/mod/CustomModal";
 
 import { getToday } from "../utils/dateUtils";
 
@@ -390,7 +395,7 @@ function getStyles() {
         borderRadius: "20px",
         color: "gray",
         fontSize: 16,
-                fontWeight: 1000,
+        fontWeight: 1000,
       },
       "& .MuiInputLabel-root": {
         fontWeight: 1000,
@@ -401,6 +406,7 @@ function getStyles() {
     },
     buttonFiltrar: {
       backgroundColor: "rgba(177, 16, 16, 1)",
+      textTransform: "none",
       width: "8%",
       height: "60%",
       marginRight: 5,

@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 
 import {
@@ -15,7 +16,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-// Importe os dois modais
 import HistoricoReservasModal from "./HistoricoReservasModal";
 import HistoricoDelecaoReservasModal from "./HistoricoDelecaoReservasModal";
 
@@ -35,7 +35,6 @@ export default function ReservasUsuarioModal({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [reservaToDeleteId, setReservaToDeleteId] = useState(null);
 
-  // Estados para controlar a abertura dos modais
   const [openHistorico, setOpenHistorico] = useState(false);
   const [openDelecao, setOpenDelecao] = useState(false);
 
@@ -147,7 +146,11 @@ export default function ReservasUsuarioModal({
       </Modal>
 
       {/* Modal de confirmação de exclusão */}
-      <Modal open={confirmDeleteOpen} onClose={handleCloseConfirmDelete} sx={styles.modalContainer}>
+      <Modal
+        open={confirmDeleteOpen}
+        onClose={handleCloseConfirmDelete}
+        sx={styles.modalContainer}
+      >
         <Box sx={styles.confirmDeleteModalBox}>
           <Typography
             variant="h6"
@@ -160,10 +163,7 @@ export default function ReservasUsuarioModal({
             Tem certeza que deseja apagar esta reserva?
           </Typography>
           <Box sx={styles.confirmDeleteButtonContainer}>
-            <Button
-              onClick={handleCloseConfirmDelete}
-              sx={styles.cancelButton}
-            >
+            <Button onClick={handleCloseConfirmDelete} sx={styles.cancelButton}>
               Cancelar
             </Button>
             <Button
@@ -287,7 +287,10 @@ function getStyles() {
       borderTop: "1px solid #ECEFF1",
     },
     actionButton: {
-      backgroundColor: "#EF5350",
+      backgroundColor: "rgb(161, 0, 0)",
+      "&:hover": {
+        backgroundColor: "rgba(161, 0, 0, 0.76)",
+      },
       color: "#FFFFFF",
       fontWeight: 500,
       padding: "10px 20px",
