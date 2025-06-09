@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../img/logo.png";
@@ -13,6 +12,7 @@ import ReservasUsuarioModal from "../components/mod/ReservasUsuarioModal";
 import CustomModal from "../components/mod/CustomModal";
 import ConfirmarSenhaModal from "../components/mod/ConfirmarSenhaModal";
 import UpdateUsuarioModal from "../components/mod/UpdateUsuarioModal";
+import ConfirmarDelecaoModal from "../components/mod/ConfirmarDelecaoModal";
 
 function Perfil() {
   const styles = getStyles();
@@ -42,7 +42,7 @@ function Perfil() {
 
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
 
-  const [confirmDeleteCallback, setConfirmDeleteCallback] = useState(null);
+  const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
 
   useEffect(() => {
     document.title = "Perfil | SENAI";
@@ -117,32 +117,7 @@ function Perfil() {
       if (confirmPasswordAction === "updateProfile") {
         setOpenEditProfileModal(true);
       } else if (confirmPasswordAction === "deleteAccount") {
-        setCustomModalTitle("Confirmação");
-        setCustomModalMessage(
-          "Tem certeza que deseja deletar sua conta? Esta ação é irreversível."
-        );
-        setCustomModalType("warning");
-        setCustomModalOpen(true);
-        setConfirmDeleteCallback(() => async () => {
-          try {
-            await api.deleteUsuario(idUsuario);
-            setCustomModalTitle("Sucesso");
-            setCustomModalMessage("Conta deletada com sucesso!");
-            setCustomModalType("success");
-            setCustomModalOpen(true);
-            setTimeout(() => {
-              window.location.href = "/";
-            }, 1500);
-          } catch (error) {
-            console.error("Erro ao deletar conta:", error);
-            setCustomModalTitle("Erro");
-            setCustomModalMessage(
-              error.response?.data?.error || "Erro ao deletar conta."
-            );
-            setCustomModalType("error");
-            setCustomModalOpen(true);
-          }
-        });
+        setOpenConfirmDeleteModal(true);
       }
 
       setConfirmPasswordAction(null);
@@ -157,12 +132,27 @@ function Perfil() {
     }
   };
 
-  const handleConfirmCustomModal = () => {
-    if (confirmDeleteCallback) {
-      confirmDeleteCallback();
-      setConfirmDeleteCallback(null);
+  const handleDeleteAccount = async () => {
+    setOpenConfirmDeleteModal(false);
+    const idUsuario = getIdFromToken();
+    try {
+      await api.deleteUsuario(idUsuario);
+      setCustomModalTitle("Sucesso");
+      setCustomModalMessage("Conta deletada com sucesso!");
+      setCustomModalType("success");
+      setCustomModalOpen(true);
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
+    } catch (error) {
+      console.error("Erro ao deletar conta:", error);
+      setCustomModalTitle("Erro");
+      setCustomModalMessage(
+        error.response?.data?.error || "Erro ao deletar conta."
+      );
+      setCustomModalType("error");
+      setCustomModalOpen(true);
     }
-    setCustomModalOpen(false);
   };
 
   const handleProfileUpdateSuccess = () => {
@@ -298,9 +288,17 @@ function Perfil() {
         onProfileUpdateSuccess={handleProfileUpdateSuccess}
       />
 
+      <ConfirmarDelecaoModal
+        open={openConfirmDeleteModal}
+        onClose={() => setOpenConfirmDeleteModal(false)}
+        onConfirm={handleDeleteAccount}
+        title="Confirmação de Deleção"
+        message="Tem certeza que deseja deletar sua conta? Esta ação é irreversível."
+      />
+
       <CustomModal
         open={customModalOpen}
-        onClose={handleConfirmCustomModal}
+        onClose={() => setCustomModalOpen(false)}
         title={customModalTitle}
         message={customModalMessage}
         type={customModalType}
