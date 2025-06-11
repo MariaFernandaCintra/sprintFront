@@ -292,8 +292,7 @@ function Perfil() {
         open={openConfirmDeleteModal}
         onClose={() => setOpenConfirmDeleteModal(false)}
         onConfirm={handleDeleteAccount}
-        title="Confirmação de Deleção"
-        message="Tem certeza que deseja deletar sua conta? Esta ação é irreversível."
+
       />
 
       <CustomModal

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { getIdFromToken } from "../../auth/auth";
 import api from "../../services/axios";
@@ -116,7 +115,9 @@ export default function HistoricoReservasModal({
           {loading ? (
             <Box sx={styles.loadingContainer}>
               <CircularProgress sx={{ color: "#ccc" }} />
-              <Typography sx={{ mt: 2, color: "#ccc" }}>Carregando reservas...</Typography>
+              <Typography sx={{ mt: 2, color: "#ccc" }}>
+                Carregando reservas...
+              </Typography>
             </Box>
           ) : error ? (
             <Typography sx={styles.errorMessage}>{error}</Typography>
@@ -142,7 +143,9 @@ export default function HistoricoReservasModal({
                             <IconButton
                               edge="end"
                               aria-label="apagar"
-                              onClick={() => handleApagarClick(reserva.id_reserva)}
+                              onClick={() =>
+                                handleApagarClick(reserva.id_reserva)
+                              }
                               sx={{ color: "#ccc" }}
                             >
                               <DeleteIcon />
@@ -157,7 +160,8 @@ export default function HistoricoReservasModal({
                       sx={styles.listItemText}
                       secondary={
                         <>
-                          Data: {new Date(reserva.data).toLocaleDateString()} <br />
+                          Data: {new Date(reserva.data).toLocaleDateString()}{" "}
+                          <br />
                           Hora Início: {reserva.hora_inicio} | Hora Fim:{" "}
                           {reserva.hora_fim}
                         </>
@@ -172,36 +176,6 @@ export default function HistoricoReservasModal({
               Nenhuma reserva encontrada.
             </Typography>
           )}
-        </Box>
-      </Modal>
-      
-      <Modal open={confirmDeleteOpen} onClose={handleCloseConfirmDelete}>
-        <Box sx={{ ...styles.modalBox, width: 300 }}>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ mt: 2, mb: 2, color: "#eee" }}
-          >
-            Confirmar Exclusão
-          </Typography>
-          <Typography sx={{ mb: 2, color: "#ddd" }}>
-            Tem certeza que deseja apagar esta reserva?
-          </Typography>
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-            <Button
-              onClick={handleCloseConfirmDelete}
-              sx={{ mr: 2, color: "#ccc" }}
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={handleConfirmApagar}
-              variant="contained"
-              color="error"
-            >
-              Apagar
-            </Button>
-          </Box>
         </Box>
       </Modal>
     </>
@@ -278,7 +252,7 @@ function getStyles() {
         marginBottom: 0.2,
       },
       "& .MuiListItemText-secondary": {
-      color: "rgba(0, 0, 0, 0.63)",
+        color: "rgba(0, 0, 0, 0.63)",
         fontSize: "14px",
         lineHeight: 1.4,
       },
@@ -294,16 +268,16 @@ function getStyles() {
       fontSize: "16px",
     },
     loadingContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
       minHeight: 120,
-      color: '#B0BEC5',
+      color: "#B0BEC5",
     },
     errorMessage: {
-      textAlign: 'center',
-      color: '#D32F2F',
+      textAlign: "center",
+      color: "#D32F2F",
       fontSize: "15px",
       marginTop: 2.5,
     },

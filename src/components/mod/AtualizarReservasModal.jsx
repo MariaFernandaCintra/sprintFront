@@ -148,14 +148,14 @@ export default function AtualizarReservasUsuario({
               onClick={onClose}
               sx={styles.buttonCancelar}
             >
-              CANCELAR
+              Cancelar
             </Button>
             <Button
               variant="contained"
               onClick={handleSubmit}
               sx={styles.buttonReservar}
             >
-              SALVAR
+              Salvar
             </Button>
           </Box>
         </Box>
@@ -230,24 +230,24 @@ function getStyles() {
       width: "80%",
     },
     buttonCancelar: {
-      backgroundColor: "#ECEFF1",
-      color: "#546E7A",
+      backgroundColor: "#B30808",
+      color: "#5FFFFFF",
       fontWeight: 500,
       padding: "10px 20px",
       borderRadius: 8,
       textTransform: "none",
       boxShadow: "none",
       "&:hover": {
-        backgroundColor: "#CFD8DC",
-        boxShadow: "none",
+        backgroundColor: "#E53935",
+        boxShadow: "0 6px 15px rgba(239, 83, 80, 0.4)",
       },
       "&:active": {
         backgroundColor: "#B0BEC5",
       },
     },
     buttonReservar: {
-      backgroundColor: "#EF5350",
-      color: "#FFFFFF",
+      backgroundColor: "#B30808",
+      color: "#5FFFFFF",
       fontWeight: 500,
       padding: "10px 20px",
       borderRadius: 8,

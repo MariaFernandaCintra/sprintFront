@@ -159,7 +159,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
               onClick={onClose}
               sx={styles.buttonCancelar}
             >
-              CANCELAR
+              Cancelar
             </Button>
             <Button
               variant="contained"
@@ -167,7 +167,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
               onClick={handleReserva}
               sx={styles.buttonReservar}
             >
-              RESERVAR
+              Reservar
             </Button>
           </Box>
         </Box>
@@ -265,8 +265,8 @@ function getStyles() {
       width: "80%",
     },
     buttonCancelar: {
-      backgroundColor: "#ECEFF1",
-      color: "#546E7A",
+      backgroundColor: "#B30808",
+      color: "#5FFFFFF",
       fontWeight: 500,
       padding: "10px 20px",
       borderRadius: 8,
@@ -281,7 +281,7 @@ function getStyles() {
       },
     },
     buttonReservar: {
-      backgroundColor: "#EF5350",
+      backgroundColor: "#B30808",
       color: "#FFFFFF",
       fontWeight: 500,
       padding: "10px 20px",
