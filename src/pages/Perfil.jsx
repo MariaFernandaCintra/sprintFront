@@ -196,16 +196,6 @@ function Perfil() {
             value={usuario.NIF || ""}
             sx={styles.textField}
           />
-          <TextField
-            id="senha"
-            type="password"
-            placeholder="senha"
-            name="senha"
-            margin="normal"
-            value="********"
-            sx={styles.textField}
-            disabled
-          />
           <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
             <Button
               variant="contained"
@@ -335,7 +325,7 @@ function getStyles() {
     logo: {
       width: "280px",
       height: "auto",
-      marginBottom: 10,
+      marginBottom: 14,
       border: "4.5px solid white",
       borderRadius: 15,
     },
@@ -359,10 +349,10 @@ function getStyles() {
       backgroundColor: "rgba(255, 255, 255, 0.7)",
       paddingRight: 8,
       paddingLeft: 8,
-      paddingTop: 7,
-      paddingBottom: 7,
+      paddingTop: 5,
+      paddingBottom: 0,
       borderRadius: 10,
-      mt: 8,
+      mt: 12,
       height: "68.5%",
     },
     title: {
