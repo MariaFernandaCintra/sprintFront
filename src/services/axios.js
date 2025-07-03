@@ -27,7 +27,7 @@ const sheets = {
   verificarSenha: (senha, id_usuario) => api.post(`usuario/verificarsenha/${id_usuario}`, { senha }),
 
   getUsuarioById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}`),
-  getUsuarioReservaById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}/reservas`),
+  getUsuarioReservasById: (id_usuario) => api.get(`/usuario/perfil/${id_usuario}/reservas`),
   getUsuarioHistoricoReservasbyId: (id_usuario) => api.get(`/usuario/historico/${id_usuario}`),
   getUsuarioHistoricoReservasDelecaobyId: (id_usuario) => api.get(`/usuario/historico/delecao/${id_usuario}`),
 

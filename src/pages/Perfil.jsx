@@ -18,7 +18,7 @@ import {
   Article as ArticleIcon,
 } from "@mui/icons-material";
 
-import AtualizarReservasModal from "../components/mod/AtualizarReservasModal";
+import AtualizarReservaModal from "../components/mod/AtualizarReservaModal";
 import ReservasUsuarioModal from "../components/mod/ReservasUsuarioModal";
 import CustomModal from "../components/mod/CustomModal";
 import ConfirmarSenhaModal from "../components/mod/ConfirmarSenhaModal";
@@ -66,7 +66,7 @@ function Perfil() {
     try {
       const responseUsuario = await api.getUsuarioById(idUsuario);
       setUsuario(responseUsuario.data.usuario);
-      const responseReservas = await api.getUsuarioReservaById(idUsuario);
+      const responseReservas = await api.getUsuarioReservasById(idUsuario);
       setReservas(responseReservas.data.reservas || []);
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -78,7 +78,7 @@ function Perfil() {
       const idUsuario = getIdFromToken();
       await api.deleteReserva(idReserva, idUsuario);
       if (idUsuario) {
-        const responseReservas = await api.getUsuarioReservaById(idUsuario);
+        const responseReservas = await api.getUsuarioReservasById(idUsuario);
         setReservas(responseReservas.data.reservas || []);
       }
       setCustomModalTitle("Sucesso");
@@ -197,7 +197,7 @@ function Perfil() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <PersonIcon sx={{ color: 'gray' }} />
+                  <PersonIcon sx={{ color: "gray" }} />
                 </InputAdornment>
               ),
             }}
@@ -214,7 +214,7 @@ function Perfil() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <EmailIcon sx={{ color: 'gray' }} />
+                  <EmailIcon sx={{ color: "gray" }} />
                 </InputAdornment>
               ),
             }}
@@ -231,7 +231,7 @@ function Perfil() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <ArticleIcon sx={{ color: 'gray' }} />
+                  <ArticleIcon sx={{ color: "gray" }} />
                 </InputAdornment>
               ),
             }}
@@ -281,7 +281,7 @@ function Perfil() {
         />
       )}
       {openUpdateModal && selectedReserva && (
-        <AtualizarReservasModal
+        <AtualizarReservaModal
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
           reserva={selectedReserva}
@@ -358,30 +358,30 @@ function getStyles() {
     },
     body: {
       flexGrow: 1,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      width: '100%',
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      width: "100%",
     },
     profileIconBox: {
-        backgroundColor: 'rgba(255, 0, 0, 1)',
-        borderRadius: '50%',
-        width: '80px',
-        height: '80px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        mb: 2,
+      backgroundColor: "rgba(255, 0, 0, 1)",
+      borderRadius: "50%",
+      width: "80px",
+      height: "80px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      mb: 2,
     },
     profileIcon: {
-        color: 'white',
-        fontSize: '40px',
+      color: "white",
+      fontSize: "40px",
     },
     profileTitle: {
-        fontSize: '24px',
-        fontWeight: 'bold',
-        mb: 3,
-        color: '#333',
+      fontSize: "24px",
+      fontWeight: "bold",
+      mb: 3,
+      color: "#333",
     },
     IconeLogout: {
       width: 40,
@@ -401,52 +401,52 @@ function getStyles() {
       flexDirection: "column",
       alignItems: "center",
       backgroundColor: "white",
-      padding: '40px 30px',
-      borderRadius: '20px',
-      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-      width: '100%',
-      maxWidth: '400px',
+      padding: "40px 30px",
+      borderRadius: "20px",
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+      width: "100%",
+      maxWidth: "400px",
       mt: 0,
       mb: 0,
     },
     textField: {
       mb: 2,
-      '& .MuiOutlinedInput-root': {
-          borderRadius: '10px',
-          backgroundColor: '#f5f5f5',
-          '& fieldset': {
-              borderColor: 'transparent',
-          },
-          '&:hover fieldset': {
-              borderColor: 'transparent',
-          },
-          '&.Mui-focused fieldset': {
-              borderColor: 'rgba(255, 0, 0, 0.5)',
-              borderWidth: '1px',
-          },
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+        backgroundColor: "#f5f5f5",
+        "& fieldset": {
+          borderColor: "transparent",
+        },
+        "&:hover fieldset": {
+          borderColor: "transparent",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "rgba(255, 0, 0, 0.5)",
+          borderWidth: "1px",
+        },
       },
-      '& .MuiInputBase-input': {
-          padding: '12px 14px',
-          fontSize: '16px',
-          color: '#333',
+      "& .MuiInputBase-input": {
+        padding: "12px 14px",
+        fontSize: "16px",
+        color: "#333",
       },
-      '& .MuiInputLabel-root': {
-          color: 'gray',
-          '&.Mui-focused': {
-              color: 'rgba(255, 0, 0, 1)',
-          },
-          transform: 'translate(40px, 12px) scale(1)',
-          '&.MuiInputLabel-shrink': {
-            transform: 'translate(14px, -9px) scale(0.75)',
-          },
+      "& .MuiInputLabel-root": {
+        color: "gray",
+        "&.Mui-focused": {
+          color: "rgba(255, 0, 0, 1)",
+        },
+        transform: "translate(40px, 12px) scale(1)",
+        "&.MuiInputLabel-shrink": {
+          transform: "translate(14px, -9px) scale(0.75)",
+        },
       },
     },
     buttonGroup: {
       display: "flex",
       gap: 2,
       mt: 3,
-      width: '100%',
-      justifyContent: 'space-between',
+      width: "100%",
+      justifyContent: "space-between",
     },
     buttonAtualizar: {
       "&.MuiButton-root": {
@@ -456,7 +456,7 @@ function getStyles() {
       },
       color: "white",
       backgroundColor: "rgba(255, 0, 0, 1)",
-      width: '48%',
+      width: "48%",
       height: 45,
       fontWeight: 600,
       fontSize: 14,
@@ -471,7 +471,7 @@ function getStyles() {
       },
       color: "white",
       backgroundColor: "rgb(157, 0, 0)",
-      width: '48%',
+      width: "48%",
       height: 45,
       fontWeight: 600,
       fontSize: 14,
@@ -483,15 +483,17 @@ function getStyles() {
       backgroundColor: "transparent",
       fontWeight: "bold",
       fontSize: 15.5,
-      textDecoration: "underline",
+      textDecoration: "none",
       textDecorationThickness: "1.5px",
       textUnderlineOffset: "4px",
       mt: 2,
       textTransform: "none",
       "&:hover": {
         textDecoration: "underline",
+        textDecorationThickness: "1.5px",
+        textUnderlineOffset: "4px",
         backgroundColor: "transparent",
-        color: "rgb(167, 63, 63)",
+        color: "rgb(231, 0, 0)",
       },
     },
     footer: {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { getIdFromToken } from "../../auth/auth";
 import api from "../../services/axios";
@@ -13,7 +12,13 @@ import {
   InputAdornment,
 } from "@mui/material";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  Person as PersonIcon,
+  Email as EmailIcon,
+  Lock as LockIcon,
+} from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 
 function UpdateUsuarioModal({
@@ -105,65 +110,89 @@ function UpdateUsuarioModal({
           </IconButton>
         </Box>
         <TextField
-          label="Nome"
+          margin="normal"
+          label="nome"
           fullWidth
           value={nome}
           onChange={(e) => setNome(e.target.value)}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PersonIcon sx={{ color: "gray" }} />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
-          label="Email"
+          margin="normal"
+          label="email"
           fullWidth
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <EmailIcon sx={{ color: "gray" }} />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
-          label="Nova Senha"
+          margin="normal"
+          label="nova-senha"
           type={showSenha ? "text" : "password"}
           fullWidth
           value={senha}
           onChange={(e) => setSenha(e.target.value)}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowSenha((prev) => !prev)}
-                    edge="end"
-                  >
-                    {showSenha ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LockIcon sx={{ color: "gray" }} />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setShowSenha((prev) => !prev)}
+                  edge="end"
+                >
+                  {showSenha ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
 
         <TextField
-          label="Confirmar Nova Senha"
+          margin="normal"
+          label="confirmar-senha"
           type={showConfirmarSenha ? "text" : "password"}
           fullWidth
           value={confirmarSenha}
           onChange={(e) => setConfirmarSenha(e.target.value)}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() => setShowConfirmarSenha((prev) => !prev)}
-                    edge="end"
-                  >
-                    {showConfirmarSenha ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LockIcon sx={{ color: "gray" }} />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setShowConfirmarSenha((prev) => !prev)}
+                  edge="end"
+                >
+                  {showConfirmarSenha ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
 
         <Button
@@ -193,64 +222,79 @@ function getStyles() {
       flexDirection: "column",
       width: 360,
       maxWidth: "90%",
-      padding: 4,
+      padding: "40px 30px",
       backgroundColor: "#FFFFFF",
-      borderRadius: 10,
-      boxShadow: "0 6px 20px rgba(0, 0, 0, 0.07)",
+      borderRadius: "20px",
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
       outline: "none",
     },
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 2,
+      marginBottom: 3,
     },
     title: {
-      fontWeight: 600,
-      color: "#37474F",
-      fontSize: "26px",
+      fontWeight: "bold",
+      color: "#333",
+      fontSize: "24px",
       textAlign: "center",
       flexGrow: 1,
     },
     closeButton: {
-      color: '#BDBDBD',
+      color: "gray",
       "&:hover": {
         backgroundColor: "transparent",
       },
     },
     textField: {
-      marginBottom: 2,
+      mb: 2,
       "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+        backgroundColor: "#f5f5f5",
         "& fieldset": {
-          borderColor: "#E0E0E0",
+          borderColor: "transparent",
         },
         "&:hover fieldset": {
-          borderColor: "#90A4AE",
+          borderColor: "transparent",
         },
         "&.Mui-focused fieldset": {
-          borderColor: "#E57373",
+          borderColor: "rgba(255, 0, 0, 0.5)",
+          borderWidth: "1px",
         },
       },
-      "& .MuiInputLabel-root": {
-        color: "#90A4AE",
+      "& .MuiInputBase-input": {
+        padding: "12px 14px",
+        fontSize: "16px",
+        color: "#333",
       },
-      "& .MuiInputLabel-root.Mui-focused": {
-        color: "#E57373",
+      "& .MuiInputLabel-root": {
+        color: "gray",
+        "&.Mui-focused": {
+          color: "rgba(255, 0, 0, 1)",
+        },
+        transform: "translate(40px, 12px) scale(1)",
+        "&.MuiInputLabel-shrink": {
+          transform: "translate(14px, -9px) scale(0.75)",
+        },
       },
     },
     updateButton: {
-      backgroundColor: "rgb(161, 0, 0)",
-      "&:hover": {
-        backgroundColor: "rgba(161, 0, 0, 0.76)",
+      "&.MuiButton-root": {
+        border: "none",
+        boxShadow: "none",
+        "&:hover": { backgroundColor: "rgba(200, 0, 0, 1)" },
       },
-      textTransform: "none",
-      ml: "25%",
-      width: "50%",
-      paddingY: 1.5,
-      fontSize: "15px",
+      color: "white",
+      backgroundColor: "rgba(255, 0, 0, 1)",
+      width: "100%",
+      height: 45,
       fontWeight: 600,
-      borderRadius: 8,
-      marginTop: 1,
+      fontSize: 14,
+      borderRadius: 10,
+      textTransform: "none",
+      mt: 3,
+      ml: 0, 
     },
   };
 }

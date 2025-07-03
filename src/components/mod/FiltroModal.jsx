@@ -36,12 +36,11 @@ function FiltroModal({ visible, onClose, onApplyFilters }) {
   const [showDaySelectionModal, setShowDaySelectionModal] = useState(false);
 
   const diasSemanaMap = {
-    0: "Domingo",
-    1: "Segunda-feira",
-    2: "Terça-feira",
-    3: "Quarta-feira",
-    4: "Quinta-feira",
-    5: "Sexta-feira",
+    1: "Segunda-Feira",
+    2: "Terça-Feira",
+    3: "Quarta-Feira",
+    4: "Quinta-Feira",
+    5: "Sexta-Feira",
     6: "Sábado",
   };
   const diasSemanaKeys = Object.keys(diasSemanaMap).map(Number).filter(key => key !== 0);

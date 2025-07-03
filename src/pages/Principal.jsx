@@ -18,9 +18,9 @@ import SearchIcon from "@mui/icons-material/Search";
 
 import ReservarModal from "../components/mod/ReservarModal";
 import CustomModal from "../components/mod/CustomModal";
-import FiltroModal from "../components/mod/FiltroModal"; // Importe o FiltroModal
+import FiltroModal from "../components/mod/FiltroModal";
 
-import { getToday } from "../utils/dateUtils"; // Provavelmente não será mais necessário diretamente para a lógica de filtros de data/hora no Principal
+import { getToday } from "../utils/dateUtils";
 
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -31,13 +31,13 @@ function Principal() {
   const styles = getStyles();
 
   const [salas, setSalas] = useState([]);
-  const [modalOpen, setModalOpen] = useState(false); // Para ReservarModal
+  const [modalOpen, setModalOpen] = useState(false);
   const [selectedSalaId, setSelectedSalaId] = useState(null);
   const [selectedSalaNome, setSelectedSalaNome] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const [filtroModalOpen, setFiltroModalOpen] = useState(false); // Novo estado para FiltroModal
-  const [appliedFilters, setAppliedFilters] = useState(null); // Estado para armazenar os filtros aplicados pelo FiltroModal
+  const [filtroModalOpen, setFiltroModalOpen] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState(null);
 
   const [customModalOpen, setCustomModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -46,17 +46,16 @@ function Principal() {
 
   useEffect(() => {
     document.title = "Principal | SENAI";
-    getSalas(); // Carrega as salas inicialmente sem filtros
+    getSalas();
   }, []);
 
-  // UseEffect para aplicar filtros quando appliedFilters mudar
   useEffect(() => {
     if (appliedFilters) {
       applyAdvancedFilters(appliedFilters);
     } else {
-      getSalas(); // Se os filtros forem resetados, busca todas as salas
+      getSalas();
     }
-  }, [appliedFilters]); // Dependência: re-executa quando appliedFilters muda
+  }, [appliedFilters]);
 
   async function getSalas() {
     try {
@@ -71,7 +70,6 @@ function Principal() {
     }
   }
 
-  // Nova função para aplicar os filtros recebidos do FiltroModal
   async function applyAdvancedFilters(filtersFromModal) {
     try {
       const response = await api.getSalasDisponivelHorario(filtersFromModal);
@@ -91,7 +89,7 @@ function Principal() {
       );
       setModalType("error");
       setCustomModalOpen(true);
-      setSalas([]); // Limpa as salas em caso de erro
+      setSalas([]);
     }
   }
 
@@ -102,7 +100,7 @@ function Principal() {
   }
 
   function handleCloseModal() {
-    setModalOpen(false); // Fecha ReservarModal
+    setModalOpen(false);
     setSelectedSalaId(null);
   }
 
@@ -113,7 +111,7 @@ function Principal() {
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
       <Fragment>
-        {salas.length === 0 && !appliedFilters ? ( // Renderiza carregando apenas se não houver salas e não houver filtros aplicados ainda
+        {salas.length === 0 && !appliedFilters ? (
           <Container sx={styles.container}>
             <Box sx={styles.header}>
               <img src={logo} alt="Logo" style={styles.logo} />
@@ -185,7 +183,7 @@ function Principal() {
               <Button
                 variant="contained"
                 sx={styles.advancedFilterButton}
-                onClick={() => setFiltroModalOpen(true)} // Abre o FiltroModal
+                onClick={() => setFiltroModalOpen(true)}
               >
                 Filtros Avançados
               </Button>
@@ -245,7 +243,6 @@ function Principal() {
           </Container>
         )}
 
-        {/* ReservarModal permanece inalterado */}
         {selectedSalaId && (
           <ReservarModal
             isOpen={modalOpen}
@@ -255,7 +252,6 @@ function Principal() {
           />
         )}
 
-        {/* CustomModal permanece inalterado */}
         <CustomModal
           open={customModalOpen}
           onClose={() => setCustomModalOpen(false)}
@@ -264,13 +260,12 @@ function Principal() {
           type={modalType}
         />
 
-        {/* Novo FiltroModal */}
         <FiltroModal
           visible={filtroModalOpen}
           onClose={() => setFiltroModalOpen(false)}
           onApplyFilters={(filters) => {
-            setAppliedFilters(filters); // Armazena os filtros aplicados
-            setFiltroModalOpen(false); // Fecha o modal
+            setAppliedFilters(filters);
+            setFiltroModalOpen(false);
           }}
         />
       </Fragment>{" "}

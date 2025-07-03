@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getIdFromToken } from "../../auth/auth";
 import api from "../../services/axios";
 
@@ -11,274 +11,457 @@ import {
   ListItem,
   ListItemText,
   CircularProgress,
+  ToggleButtonGroup,
+  ToggleButton,
+  Chip,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-export default function HistoricoReservasModal({
-  open,
-  onClose,
-  onApagarReserva,
-  onEditarReserva,
-  setCustomModalOpen,
-  setCustomModalTitle,
-  setCustomModalMessage,
-  setCustomModalType,
-}) {
+export default function HistoricoReservasModal({ open, onClose }) {
   const styles = getStyles();
 
-  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
-  const [reservaToDeleteId, setReservaToDeleteId] = useState(null);
-  const [reservas, setReservas] = useState([]); // Estado para armazenar as reservas
-  const [loading, setLoading] = useState(true); // Estado para controlar o carregamento
-  const [error, setError] = useState(null); // Estado para erros
+  const [reservasSimples, setReservasSimples] = useState([]);
+  const [reservasPeriodicas, setReservasPeriodicas] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [activeTab, setActiveTab] = useState("simples");
+  const [expandedDaysMap, setExpandedDaysMap] = useState({});
 
-  // Função para buscar o histórico de reservas
-  const fetchHistoricoReservas = async () => {
+  const diasSemanaMap = {
+    1: "Segunda-Feira",
+    2: "Terça-Feira",
+    3: "Quarta-Feira",
+    4: "Quinta-Feira",
+    5: "Sexta-Feira",
+    6: "Sábado",
+  };
+
+  const fetchHistoricoReservas = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const idUsuario = getIdFromToken();
       if (!idUsuario) {
-        console.error("ID do usuário não encontrado no localStorage.");
         setError("ID do usuário não encontrado.");
         setLoading(false);
         return;
       }
       const response = await api.getUsuarioHistoricoReservasbyId(idUsuario);
-      setReservas(response.data.historico || []);
+      const historico = response.data.historico || [];
+
+      const simples = historico.filter(
+        (reserva) => reserva.data_inicio === reserva.data_fim
+      );
+      const periodicas = historico.filter(
+        (reserva) => reserva.data_inicio !== reserva.data_fim
+      );
+
+      setReservasSimples(simples);
+      setReservasPeriodicas(periodicas);
     } catch (err) {
-      console.error("Erro ao buscar histórico de reservas:", err);
       setError("Não foi possível carregar as reservas.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Chama a função de busca quando o modal é aberto
   useEffect(() => {
     if (open) {
       fetchHistoricoReservas();
     }
-  }, [open]);
+  }, [open, fetchHistoricoReservas]);
 
-  const handleEditarClick = (reserva) => {
-    onEditarReserva(reserva);
+  const toggleDayExpansion = (reservaId) => {
+    setExpandedDaysMap((prevState) => ({
+      ...prevState,
+      [reservaId]: !prevState[reservaId],
+    }));
   };
 
-  const handleApagarClick = (id_reserva) => {
-    setReservaToDeleteId(id_reserva);
-    setConfirmDeleteOpen(true);
-  };
+  const renderReservasList = (reservaList) => {
+    return (
+      <Box sx={styles.scrollArea}>
+        {reservaList.length === 0 ? (
+          <Typography sx={styles.noReservas}>Nenhuma reserva encontrada</Typography>
+        ) : (
+          <List>
+            {reservaList.map((reserva, index) => {
+              const isExpanded = expandedDaysMap[reserva.id_reserva];
+              const formattedDaysArray =
+                reserva.dias_semana && Array.isArray(reserva.dias_semana)
+                  ? reserva.dias_semana.map(
+                      (dayNum) =>
+                        diasSemanaMap[String(dayNum)] || `Dia ${dayNum}`
+                    )
+                  : [];
 
-  const handleConfirmApagar = async () => {
-    if (reservaToDeleteId) {
-      try {
-        const idUsuario = getIdFromToken();
-        await onApagarReserva(reservaToDeleteId, idUsuario);
-        setCustomModalOpen(true);
-        setCustomModalTitle("Sucesso");
-        setCustomModalMessage("Reserva apagada com sucesso!");
-        setCustomModalType("success");
-        fetchHistoricoReservas();
-      } catch (err) {
-        console.error("Erro ao apagar reserva:", err);
-        setCustomModalOpen(true);
-        setCustomModalTitle("Erro");
-        setCustomModalMessage("Não foi possível apagar a reserva.");
-        setCustomModalType("error");
-      }
-    }
-    setConfirmDeleteOpen(false);
-    setReservaToDeleteId(null);
-  };
+              const showExpandToggle = formattedDaysArray.length > 1;
 
-  const handleCloseConfirmDelete = () => {
-    setConfirmDeleteOpen(false);
-    setReservaToDeleteId(null);
+              return (
+                <ListItem
+                  key={`${reserva.id_reserva || index}-list-item`}
+                  sx={styles.itemReserva}
+                >
+                  <ListItemText
+                    primary={
+                      <Typography sx={styles.itemTitle}>
+                        {String(reserva.sala)}
+                      </Typography>
+                    }
+                    secondary={
+                      <>
+                        {activeTab === "simples" ? (
+                          <Box>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Data:
+                              </Typography>{" "}
+                              {String(reserva.data_inicio)}
+                            </Typography>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Hora Início:
+                              </Typography>{" "}
+                              {String(reserva.hora_inicio).substring(0, 5)}
+                            </Typography>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Hora Fim:
+                              </Typography>{" "}
+                              {String(reserva.hora_fim).substring(0, 5)}
+                            </Typography>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Dia da Semana:
+                              </Typography>{" "}
+                              {formattedDaysArray.length > 0
+                                ? formattedDaysArray.join(", ")
+                                : "N/A"}
+                            </Typography>
+                          </Box>
+                        ) : (
+                          <Box>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Data Início:
+                              </Typography>{" "}
+                              {String(reserva.data_inicio)}
+                            </Typography>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Data Fim:
+                              </Typography>{" "}
+                              {String(reserva.data_fim)}
+                            </Typography>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Hora Início:
+                              </Typography>{" "}
+                              {String(reserva.hora_inicio).substring(0, 5)}
+                            </Typography>
+                            <Typography sx={styles.detailText}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Hora Fim:
+                              </Typography>{" "}
+                              {String(reserva.hora_fim).substring(0, 5)}
+                            </Typography>
+                            <Box sx={styles.detailRow}>
+                              <Typography
+                                component="span"
+                                sx={styles.detailLabel}
+                              >
+                                Dias da Semana:
+                              </Typography>{" "}
+                              <Box sx={styles.chipsContainer}>
+                                {isExpanded || !showExpandToggle ? (
+                                  formattedDaysArray.map((dayName, dayIndex) => (
+                                    <Chip
+                                      key={dayIndex}
+                                      label={dayName}
+                                      sx={styles.dayChip}
+                                    />
+                                  ))
+                                ) : (
+                                  <Chip
+                                    label={`${formattedDaysArray[0]}...`}
+                                    sx={styles.dayChip}
+                                  />
+                                )}
+                                {showExpandToggle && (
+                                  <IconButton
+                                    onClick={() => toggleDayExpansion(reserva.id_reserva)}
+                                    size="small"
+                                    sx={styles.expandToggleButton}
+                                  >
+                                    {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                  </IconButton>
+                                )}
+                              </Box>
+                            </Box>
+                          </Box>
+                        )}
+                      </>
+                    }
+                  />
+                </ListItem>
+              );
+            })}
+          </List>
+        )}
+      </Box>
+    );
   };
 
   return (
-    <>
-      <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
-        <Box sx={styles.modalBox}>
-          <Box sx={styles.header}>
-            <Typography sx={styles.title}>Histórico de Reservas</Typography>
-            <IconButton onClick={onClose} sx={styles.closeButton}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
+    <Modal open={open} onClose={onClose} sx={styles.overlay}>
+      <Box sx={styles.modal}>
+        <IconButton onClick={onClose} sx={styles.closeButton}>
+          <CloseIcon sx={{ fontSize: "35px" }} />
+        </IconButton>
 
+        <Typography sx={styles.modalTitle}>Histórico de Reservas</Typography>
+
+        <ToggleButtonGroup
+          value={activeTab}
+          exclusive
+          onChange={(event, newTab) => {
+            if (newTab !== null) {
+              setActiveTab(newTab);
+            }
+          }}
+          aria-label="reservation type tabs"
+          sx={styles.modeToggleContainer}
+        >
+          <ToggleButton value="simples" aria-label="simple reservations">
+            Simples
+          </ToggleButton>
+          <ToggleButton value="periodicas" aria-label="periodic reservations">
+            Periódicas
+          </ToggleButton>
+        </ToggleButtonGroup>
+
+        <Box sx={{ flex: 1, width: "100%", minHeight: "150px" }}>
           {loading ? (
             <Box sx={styles.loadingContainer}>
               <CircularProgress sx={{ color: "#ccc" }} />
               <Typography sx={{ mt: 2, color: "#ccc" }}>
-                Carregando reservas...
+                Carregando histórico...
               </Typography>
             </Box>
           ) : error ? (
             <Typography sx={styles.errorMessage}>{error}</Typography>
-          ) : reservas.length > 0 ? (
-            <Box sx={styles.scrollArea}>
-              <List>
-                {reservas.map((reserva, index) => (
-                  <ListItem
-                    key={reserva.id_reserva || `reserva-${index}`}
-                    sx={styles.listItem}
-                    secondaryAction={
-                      <Box>
-                        {reserva.id_reserva && (
-                          <>
-                            <IconButton
-                              edge="end"
-                              aria-label="editar"
-                              onClick={() => handleEditarClick(reserva)}
-                              sx={{ color: "#ccc" }}
-                            >
-                              <EditIcon />
-                            </IconButton>
-                            <IconButton
-                              edge="end"
-                              aria-label="apagar"
-                              onClick={() =>
-                                handleApagarClick(reserva.id_reserva)
-                              }
-                              sx={{ color: "#ccc" }}
-                            >
-                              <DeleteIcon />
-                            </IconButton>
-                          </>
-                        )}
-                      </Box>
-                    }
-                  >
-                    <ListItemText
-                      primary={`Reserva ${index + 1}`}
-                      sx={styles.listItemText}
-                      secondary={
-                        <>
-                          Data: {new Date(reserva.data).toLocaleDateString()}{" "}
-                          <br />
-                          Hora Início: {reserva.hora_inicio} | Hora Fim:{" "}
-                          {reserva.hora_fim}
-                        </>
-                      }
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Box>
+          ) : activeTab === "simples" ? (
+            renderReservasList(reservasSimples)
           ) : (
-            <Typography sx={styles.noReservas}>
-              Nenhuma reserva encontrada.
-            </Typography>
+            renderReservasList(reservasPeriodicas)
           )}
         </Box>
-      </Modal>
-    </>
+      </Box>
+    </Modal>
   );
 }
 
 function getStyles() {
   return {
-    modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.4)",
-      backdropFilter: "blur(5px)",
+    overlay: {
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      backgroundColor: "rgba(0,0,0,0.7)",
+      backdropFilter: "blur(4px)",
     },
-    modalBox: {
+    modal: {
+      backgroundColor: "white",
+      padding: "30px",
+      borderRadius: "15px",
+      width: "90%",
+      maxWidth: "500px",
+      minHeight: "50vh",
+      maxHeight: "65vh",
       display: "flex",
       flexDirection: "column",
-      width: 420,
-      maxWidth: "90%",
-      maxHeight: "65%",
-      padding: 3,
-      backgroundColor: "#FFFFFF",
-      borderRadius: 10,
-      boxShadow: "0 6px 20px rgba(0, 0, 0, 0.07)",
-      outline: "none",
-    },
-    header: {
-      display: "flex",
-      justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 1.5,
-    },
-    title: {
-      fontWeight: 600,
-      color: "#37474F",
-      fontSize: "26px",
-      textAlign: "center",
-      flexGrow: 1,
+      boxShadow: "0 5px 15px rgba(0,0,0,0.35)",
+      position: "relative",
+      outline: "none",
+      overflow: "hidden",
     },
     closeButton: {
-      color: "#E57373",
+      position: "absolute",
+      top: 10,
+      right: 10,
+      padding: "5px",
+      zIndex: 1,
+      color: "#999",
       "&:hover": {
-        backgroundColor: "rgba(239, 83, 80, 0.08)",
+        backgroundColor: "transparent",
+        color: "#666",
+      },
+    },
+    modalTitle: {
+      fontSize: "28px",
+      fontWeight: "bold",
+      color: "#333",
+      marginBottom: "20px",
+      textAlign: "center",
+    },
+    modeToggleContainer: {
+      marginBottom: 2,
+      width: "100%",
+      borderRadius: 2,
+      overflow: "hidden",
+      backgroundColor: "#f0f0f0",
+      "& .MuiToggleButton-root": {
+        flex: 1,
+        border: "1px solid #e0e0e0",
+        "&.Mui-selected": {
+          backgroundColor: "rgb(177, 16, 16)",
+          color: "white",
+          borderColor: "rgb(177, 16, 16)",
+          "&:hover": {
+            backgroundColor: "rgb(177, 16, 16)",
+          },
+        },
+        "&:not(:first-of-type)": {
+          marginLeft: "-1px",
+          borderLeft: "1px solid transparent",
+        },
+        "&:hover": {
+          backgroundColor: "#e8e8e8",
+        },
+        fontSize: "1.2rem",
+        fontWeight: "bold",
+        color: "#555",
+        paddingBottom: "10px",
+        paddingTop: "10px",
       },
     },
     scrollArea: {
-      overflowY: "auto",
       flexGrow: 1,
-      paddingRight: 0.5,
+      width: "100%",
+      overflowY: "auto",
+      flexShrink: 1,
+      height: "400px",
       "&::-webkit-scrollbar": {
-        width: "5px",
+        width: "6px",
       },
       "&::-webkit-scrollbar-thumb": {
         backgroundColor: "#E0E0E0",
-        borderRadius: "8px",
+        borderRadius: "10px",
       },
       "&::-webkit-scrollbar-track": {
         backgroundColor: "transparent",
       },
     },
-    listItem: {
-      borderBottom: "1px solid #F5F5F5",
-      paddingY: 1.2,
-      "&:last-child": {
-        borderBottom: "none",
-      },
-    },
-    listItemText: {
-      color: "rgba(0, 0, 0, 0.79)",
-      "& .MuiListItemText-primary": {
-        fontWeight: 500,
-        fontSize: "16px",
-        marginBottom: 0.2,
-      },
-      "& .MuiListItemText-secondary": {
-        color: "rgba(0, 0, 0, 0.63)",
-        fontSize: "14px",
-        lineHeight: 1.4,
-      },
-    },
     noReservas: {
-      color: "#90A4AE",
       textAlign: "center",
-      marginTop: 2.5,
+      marginVertical: "20px",
+      color: "gray",
+      fontSize: "18px",
       flexGrow: 1,
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
-      fontSize: "16px",
+    },
+    itemReserva: {
+      backgroundColor: "#f9f9f9",
+      borderRadius: "10px",
+      padding: "15px 20px",
+      marginBottom: "15px",
+      border: "1px solid #eee",
+      boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+      width: "100%",
+      alignItems: "flex-start",
+      display: "flex",
+      flexDirection: "column",
+      position: "relative",
+    },
+    itemTitle: {
+      fontSize: "20px",
+      fontWeight: "bold",
+      color: "#333",
+      marginBottom: "5px",
+    },
+    detailText: {
+      fontSize: "14px",
+      color: "#777",
+      marginBottom: "5px",
+    },
+    detailLabel: {
+      fontSize: "14px",
+      fontWeight: "600",
+      color: "#555",
+      marginRight: "5px",
+    },
+    detailRow: {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: "5px",
+      width: "100%",
+    },
+    chipsContainer: {
+      display: "flex",
+      flexWrap: "wrap",
+      gap: "5px",
+      alignItems: "center",
+      flex: 1,
+    },
+    dayChip: {
+      backgroundColor: "#e0e0e0",
+      color: "#555",
+      fontWeight: "bold",
+      height: "24px",
+      "& .MuiChip-label": {
+        paddingTop: "2px",
+        paddingBottom: "2px",
+      },
+    },
+    expandToggleButton: {
+      padding: "4px",
+      marginLeft: "5px",
+      color: "#777",
     },
     loadingContainer: {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      minHeight: 120,
-      color: "#B0BEC5",
+      minHeight: "150px",
+      color: "#90A4AE",
     },
     errorMessage: {
       textAlign: "center",
       color: "#D32F2F",
-      fontSize: "15px",
-      marginTop: 2.5,
+      fontSize: "16px",
+      marginTop: "20px",
     },
   };
 }
