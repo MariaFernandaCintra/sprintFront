@@ -1,11 +1,22 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import logo from "../../img/logo.png";
 import api from "../services/axios";
 import { getIdFromToken } from "../auth/auth";
 
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
-import { ExitToApp as ExitToAppIcon } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Container,
+  TextField,
+  Typography,
+  InputAdornment,
+} from "@mui/material";
+import {
+  ExitToApp as ExitToAppIcon,
+  Person as PersonIcon,
+  Email as EmailIcon,
+  Article as ArticleIcon,
+} from "@mui/icons-material";
 
 import AtualizarReservasModal from "../components/mod/AtualizarReservasModal";
 import ReservasUsuarioModal from "../components/mod/ReservasUsuarioModal";
@@ -168,56 +179,81 @@ function Perfil() {
       </Box>
       <Box sx={styles.body}>
         <Box component="form" sx={styles.form} noValidate>
-          <img src={logo} alt="Logo" style={styles.logo} />
+          <Box sx={styles.profileIconBox}>
+            <PersonIcon sx={styles.profileIcon} />
+          </Box>
+          <Typography component="h1" variant="h5" sx={styles.profileTitle}>
+            Meu Perfil
+          </Typography>
           <TextField
-            id="nome"
-            placeholder="nome"
-            name="nome"
             margin="normal"
+            fullWidth
+            id="nome"
+            label="nome"
+            name="nome"
             value={usuario.nome || ""}
             sx={styles.textField}
             disabled
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <PersonIcon sx={{ color: 'gray' }} />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
-            id="email"
-            placeholder="e-mail"
-            name="email"
             margin="normal"
+            fullWidth
+            id="email"
+            label="email"
+            name="email"
             value={usuario.email || ""}
             sx={styles.textField}
             disabled
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailIcon sx={{ color: 'gray' }} />
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
-            id="NIF"
-            placeholder="NIF"
-            name="NIF"
             margin="normal"
+            fullWidth
+            id="NIF"
+            label="NIF"
+            name="NIF"
             disabled
             value={usuario.NIF || ""}
             sx={styles.textField}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <ArticleIcon sx={{ color: 'gray' }} />
+                </InputAdornment>
+              ),
+            }}
           />
-          <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
+          <Box sx={styles.buttonGroup}>
             <Button
               variant="contained"
               onClick={handleOpenUpdateProfileFlow}
               sx={styles.buttonAtualizar}
             >
-              Editar Perfil
+              Atualizar Perfil
             </Button>
             <Button
               variant="contained"
               onClick={handleOpenDeleteAccountFlow}
-              sx={{
-                ...styles.buttonAtualizar,
-                backgroundColor: "rgb(157, 0, 0)",
-                "&:hover": { backgroundColor: "rgba(157, 0, 0, 0.92)" },
-              }}
+              sx={styles.buttonDeletar}
             >
-              Deletar Conta
+              Deletar Perfil
             </Button>
           </Box>
           <Button
-            variant="outlined"
+            variant="text"
             onClick={() => setOpenReservasModal(true)}
             sx={styles.buttonMinhasReservas}
           >
@@ -282,7 +318,6 @@ function Perfil() {
         open={openConfirmDeleteModal}
         onClose={() => setOpenConfirmDeleteModal(false)}
         onConfirm={handleDeleteAccount}
-
       />
 
       <CustomModal
@@ -321,13 +356,32 @@ function getStyles() {
       justifyContent: "flex-end",
       borderBottom: "7px solid white",
     },
-    body: { height: "78.5vh" },
-    logo: {
-      width: "280px",
-      height: "auto",
-      marginBottom: 14,
-      border: "4.5px solid white",
-      borderRadius: 15,
+    body: {
+      flexGrow: 1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+    },
+    profileIconBox: {
+        backgroundColor: 'rgba(255, 0, 0, 1)',
+        borderRadius: '50%',
+        width: '80px',
+        height: '80px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        mb: 2,
+    },
+    profileIcon: {
+        color: 'white',
+        fontSize: '40px',
+    },
+    profileTitle: {
+        fontSize: '24px',
+        fontWeight: 'bold',
+        mb: 3,
+        color: '#333',
     },
     IconeLogout: {
       width: 40,
@@ -346,83 +400,100 @@ function getStyles() {
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      backgroundColor: "rgba(255, 255, 255, 0.7)",
-      paddingRight: 8,
-      paddingLeft: 8,
-      paddingTop: 5,
-      paddingBottom: 0,
-      borderRadius: 10,
-      mt: 12,
-      height: "68.5%",
-    },
-    title: {
-      fontWeight: 1000,
-      marginBottom: 2,
-      color: "rgb(202, 0, 0)",
-      fontSize: 30,
-      backgroundColor: "rgba(219, 112, 112, 0.67)",
-      paddingTop: 1,
-      paddingBottom: 1,
-      paddingRight: 3,
-      paddingLeft: 3,
-      borderRadius: 10,
+      backgroundColor: "white",
+      padding: '40px 30px',
+      borderRadius: '20px',
+      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+      width: '100%',
+      maxWidth: '400px',
+      mt: 0,
+      mb: 0,
     },
     textField: {
-      "& .MuiOutlinedInput-root": {
-        "& fieldset": { border: "none" },
-        "&:hover fieldset": { border: "none" },
-        "&.Mui-focused fieldset": { border: "none" },
-        color: "gray",
-        backgroundColor: "rgb(242, 242, 242)",
-        borderRadius: 4,
+      mb: 2,
+      '& .MuiOutlinedInput-root': {
+          borderRadius: '10px',
+          backgroundColor: '#f5f5f5',
+          '& fieldset': {
+              borderColor: 'transparent',
+          },
+          '&:hover fieldset': {
+              borderColor: 'transparent',
+          },
+          '&.Mui-focused fieldset': {
+              borderColor: 'rgba(255, 0, 0, 0.5)',
+              borderWidth: '1px',
+          },
       },
-      "& input::placeholder": { fontSize: "17px", color: "gray" },
-      width: "35vh",
-      height: "6vh",
-      backgroundColor: "white",
-      display: "flex",
-      border: "0px transparent",
-      borderRadius: 4,
+      '& .MuiInputBase-input': {
+          padding: '12px 14px',
+          fontSize: '16px',
+          color: '#333',
+      },
+      '& .MuiInputLabel-root': {
+          color: 'gray',
+          '&.Mui-focused': {
+              color: 'rgba(255, 0, 0, 1)',
+          },
+          transform: 'translate(40px, 12px) scale(1)',
+          '&.MuiInputLabel-shrink': {
+            transform: 'translate(14px, -9px) scale(0.75)',
+          },
+      },
     },
-
+    buttonGroup: {
+      display: "flex",
+      gap: 2,
+      mt: 3,
+      width: '100%',
+      justifyContent: 'space-between',
+    },
     buttonAtualizar: {
       "&.MuiButton-root": {
         border: "none",
         boxShadow: "none",
-        "&:hover": { border: "none", backgroundColor: "rgba(255, 0, 0, 0.55)" },
+        "&:hover": { backgroundColor: "rgba(200, 0, 0, 1)" },
       },
-      mt: 1,
       color: "white",
       backgroundColor: "rgba(255, 0, 0, 1)",
-      width: 160,
+      width: '48%',
       height: 45,
       fontWeight: 600,
-      fontSize: 15,
-      borderRadius: 15,
+      fontSize: 14,
+      borderRadius: 10,
       textTransform: "none",
     },
-    buttonMinhasReservas: {
+    buttonDeletar: {
       "&.MuiButton-root": {
         border: "none",
         boxShadow: "none",
-        backgroundColor: "transparent",
-        "&:hover": {
-          border: "none",
-          backgroundColor: "transparent",
-          boxShadow: "none",
-          textDecoration: "underline",
-          textDecorationColor: "rgba(177, 16, 16, 1)",
-        },
+        "&:hover": { backgroundColor: "rgba(120, 0, 0, 1)" },
       },
-      mt: 3,
-      color: "rgba(177, 16, 16, 1)",
-      width: 200,
-      height: 40,
+      color: "white",
+      backgroundColor: "rgb(157, 0, 0)",
+      width: '48%',
+      height: 45,
       fontWeight: 600,
-      fontSize: 15,
+      fontSize: 14,
+      borderRadius: 10,
       textTransform: "none",
     },
-
+    buttonMinhasReservas: {
+      color: "rgba(255, 0, 0, 1)",
+      backgroundColor: "transparent",
+      fontWeight: "bold",
+      fontSize: 15.5,
+      textDecoration: "underline",
+      textDecorationThickness: "1.5px",
+      textUnderlineOffset: "4px",
+      mt: 2,
+      textTransform: "none",
+      "&:hover": {
+        textDecoration: "underline",
+        backgroundColor: "transparent",
+        color: "rgb(167, 63, 63)",
+      },
+    },
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",
       width: "100%",

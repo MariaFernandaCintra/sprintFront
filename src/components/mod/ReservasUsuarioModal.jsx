@@ -232,9 +232,9 @@ function getStyles() {
       flexGrow: 1,
     },
     closeButton: {
-      color: "#EF5350",
+      color: "#BDBDBD",
       "&:hover": {
-        backgroundColor: "rgba(239, 83, 80, 0.1)",
+        backgroundColor: "transparent",
       },
     },
     scrollArea: {

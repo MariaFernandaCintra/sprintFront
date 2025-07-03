@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { getIdFromToken } from "../../auth/auth";
 import api from "../../services/axios";
@@ -134,9 +133,9 @@ function getStyles() {
       flexGrow: 1,
     },
     closeButton: {
-      color: "#EF5350",
+      color: "#BDBDBD",
       "&:hover": {
-        backgroundColor: "rgba(239, 83, 80, 0.1)",
+        backgroundColor: "transparent",
       },
     },
     scrollArea: {
@@ -190,11 +189,11 @@ function getStyles() {
       alignItems: "center",
       justifyContent: "center",
       minHeight: 150,
-      color: '#90A4AE',
+      color: "#90A4AE",
     },
     errorMessage: {
-      textAlign: 'center',
-      color: '#D32F2F',
+      textAlign: "center",
+      color: "#D32F2F",
       fontSize: "16px",
       marginTop: 20,
     },

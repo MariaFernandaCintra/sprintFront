@@ -1,7 +1,5 @@
-
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logo from "../../img/logo.png";
 import api from "../services/axios";
 
 import {
@@ -11,9 +9,10 @@ import {
   IconButton,
   InputAdornment,
   TextField,
+  Typography,
 } from "@mui/material";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff, PersonOutline, Email, Article, Lock } from "@mui/icons-material";
 
 import CustomModal from "../components/mod/CustomModal";
 
@@ -89,117 +88,145 @@ function Cadastro() {
   return (
     <Container component="main" sx={styles.container}>
       <Box component="form" sx={styles.form} onSubmit={handleSubmit} noValidate>
-        <Box
-          component="img"
-          src={logo}
-          alt="Logo"
-          sx={{
-            width: "280px",
-            height: "auto",
-            mb: 2,
-            border: 5,
-            borderColor: "white",
-            borderRadius: 4,
-          }}
-        />
+        <Box sx={styles.cadastroIconBox}>
+          <PersonOutline sx={styles.cadastroIcon} />
+        </Box>
+        <Typography component="h1" variant="h5" sx={styles.cadastroTitle}>
+          Cadastre-se
+        </Typography>
         <TextField
+          margin="normal"
+          required
+          fullWidth
           id="nome"
-          autoComplete="off"
           label="nome"
           name="nome"
-          margin="normal"
+          autoComplete="name"
+          autoFocus
           value={usuario.nome}
           onChange={onChange}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <PersonOutline sx={{ color: 'gray' }} />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
+          margin="normal"
+          required
+          fullWidth
           id="email"
-          autoComplete="off"
           label="e-mail"
           name="email"
-          margin="normal"
+          autoComplete="email"
           value={usuario.email}
           onChange={onChange}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Email sx={{ color: 'gray' }} />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
+          margin="normal"
+          required
+          fullWidth
           id="NIF"
-          autoComplete="off"
           label="NIF"
           type="number"
           name="NIF"
-          margin="normal"
+          autoComplete="off"
           value={usuario.NIF}
           onChange={onChange}
           sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Article sx={{ color: 'gray' }} />
+              </InputAdornment>
+            ),
+          }}
         />
         <TextField
-          id="senha"
-          type={mostrarSenha ? "text" : "password"}
-          autoComplete="off"
-          label="senha"
-          name="senha"
           margin="normal"
+          required
+          fullWidth
+          name="senha"
+          label="senha"
+          type={mostrarSenha ? "text" : "password"}
+          id="senha"
+          autoComplete="new-password"
           value={usuario.senha}
           onChange={onChange}
           sx={styles.textField}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() =>
-                      setMostrarSenha((previousState) => !previousState)
-                    }
-                    edge="end"
-                    sx={{ color: "gray", mr: 0.1 }}
-                  >
-                    {mostrarSenha ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Lock sx={{ color: 'gray' }} />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setMostrarSenha((previousState) => !previousState)}
+                  edge="end"
+                  sx={{ color: "gray", mr: 0 }}
+                >
+                  {mostrarSenha ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
         <TextField
-          id="confirmarSenha"
-          label="confirmar-senha"
-          name="confirmarSenha"
-          type={mostrarConfirmarSenha ? "text" : "password"}
           margin="normal"
-          autoComplete="off"
+          required
+          fullWidth
+          name="confirmarSenha"
+          label="confirmar senha"
+          type={mostrarConfirmarSenha ? "text" : "password"}
+          id="confirmarSenha"
+          autoComplete="new-password"
           value={usuario.confirmarSenha}
           onChange={onChange}
           sx={styles.textField}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={() =>
-                      setMostrarConfirmarSenha(
-                        (previousState) => !previousState
-                      )
-                    }
-                    edge="end"
-                    sx={{ color: "gray", mr: 0.1 }}
-                  >
-                    {mostrarConfirmarSenha ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Lock sx={{ color: 'gray' }} />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle confirm password visibility"
+                  onClick={() => setMostrarConfirmarSenha((previousState) => !previousState)}
+                  edge="end"
+                  sx={{ color: "gray", mr: 0 }}
+                >
+                  {mostrarConfirmarSenha ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
           }}
         />
         <Button
+          type="submit"
           variant="contained"
-          onClick={CadastroUsuario}
           sx={styles.buttonCadastro}
         >
-          Cadastre-se
+          Cadastrar-se
         </Button>
+        <Typography variant="body2" sx={styles.jaTemContaText}>
+          Já tem uma conta?
+        </Typography>
         <Button
           component={Link}
           to="/login"
@@ -208,15 +235,15 @@ function Cadastro() {
         >
           Login
         </Button>
-        <CustomModal
-          open={modalOpen}
-          onClose={handleCloseModal}
-          title={modalInfo.title}
-          message={modalInfo.message}
-          type={modalInfo.type}
-          buttonText="Fechar"
-        />
       </Box>
+      <CustomModal
+        open={modalOpen}
+        onClose={handleCloseModal}
+        title={modalInfo.title}
+        message={modalInfo.message}
+        type={modalInfo.type}
+        buttonText="Fechar"
+      />
     </Container>
   );
 }
@@ -228,94 +255,109 @@ function getStyles() {
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
-      width: "100%",
+      height: "auto",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       minHeight: "80.5vh",
       minWidth: "100%",
+      justifyContent: 'center',
     },
     form: {
-      mt: 7.5,
+      mt: 0,
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      backgroundColor: "rgba(255, 255, 255, 0.7)",
-      paddingRight: 6,
-      paddingLeft: 6,
-      paddingTop: 7,
-      paddingBottom: 4,
-      borderRadius: 10,
+      backgroundColor: "white",
+      padding: '40px 30px',
+      borderRadius: '20px',
+      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+      width: '100%',
+      maxWidth: '400px',
+    },
+    cadastroIconBox: {
+        backgroundColor: 'rgba(255, 0, 0, 1)',
+        borderRadius: '50%',
+        width: '80px',
+        height: '80px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        mb: 2,
+    },
+    cadastroIcon: {
+        color: 'white',
+        fontSize: '40px',
+    },
+    cadastroTitle: {
+        fontSize: '24px',
+        fontWeight: 'bold',
+        mb: 3,
+        color: '#333',
     },
     textField: {
-      "& .MuiOutlinedInput-root": {
-        "& fieldset": { border: "none" },
-        "&:hover fieldset": { border: "none" },
-        "&.Mui-focused fieldset": { border: "none" },
-      },
-      "& .MuiOutlinedInput-input": {
-        color: "gray",
-        fontSize: "16px",
-      },
-      "& .MuiInputLabel-shrink": {
-        fontSize: "18px",
-        marginTop: -1.39,
-        color: "white",
-      },
-      "& .MuiInputLabel-root.Mui-focused": {
-        color: "white",
-      },
-      width: "35vh",
-      height: "5.5vh",
-      backgroundColor: "white",
-      display: "flex",
-      border: 0,
-      borderRadius: 4,
+        mb: 2,
+        '& .MuiOutlinedInput-root': {
+            borderRadius: '10px',
+            backgroundColor: '#f5f5f5',
+            '& fieldset': {
+                borderColor: 'transparent',
+            },
+            '&:hover fieldset': {
+                borderColor: 'transparent',
+            },
+            '&.Mui-focused fieldset': {
+                borderColor: 'rgba(255, 0, 0, 0.5)',
+                borderWidth: '1px',
+            },
+        },
+        '& .MuiInputBase-input': {
+            padding: '12px 14px',
+            fontSize: '16px',
+            color: '#333',
+        },
+        '& .MuiInputLabel-root': {
+            color: 'gray',
+            '&.Mui-focused': {
+                color: 'rgba(255, 0, 0, 1)',
+            },
+        },
     },
     buttonCadastro: {
       "&.MuiButton-root": {
         border: "none",
         boxShadow: "none",
         "&:hover": {
-          border: "none",
-          backgroundColor: "rgba(255, 0, 0, 0.55)",
-        },
-        "&:focus": { border: "none", outline: "none" },
-        "&:active": {
-          border: "none",
-          outline: "none",
-          boxShadow: "none",
+          backgroundColor: "rgba(200, 0, 0, 1)",
         },
       },
-      mt: 2,
+      mt: 3,
       color: "white",
       backgroundColor: "rgba(255, 0, 0, 1)",
-      width: 135,
-      height: 45,
+      width: '100%',
+      height: 50,
       fontWeight: 600,
-      fontSize: 15,
-      borderRadius: 15,
+      fontSize: 16,
+      borderRadius: 10,
       textTransform: "none",
     },
+    jaTemContaText: {
+        mt: 2,
+        color: 'gray',
+    },
     buttonToLogin: {
-      color: "rgb(152, 0, 0)",
+      color: "rgba(255, 0, 0, 1)",
       backgroundColor: "transparent",
       fontWeight: "bold",
       fontSize: 15.5,
-      textDecoration: "underline",
-      textDecorationThickness: "1.5px",
-      textUnderlineOffset: "4px",
+      textDecoration: "none",
       mt: 1,
       textTransform: "none",
       "&:hover": {
-        textDecoration: "underline",
         backgroundColor: "transparent",
-        textDecorationThickness: "1.5px",
-        textUnderlineOffset: "4px",
-        color: "rgb(167, 63, 63)",
+        color: "rgba(200, 0, 0, 1)",
+        textDecoration: "underline",
       },
-      "&:focus": { textDecoration: "underline" },
-      "&:active": { textDecoration: "underline" },
     },
   };
 }

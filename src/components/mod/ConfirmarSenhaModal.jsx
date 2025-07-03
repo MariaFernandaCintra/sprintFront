@@ -111,9 +111,9 @@ function getStyles() {
       flexGrow: 1,
     },
     closeButton: {
-      color: "#E57373",
+      color: '#BDBDBD',
       "&:hover": {
-        backgroundColor: "rgba(239, 83, 80, 0.08)",
+        backgroundColor: "transparent",
       },
     },
     textField: {
