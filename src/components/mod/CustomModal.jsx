@@ -1,16 +1,19 @@
-
+import React, { useEffect } from 'react';
 import {
+  Modal,
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Typography,
-} from "@mui/material";
+  IconButton,
+  Button,
+  Slide,
+  Fade,
+} from '@mui/material';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import CloseIcon from '@mui/icons-material/Close';
 
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ErrorIcon from "@mui/icons-material/Error";
+const closeDelay = 5000;
 
 export default function CustomModal({
   open,
@@ -18,103 +21,211 @@ export default function CustomModal({
   title,
   message,
   buttonText = "OK",
-  type = "info", // 'success' | 'error' | 'info'
+  type = "info",
 }) {
-  const renderIcon = () => {
-    switch (type) {
-      case "success":
-        return (
-          <CheckCircleIcon sx={{ fontSize: 75, color: "#4caf50", mb: 1 }} />
-        );
-      case "error":
-        return <ErrorIcon sx={{ fontSize: 75, color: "#f44336", mb: 1 }} />;
-      default:
-        return null;
-    }
+  const iconProps = {
+    success: { IconComponent: CheckCircleOutlineIcon, color: "#4CAF50" },
+    error: { IconComponent: ErrorOutlineIcon, color: "#F44336" },
+    info: { IconComponent: InfoOutlinedIcon, color: "#2196F3" },
+  }[type] || {};
+
+  const backgroundColors = {
+    success: "#E8F5E9",
+    error: "#FFEBEE",
+    info: "#E3F2FD",
   };
 
-  const styles = getStyles();
+  const borderColors = {
+    success: "#4CAF50",
+    error: "#F44336",
+    info: "#2196F3",
+  };
+
+  const buttonColors = {
+    success: "#4CAF50",
+    error: "#F44336",
+    info: "#2196F3",
+  };
+
+  const isSmallMessage = message && message.length < 60;
+
+  useEffect(() => {
+    if (open && isSmallMessage) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, closeDelay);
+      return () => clearTimeout(timer);
+    }
+  }, [open, onClose, isSmallMessage]);
+
+  const getDynamicStyles = () => {
+    const iconColor = iconProps.color;
+    const backgroundColor = backgroundColors[type] || backgroundColors.info;
+    const borderColor = borderColors[type] || borderColors.info;
+    const buttonBgColor = buttonColors[type] || buttonColors.info;
+
+    return {
+      overlay: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        backdropFilter: 'blur(3px)',
+      },
+      container: {
+        width: { xs: '90%', sm: 400 },
+        maxWidth: 400,
+        padding: { xs: '24px', sm: '32px' },
+        borderRadius: '15px',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+        boxShadow: '0 8px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+        textAlign: 'center',
+      },
+      icon: {
+        fontSize: { xs: '6rem', sm: '7rem' },
+        color: iconColor,
+        mb: '16px',
+      },
+      title: {
+        fontSize: { xs: '1.5rem', sm: '1.8rem' },
+        fontWeight: '700',
+        color: '#333',
+        mb: '12px',
+        lineHeight: 1.2,
+      },
+      message: {
+        fontSize: { xs: '1rem', sm: '1.1rem' },
+        color: '#666',
+        lineHeight: 1.5,
+        mb: '24px',
+      },
+      button: {
+        width: '80%',
+        paddingY: '12px',
+        borderRadius: '10px',
+        backgroundColor: buttonBgColor,
+        color: '#fff',
+        fontSize: { xs: '1rem', sm: '1.1rem' },
+        fontWeight: '600',
+        textTransform: 'none',
+        boxShadow: `0 4px 5px ${buttonBgColor}40`,
+        '&:hover': {
+          backgroundColor: buttonBgColor,
+          boxShadow: `0 6px 8px ${buttonBgColor}60`,
+        },
+        transition: 'all 0.3s ease-in-out',
+      },
+      toastOverlay: {
+        position: 'fixed',
+        top: { xs: '20px', sm: '30px' },
+        left: '50%',
+        transform: 'translateX(-50%)',
+        zIndex: 1400,
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        pointerEvents: 'none',
+      },
+      toastContainer: {
+        pointerEvents: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        minHeight: { xs: '60px', sm: '70px' },
+        width: { xs: '90%', sm: 500 },
+        maxWidth: 500,
+        padding: { xs: '12px 16px', sm: '5px 20px' },
+        borderRadius: '10px',
+        borderLeft: `6px solid ${borderColor}`,
+        backgroundColor: backgroundColor,
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05)',
+        gap: { xs: '8px', sm: '12px' },
+      },
+      toastIcon: {
+        fontSize: { xs: '1.5rem', sm: '1.8rem' },
+        color: iconColor,
+        mr: { xs: '8px', sm: '12px' },
+        flexShrink: 0,
+      },
+      toastMessage: {
+        flexGrow: 1,
+        fontSize: { xs: '0.9rem', sm: '1rem' },
+        fontWeight: '500',
+        color: iconColor,
+        wordBreak: 'break-word',
+        textAlign: 'left',
+      },
+      toastCloseButton: {
+        color: iconColor,
+        padding: '4px',
+        ml: { xs: '8px', sm: '12px' },
+        '&:hover': {
+          backgroundColor: 'rgba(0,0,0,0.05)',
+        },
+        flexShrink: 0,
+      },
+    };
+  };
+
+  const styles = getDynamicStyles();
+
+  const IconComponent = iconProps.IconComponent;
+
   return (
-    <Dialog open={open} onClose={onClose} sx={styles.dialog}>
-      <DialogContent sx={styles.dialogContent}>
-        <Box sx={styles.box(type)}>
-          {renderIcon()}
-          <DialogTitle>
-            <Typography variant="h5" component="div" sx={styles.title}>
+    <Modal
+      open={open}
+      onClose={onClose}
+      aria-labelledby="modal-title"
+      aria-describedby="modal-description"
+      closeAfterTransition
+      BackdropProps={{
+        timeout: 300,
+      }}
+      // Apply overlay styles only when it's not a small message (toast)
+      sx={isSmallMessage ? {} : styles.overlay}
+    >
+      {isSmallMessage ? (
+        <Fade in={open} timeout={{ enter: 0, exit: 300 }}>
+          <Box sx={styles.toastOverlay}>
+            <Slide direction="down" in={open} mountOnEnter unmountOnExit timeout={300}>
+              <Box sx={styles.toastContainer}>
+                {IconComponent && (
+                  <IconComponent sx={styles.toastIcon} />
+                )}
+                <Typography sx={styles.toastMessage}>
+                  {message}
+                </Typography>
+                <IconButton onClick={onClose} sx={styles.toastCloseButton}>
+                  <CloseIcon fontSize="small" />
+                </IconButton>
+              </Box>
+            </Slide>
+          </Box>
+        </Fade>
+      ) : (
+        // For standard modals
+        <Fade in={open} timeout={{ enter: 300, exit: 300 }}>
+          <Box sx={styles.container}>
+            {IconComponent && (
+              <IconComponent sx={styles.icon} />
+            )}
+            <Typography id="modal-title" sx={styles.title}>
               {title}
             </Typography>
-          </DialogTitle>
-          <Typography variant="body1" sx={styles.message}>
-            {message}
-          </Typography>
-        </Box>
-      </DialogContent>
-      <DialogActions sx={styles.actions}>
-        <Button onClick={onClose} variant="contained" sx={styles.button(type)}>
-          {buttonText}
-        </Button>
-      </DialogActions>
-    </Dialog>
+            <Typography id="modal-description" sx={styles.message}>
+              {message}
+            </Typography>
+            <Button
+              onClick={onClose}
+              sx={styles.button}
+              variant="contained"
+            >
+              {buttonText}
+            </Button>
+          </Box>
+        </Fade>
+      )}
+    </Modal>
   );
-}
-
-function getStyles() {
-  return {
-    dialog: {
-      "& .MuiDialog-container": {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(70, 70, 70, 0.4)",
-        backdropFilter: "blur(5px)",
-      },
-      "& .MuiPaper-root": {
-        borderRadius: 8,
-        boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.2)",
-        backgroundColor: "rgb(255, 255, 255)",
-        backdropFilter: "blur(10px)",
-        border: "1px solid rgba(214, 214, 214, 0.1)",
-      },
-      "& .MuiDialogActions-root": {
-        mb: 3
-      },
-    },
-    dialogContent: {
-      textAlign: "center",
-      color: "balck",
-    },
-    box: (type) => ({
-      minWidth: 300,
-      height: 220,
-      maxWidth: 300,
-      alignItems: "center",
-      justifyContent: "center",
-      textAlign: "center",
-      p: 2,
-      borderRadius: 2,
-      backgroundColor: type === "success" ? "#e8f5e9" : "#ffebee",
-      display: "flex",
-      flexDirection: "column",
-      background: "transparent",
-    }),
-    title: {
-      mt: 1,
-      color: "balck",
-      fontWeight: 1000,
-      fontSize: 26
-    },
-    message: {
-      color: "balck",
-      fontSize: 18
-    },
-    actions: {
-      justifyContent: "center",
-    },
-    button: (type) => ({
-      backgroundColor: type === "success" ? "green" : "rgb(226, 16, 16)",
-      "&:hover": {
-        backgroundColor: type === "success" ? "green" : "rgb(226, 16, 16)",
-      },
-    }),
-  };
 }

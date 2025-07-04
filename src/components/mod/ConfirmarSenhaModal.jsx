@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 
 import {
@@ -11,7 +10,7 @@ import {
   InputAdornment
 } from "@mui/material";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Lock as LockIcon } from "@mui/icons-material";
 
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -44,12 +43,19 @@ function ConfirmarSenhaModal({ open, onClose, onConfirm }) {
           </IconButton>
         </Box>
         <TextField
+          margin="normal"
           label="Senha Atual"
           type={showPassword ? "text" : "password"}
           fullWidth
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          sx={styles.textField}
           InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <LockIcon sx={{ color: 'gray' }} />
+              </InputAdornment>
+            ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
@@ -62,7 +68,6 @@ function ConfirmarSenhaModal({ open, onClose, onConfirm }) {
               </InputAdornment>
             ),
           }}
-          sx={styles.textField}
         />
         <Button
           variant="contained"
@@ -81,7 +86,7 @@ function getStyles() {
   return {
     modalContainer: {
       backgroundColor: "rgba(0, 0, 0, 0.4)",
-      backdropFilter: "blur(10px)",
+      backdropFilter: "blur(5px)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -91,63 +96,79 @@ function getStyles() {
       flexDirection: "column",
       width: 360,
       maxWidth: "90%",
-      padding: 4,
-      backgroundColor: "rgb(255, 255, 255)",
-      borderRadius: 10,
-      boxShadow: "0 6px 20px rgba(0, 0, 0, 0.07)",
+      padding: "40px 30px",
+      backgroundColor: "#FFFFFF",
+      borderRadius: "20px",
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
       outline: "none",
     },
     header: {
       display: "flex",
       justifyContent: "space-between",
       alignItems: "center",
-      marginBottom: 2,
+      marginBottom: 3,
     },
     title: {
-      fontWeight: 600,
-      color: "#37474F",
-      fontSize: "22px",
+      fontWeight: "bold",
+      color: "#333",
+      fontSize: "24px",
       textAlign: "center",
       flexGrow: 1,
     },
     closeButton: {
-      color: "#E57373",
+      color: "gray",
       "&:hover": {
-        backgroundColor: "rgba(239, 83, 80, 0.08)",
+        backgroundColor: "transparent",
       },
     },
     textField: {
-      marginBottom: 3,
-      '& .MuiOutlinedInput-root': {
-        '& fieldset': {
-          borderColor: '#E0E0E0',
+      mb: 2,
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+        backgroundColor: "#f5f5f5",
+        "& fieldset": {
+          borderColor: "transparent",
         },
-        '&:hover fieldset': {
-          borderColor: '#90A4AE',
+        "&:hover fieldset": {
+          borderColor: "transparent",
         },
-        '&.Mui-focused fieldset': {
-          borderColor: '#E57373',
+        "&.Mui-focused fieldset": {
+          borderColor: "rgba(255, 0, 0, 0.5)",
+          borderWidth: "1px",
         },
       },
-      '& .MuiInputLabel-root': {
-        color: '#90A4AE',
+      "& .MuiInputBase-input": {
+        padding: "12px 14px",
+        fontSize: "16px",
+        color: "#333",
       },
-      '& .MuiInputLabel-root.Mui-focused': {
-        color: '#E57373',
+      "& .MuiInputLabel-root": {
+        color: "gray",
+        "&.Mui-focused": {
+          color: "rgba(255, 0, 0, 1)",
+        },
+        transform: "translate(40px, 12px) scale(1)",
+        "&.MuiInputLabel-shrink": {
+          transform: "translate(14px, -9px) scale(0.75)",
+        },
       },
     },
     confirmButton: {
-      backgroundColor: "rgb(161, 0, 0)",
-      "&:hover": {
-        backgroundColor: "rgba(161, 0, 0, 0.76)",
+      "&.MuiButton-root": {
+        border: "none",
+        boxShadow: "none",
+        "&:hover": { backgroundColor: "rgba(200, 0, 0, 1)" },
       },
-      textTransform: "none",
-      ml:"30%",
-      width: "40%",
-      paddingY: 1.5,
-      fontSize: "16px",
+      color: "white",
+      backgroundColor: "rgb(177, 16, 16)",
+      width: "100%",
+      height: 45,
       fontWeight: 600,
-      borderRadius: 8,
+      fontSize: 14,
+      borderRadius: 10,
+      textTransform: "none",
+      mt: 3,
+      ml: 0,
     },
   };
 }

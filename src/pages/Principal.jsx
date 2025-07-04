@@ -1,5 +1,4 @@
-
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { Link } from "react-router-dom";
 import logo from "../../img/logo.png";
 import api from "../services/axios";
@@ -8,27 +7,23 @@ import {
   Box,
   Button,
   Container,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Typography,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 
 import PersonIcon from "@mui/icons-material/Person";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import SearchIcon from "@mui/icons-material/Search";
 
 import ReservarModal from "../components/mod/ReservarModal";
 import CustomModal from "../components/mod/CustomModal";
+import FiltroModal from "../components/mod/FiltroModal";
 
 import { getToday } from "../utils/dateUtils";
 
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-
 import { format, addHours } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -39,14 +34,10 @@ function Principal() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedSalaId, setSelectedSalaId] = useState(null);
   const [selectedSalaNome, setSelectedSalaNome] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  // Inicializar filtros com data atual, hora atual e hora atual + 1h
-  const now = new Date();
-  const [filters, setFilters] = useState({
-    data: now,
-    hora_inicio: now,
-    hora_fim: addHours(now, 1),
-  });
+  const [filtroModalOpen, setFiltroModalOpen] = useState(false);
+  const [appliedFilters, setAppliedFilters] = useState(null);
 
   const [customModalOpen, setCustomModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -58,43 +49,47 @@ function Principal() {
     getSalas();
   }, []);
 
+  useEffect(() => {
+    if (appliedFilters) {
+      applyAdvancedFilters(appliedFilters);
+    } else {
+      getSalas();
+    }
+  }, [appliedFilters]);
+
   async function getSalas() {
     try {
       const response = await api.getSalas();
       setSalas(response.data.salas);
     } catch (error) {
-      console.log("Erro", error);
+      console.log("Erro ao buscar salas: ", error);
+      setModalTitle("Erro");
+      setModalMessage("Não foi possível carregar as salas.");
+      setModalType("error");
+      setCustomModalOpen(true);
     }
   }
 
-  async function handleFilter() {
+  async function applyAdvancedFilters(filtersFromModal) {
     try {
-      // Envia no formato ISO (yyyy-MM-dd) e horário (HH:mm)
-      const filtroFormatado = {
-        data: filters.data ? format(filters.data, "yyyy-MM-dd") : "",
-        hora_inicio: filters.hora_inicio
-          ? format(filters.hora_inicio, "HH:mm")
-          : "",
-        hora_fim: filters.hora_fim ? format(filters.hora_fim, "HH:mm") : "",
-      };
-
-      const response = await api.getSalasDisponivelHorario(filtroFormatado);
+      const response = await api.getSalasDisponivelHorario(filtersFromModal);
       setSalas(response.data.salas);
 
-      setModalTitle("Resultado da Filtragem");
+      setModalTitle("Resultado da Filtragem Avançada");
       setModalMessage(response.data.message || "Salas filtradas com sucesso!");
       setModalType("success");
       setCustomModalOpen(true);
     } catch (error) {
-      console.log("Erro ao filtrar salas", error);
+      console.log("Erro ao filtrar salas avançado", error);
 
       setModalTitle("Erro ao Filtrar");
       setModalMessage(
         error.response?.data?.error ||
-          "Não foi possível buscar as salas disponíveis."
+          "Não foi possível buscar as salas com os filtros aplicados."
       );
       setModalType("error");
       setCustomModalOpen(true);
+      setSalas([]);
     }
   }
 
@@ -109,26 +104,14 @@ function Principal() {
     setSelectedSalaId(null);
   }
 
-  const listSalas = salas.map((sala) => (
-    <TableRow key={sala.id_sala}>
-      {["nome", "descricao", "bloco", "tipo", "capacidade"].map((campo) => (
-        <TableCell
-          key={campo}
-          align="center"
-          sx={styles.tableBodyCell}
-          onClick={() => handleCellClick(sala.id_sala, sala.nome)}
-          style={{ cursor: "pointer" }}
-        >
-          {sala[campo]}
-        </TableCell>
-      ))}
-    </TableRow>
-  ));
+  const filteredSalas = salas.filter((sala) =>
+    sala.tipo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ptBR}>
-      <div>
-        {salas.length === 0 ? (
+      <Fragment>
+        {salas.length === 0 && !appliedFilters ? (
           <Container sx={styles.container}>
             <Box sx={styles.header}>
               <img src={logo} alt="Logo" style={styles.logo} />
@@ -148,7 +131,7 @@ function Principal() {
             </Box>
             <Box>
               <Typography
-                style={{ color: "white", fontSize: 55, margin: 350 }}
+                style={{ color: "black", fontSize: 55, margin: 350 }}
                 sx={{
                   fontFamily: "'Roboto Mono', monospace",
                 }}
@@ -182,85 +165,73 @@ function Principal() {
               </Button>
             </Box>
 
-            {/* Filtros */}
-            <Box sx={styles.containerFiltro}>
-              <DatePicker
-                label="Data"
-                value={filters.data}
-                minDate={getToday()}
-                onChange={(newValue) =>
-                  setFilters({ ...filters, data: newValue })
-                }
-                slotProps={{
-                  textField: {
-                    sx: styles.inputFiltro,
-                    InputLabelProps: { shrink: true },
-                  },
-                }}
-              />
-              <TimePicker
-                label="Hora Início"
-                value={filters.hora_inicio}
-                onChange={(newValue) =>
-                  setFilters({ ...filters, hora_inicio: newValue })
-                }
-                ampm={false}
-                slotProps={{
-                  textField: {
-                    sx: styles.inputFiltro,
-                    InputLabelProps: { shrink: true },
-                  },
-                }}
-              />
-              <TimePicker
-                label="Hora Fim"
-                value={filters.hora_fim}
-                onChange={(newValue) =>
-                  setFilters({ ...filters, hora_fim: newValue })
-                }
-                ampm={false}
-                slotProps={{
-                  textField: {
-                    sx: styles.inputFiltro,
-                    InputLabelProps: { shrink: true },
-                  },
+            <Box sx={styles.searchAndFilterContainer}>
+              <TextField
+                variant="outlined"
+                placeholder="Pesquisar por Tipo (ex: Laboratório)"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                sx={styles.searchBar}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
                 }}
               />
               <Button
                 variant="contained"
-                onClick={handleFilter}
-                sx={styles.buttonFiltrar}
+                sx={styles.advancedFilterButton}
+                onClick={() => setFiltroModalOpen(true)}
               >
-                Filtrar
+                Filtros Avançados
               </Button>
             </Box>
 
-            {/* Tabela */}
-            <Box sx={styles.boxFundoTabela}>
-              <TableContainer sx={styles.tableContainer}>
-                <Table size="small" sx={styles.table}>
-                  <TableHead sx={styles.tableHead}>
-                    <TableRow sx={styles.tableRow}>
-                      <TableCell align="center" sx={styles.tableCell}>
-                        Nome
-                      </TableCell>
-                      <TableCell align="center" sx={styles.tableCell}>
-                        Descrição
-                      </TableCell>
-                      <TableCell align="center" sx={styles.tableCell}>
-                        Bloco
-                      </TableCell>
-                      <TableCell align="center" sx={styles.tableCell}>
-                        Tipo
-                      </TableCell>
-                      <TableCell align="center" sx={styles.tableCell}>
-                        Capacidade
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody sx={styles.tableBody}>{listSalas}</TableBody>
-                </Table>
-              </TableContainer>
+            <Box sx={styles.salasGridContainer}>
+              {filteredSalas.length > 0 ? (
+                filteredSalas.map((sala) => (
+                  <Box key={sala.id_sala} sx={styles.salaCard}>
+                    <Box sx={styles.salaCardHeader}>
+                      <Typography variant="h6" sx={styles.salaCardTitle}>
+                        {sala.nome} - {sala.tipo}
+                      </Typography>
+                    </Box>
+                    <Box sx={styles.salaCardBody}>
+                      <Typography sx={styles.salaCardText}>
+                        <span style={styles.salaCardLabel}>Descrição:</span>{" "}
+                        {sala.descricao}
+                      </Typography>
+                      <Typography sx={styles.salaCardText}>
+                        <span style={styles.salaCardLabel}>Bloco:</span>{" "}
+                        {sala.bloco}
+                      </Typography>
+                      <Typography sx={styles.salaCardText}>
+                        <span style={styles.salaCardLabel}>Tipo:</span>{" "}
+                        {sala.tipo}
+                      </Typography>
+                      <Typography sx={styles.salaCardText}>
+                        <span style={styles.salaCardLabel}>Capacidade:</span>{" "}
+                        {sala.capacidade}
+                      </Typography>
+                      <Button
+                        variant="contained"
+                        sx={styles.reserveButton}
+                        onClick={() =>
+                          handleCellClick(sala.id_sala, sala.nome)
+                        }
+                      >
+                        Reservar
+                      </Button>
+                    </Box>
+                  </Box>
+                ))
+              ) : (
+                <Typography sx={{ gridColumn: '1 / -1', textAlign: 'center', mt: 4, fontSize: '1.2rem', color: 'gray' }}>
+                  Nenhuma sala encontrada com os filtros aplicados.
+                </Typography>
+              )}
             </Box>
 
             <Box sx={styles.footer}>
@@ -272,7 +243,6 @@ function Principal() {
           </Container>
         )}
 
-        {/* Modal de Reserva */}
         {selectedSalaId && (
           <ReservarModal
             isOpen={modalOpen}
@@ -282,7 +252,6 @@ function Principal() {
           />
         )}
 
-        {/* Custom Modal */}
         <CustomModal
           open={customModalOpen}
           onClose={() => setCustomModalOpen(false)}
@@ -290,7 +259,16 @@ function Principal() {
           message={modalMessage}
           type={modalType}
         />
-      </div>
+
+        <FiltroModal
+          visible={filtroModalOpen}
+          onClose={() => setFiltroModalOpen(false)}
+          onApplyFilters={(filters) => {
+            setAppliedFilters(filters);
+            setFiltroModalOpen(false);
+          }}
+        />
+      </Fragment>{" "}
     </LocalizationProvider>
   );
 }
@@ -298,18 +276,17 @@ function Principal() {
 function getStyles() {
   return {
     container: {
-      backgroundImage: `url(../../img/fundo.png)`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundRepeat: "no-repeat",
+      backgroundColor: "rgb(224, 224, 224)",
       height: "auto",
+      minHeight: "100vh",
       minWidth: "100%",
       display: "flex",
       alignItems: "center",
-      justifyContent: "center",
+      justifyContent: "flex-start",
       flexDirection: "column",
       pl: { sm: 0 },
       pr: { sm: 0 },
+      paddingTop: "11vh",
     },
     header: {
       backgroundColor: "rgba(177, 16, 16, 1)",
@@ -319,11 +296,15 @@ function getStyles() {
       alignItems: "center",
       justifyContent: "flex-end",
       borderBottom: "7px solid white",
+      position: "fixed",
+      top: 0,
+      zIndex: 1000,
     },
     logo: {
       width: "230px",
       height: "auto",
-      marginRight: "1415px",
+      marginRight: "auto",
+      marginLeft: "20px",
       border: "4px solid white",
       borderRadius: 15,
     },
@@ -353,46 +334,52 @@ function getStyles() {
     buttonLogout: {
       mr: 1,
     },
-    tableContainer: {
-      backgroundColor: "transparent",
-    },
-    table: {
-      backgroundColor: "#949494",
-      marginTop: 2.5,
-      marginBottom: 2.5,
-      marginLeft: "auto",
-      marginRight: "auto",
-      width: "calc(100% - 40px)",
-      borderRadius: "15px",
-    },
-    tableHead: {
-      backgroundColor: "gray",
-      borderRadius: "50px",
-      border: "2px solid white",
-    },
-    containerFiltro: {
-      mt: 4,
+    searchAndFilterContainer: {
       display: "flex",
-      gap: 10,
-      backgroundColor: "#B5B5B5",
-      margin: "30px",
-      marginBottom: 1,
-      border: "5px solid white",
-      borderRadius: "15px",
-      width: "90%",
+      justifyContent: "space-between",
       alignItems: "center",
-      height: 80,
+      width: "90%",
+      marginTop: "20px",
+      marginBottom: "10px",
+    },
+    searchBar: {
+      width: "87%",
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "20px",
+        backgroundColor: "rgb(255, 255, 255)",
+        "& fieldset": {
+          borderColor: "transparent",
+        },
+        "&:hover fieldset": {
+          borderColor: "transparent",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "transparent",
+        },
+      },
+      "& .MuiInputBase-input": {
+        padding: "18px 14px",
+      },
+    },
+    advancedFilterButton: {
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      textTransform: "none",
+      fontSize: 16,
+      fontWeight: "bold",
+      borderRadius: "20px",
+      padding: "15px 20px",
+      marginBottom: "-2px",
+      "&:hover": {
+        backgroundColor: "darkred",
+      },
     },
     inputFiltro: {
       borderRadius: 5,
-      ml: 5,
-      mb: 0.5,
-      mt: 1,
       backgroundColor: "rgba(255, 255, 255, 0.9)",
-      width: "22%",
+      width: "25%",
       color: "#fff",
-      "& .MuiPickersInputBase-root": {
-        borderRadius: "20px",
+      "& .MuiInputBase-root": {
+        borderRadius: "10px",
         color: "gray",
         fontSize: 16,
         fontWeight: 1000,
@@ -407,39 +394,68 @@ function getStyles() {
     buttonFiltrar: {
       backgroundColor: "rgba(177, 16, 16, 1)",
       textTransform: "none",
-      width: "8%",
+      width: "15%",
       height: "60%",
-      marginRight: 5,
       fontSize: 18,
       fontWeight: "bold",
+      borderRadius: "10px",
     },
-    boxFundoTabela: {
-      margin: "25px",
-      border: "5px solid white",
-      borderRadius: "15px",
-      backgroundColor: "#B5B5B5",
+    salasGridContainer: {
+      display: "grid",
+      gridTemplateColumns: "repeat(3, 1fr)",
+      backgroundColor: "rgb(224, 224, 224)",
+      gap: "20px",
       width: "90%",
+      marginTop: "20px",
+      marginBottom: "20px",
     },
-    tableCell: {
-      backgroundColor: "#D9D9D9",
-      border: "2px solid white",
+    salaCard: {
+      backgroundColor: "rgb(255, 255, 255)",
+      border: "2px solid rgb(85, 85, 85)",
+      borderRadius: "15px",
+      padding: "15px",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+    },
+    salaCardHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderBottom: "1px solid #B5B5B5",
+      paddingBottom: "10px",
+      marginBottom: "10px",
+    },
+    salaCardTitle: {
       fontWeight: "bold",
-      fontSize: 22,
-      paddingTop: 2,
-    },
-    tableBody: {
-      backgroundColor: "#949494",
-      border: "3px solid white",
-      borderRadius: 10,
-    },
-    tableBodyCell: {
-      backgroundColor: "#949494",
-      border: "1px solid white",
-      borderRadius: 10,
-      color: "white",
       fontSize: 20,
-      paddingTop: 1.2,
-      paddingBottom: 1.2,
+      color: "#333",
+    },
+    collapseIcon: {
+      cursor: "pointer",
+      color: "#B11010",
+    },
+    salaCardBody: {
+      display: "flex",
+      flexDirection: "column",
+      gap: "5px",
+    },
+    salaCardText: {
+      fontSize: 16,
+      color: "#555",
+    },
+    salaCardLabel: {
+      fontWeight: "bold",
+    },
+    reserveButton: {
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      textTransform: "none",
+      marginTop: "-40px",
+      marginBottom: "2px",
+      alignSelf: "flex-end",
+      "&:hover": {
+        backgroundColor: "darkred",
+      },
     },
     footer: {
       backgroundColor: "rgba(177, 16, 16, 1)",

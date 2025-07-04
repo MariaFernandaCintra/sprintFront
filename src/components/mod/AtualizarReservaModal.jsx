@@ -24,7 +24,7 @@ import {
   LocalizationProvider,
 } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { format } from "date-fns";
+import { format, parseISO } from "date-fns";
 
 import { getToday } from "../../utils/dateUtils";
 import { getIdFromToken } from "../../auth/auth";
@@ -32,7 +32,12 @@ import api from "../../services/axios";
 import CustomModal from "./CustomModal";
 import DiasModal from "./DiasModal";
 
-export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
+export default function AtualizarReservaModal({
+  open,
+  onClose,
+  reserva,
+  onSuccess,
+}) {
   const styles = getStyles();
 
   const [currentMode, setCurrentMode] = useState("simples");
@@ -67,6 +72,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
     4: "Quinta-Feira",
     5: "Sexta-Feira",
     6: "Sábado",
+    0: "Domingo",
   };
   const diasSemanaKeys = Object.keys(diasSemanaMap).map(Number);
 
@@ -110,6 +116,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
 
       while (current <= end) {
         const dayOfWeek = current.getDay();
+
         if (diasSemanaKeys.includes(dayOfWeek)) {
           days.add(dayOfWeek);
         }
@@ -136,6 +143,48 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
     }
     return selectedDays.map((dayNum) => diasSemanaMap[dayNum]).join(", ");
   }, [selectedDays, diasSemanaMap]);
+
+  useEffect(() => {
+    if (open && reserva) {
+      setCurrentMode(reserva.tipo || "simples");
+      console.log("Reserva object in AtualizarReservaModal:", reserva);
+
+      if (reserva.tipo === "simples") {
+        setDataSimples(reserva.data ? parseISO(reserva.data) : getToday());
+      } else {
+        setDataInicioPeriodica(
+          reserva.data_inicio
+            ? parseISO(reserva.data_inicio)
+            : getToday()
+        );
+        setDataFimPeriodica(
+          reserva.data_fim
+            ? parseISO(reserva.data_fim)
+            : getToday()
+        );
+        setSelectedDays(reserva.dias_semana || []);
+      }
+
+      setHoraInicio(
+        reserva.hora_inicio
+          ? parseISO(`2000-01-01T${reserva.hora_inicio}`)
+          : new Date()
+      );
+      setHoraFim(
+        reserva.hora_fim
+          ? parseISO(`2000-01-01T${reserva.hora_fim}`)
+          : new Date(new Date().getTime() + 60 * 60 * 1000)
+      );
+    } else if (open && !reserva) {
+      setCurrentMode("simples");
+      setDataSimples(getToday());
+      setDataInicioPeriodica(getToday());
+      setDataFimPeriodica(getToday());
+      setSelectedDays([]);
+      setHoraInicio(new Date());
+      setHoraFim(new Date(new Date().getTime() + 60 * 60 * 1000));
+    }
+  }, [open, reserva]);
 
   useEffect(() => {
     if (currentMode === "periodica") {
@@ -173,7 +222,7 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
     validDays,
   ]);
 
-  const handleReserva = useCallback(async () => {
+  const handleUpdateReserva = useCallback(async () => {
     setLoading(true);
 
     if (horaFim.getTime() <= horaInicio.getTime()) {
@@ -187,26 +236,28 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
       return;
     }
 
-    let reserva;
+    let reservaToUpdate;
     try {
       if (currentMode === "simples") {
         const formattedData = format(dataSimples, "yyyy-MM-dd");
         const formattedHoraInicio = formatarHoraComSegundosZero(horaInicio);
         const formattedHoraFim = formatarHoraComSegundosZero(horaFim);
 
-        reserva = {
+        reservaToUpdate = {
+          id_reserva: reserva.id_reserva,
           data: formattedData,
           hora_inicio: formattedHoraInicio,
           hora_fim: formattedHoraFim,
           fk_id_usuario: idUsuario,
-          fk_id_sala: idSala,
+          fk_id_sala: reserva.fk_id_sala,
+          tipo_reserva: "simples",
         };
 
-        console.log("Reserva:", reserva);
-        const response = await api.postReserva(reserva);
+        console.log("Reserva a atualizar (simples):", reservaToUpdate);
+        const response = await api.putReserva(reserva.id_reserva, reservaToUpdate);
         setModalInfo({
           type: "success",
-          title: "Reserva Confirmada!",
+          title: "Reserva Atualizada!",
           message: response.data.message,
         });
       } else {
@@ -241,30 +292,39 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
         let diasSemanaToSend =
           selectedDays.length === 1 ? selectedDays[0] : selectedDays;
 
-        reserva = {
+        reservaToUpdate = {
+          id_reserva: reserva.id_reserva,
           data_inicio: formattedDataInicio,
           data_fim: formattedDataFim,
           hora_inicio: formattedHoraInicio,
           hora_fim: formattedHoraFim,
           fk_id_usuario: idUsuario,
-          fk_id_sala: idSala,
+          fk_id_sala: reserva.fk_id_sala,
           dias_semana: diasSemanaToSend,
+          tipo_reserva: "periodica",
         };
-        const response = await api.postReservaPeriodica(reserva);
+        console.log("Reserva a atualizar (periodica):", reservaToUpdate);
+        const response = await api.putReservaPeriodica(
+          reserva.id_reserva,
+          reservaToUpdate
+        );
         setModalInfo({
           type: "success",
-          title: "Reserva Confirmada!",
+          title: "Reserva Atualizada!",
           message: response.data.message,
         });
       }
       setModalVisible(true);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       setModalInfo({
         type: "error",
-        title: "Erro na Reserva",
+        title: "Erro na Atualização da Reserva",
         message:
           error.response?.data?.error ||
-          "Erro desconhecido ao reservar a sala.",
+          "Erro desconhecido ao atualizar a reserva da sala.",
       });
       setModalVisible(true);
       console.error(error);
@@ -279,9 +339,10 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
     horaInicio,
     horaFim,
     idUsuario,
-    idSala,
     selectedDays,
     formatarHoraComSegundosZero,
+    reserva,
+    onSuccess,
   ]);
 
   const handleModalClose = useCallback(() => {
@@ -292,155 +353,9 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
     }
   }, [modalInfo.type, navigate, onClose]);
 
-  function getStyles() {
-    return {
-      modalContainer: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        backdropFilter: "blur(8px)",
-        backgroundColor: "rgba(0, 0, 0, 0.4)",
-      },
-      modalBox: {
-        position: "relative",
-        width: { xs: "90%", sm: 400, md: 380 },
-        backgroundColor: "#fff",
-        borderRadius: 4,
-        padding: { xs: 3, sm: 4 },
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        boxShadow: "0 15px 35px rgba(0, 0, 0, 0.25)",
-        outline: "none",
-      },
-      closeButton: {
-        position: "absolute",
-        top: 30,
-        right: 40,
-        color: "#616161",
-        "&:hover": {
-          backgroundColor: "rgba(0, 0, 0, 0.04)",
-        },
-      },
-      icon: {
-        fontSize: 60,
-        color: "rgba(177, 16, 16, 1)",
-        marginBottom: 1,
-      },
-      title: {
-        fontWeight: 700,
-        color: "#212121",
-        marginBottom: 0.5,
-      },
-      subTitle: {
-        fontSize: "1rem",
-        color: "#424242",
-        marginBottom: 3,
-        textAlign: "center",
-      },
-      modeToggleContainer: {
-        marginBottom: 3,
-        width: "100%",
-        borderRadius: 2,
-        overflow: "hidden",
-        backgroundColor: "#f0f0f0",
-        "& .MuiToggleButton-root": {
-          flex: 1,
-          border: "1px solid #e0e0e0",
-          "&.Mui-selected": {
-            backgroundColor: "rgb(177, 16, 16)",
-            color: "white",
-            borderColor: "rgb(177, 16, 16)",
-            "&:hover": {
-              backgroundColor: "rgb(177, 16, 16)",
-            },
-          },
-          "&:not(:first-of-type)": {
-            marginLeft: "-1px",
-            borderLeft: "1px solid transparent",
-          },
-          "&:hover": {
-            backgroundColor: "#e8e8e8",
-          },
-          fontSize: "0.9rem",
-          fontWeight: "bold",
-          color: "#555",
-          paddingY: "12px",
-        },
-      },
-      inputGrid: {
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
-        gap: 2,
-        width: "100%",
-        maxWidth: "380px",
-        marginBottom: 3,
-      },
-      inputGroupFullWidth: {
-        width: "100%",
-        maxWidth: "380px",
-        marginBottom: 3,
-      },
-      summary: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 1,
-        backgroundColor: "#f5f5f5",
-        borderRadius: 2,
-        padding: "12px 16px",
-        width: "calc(100% - 35px)",
-        maxWidth: "380px",
-        marginTop: 1,
-        marginBottom: 3,
-        boxShadow: "inset 0 1px 3px rgba(0,0,0,0.08)",
-        flexWrap: "wrap",
-        textAlign: "center",
-      },
-      reserveButton: {
-        width: { xs: "80%", sm: "60%" },
-        padding: "12px 20px",
-        borderRadius: 10,
-        fontWeight: 700,
-        fontSize: "1.05rem",
-        backgroundColor: "rgba(177, 16, 16, 1)",
-        color: "#fff",
-        marginTop: 2,
-        transition:
-          "background-color 0.3s ease-in-out, transform 0.2s ease-in-out",
-        "&:hover": {
-          backgroundColor: "#b11010",
-          transform: "translateY(-2px)",
-          boxShadow: "0 4px 12px rgba(177, 16, 16, 0.4)",
-        },
-        "&:disabled": {
-          backgroundColor: "rgba(177, 16, 16, 0.5)",
-          color: "#f0f0f0",
-          cursor: "not-allowed",
-          transform: "none",
-          boxShadow: "none",
-        },
-      },
-      pickerTextField: {
-        "& .MuiOutlinedInput-root": {
-          backgroundColor: "#f5f5f5",
-          "& fieldset": {
-            borderColor: "#ddd",
-          },
-          "&:hover fieldset": {
-            borderColor: "#bbb",
-          },
-          "&.Mui-focused fieldset": {
-            borderColor: "rgb(177, 16, 16)",
-          },
-        },
-      },
-    };
-  }
-
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <Modal open={isOpen} onClose={onClose} sx={styles.modalContainer}>
+      <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
           <IconButton onClick={onClose} sx={styles.closeButton}>
             <CloseIcon />
@@ -448,10 +363,10 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
 
           <EventAvailableIcon sx={styles.icon} />
           <Typography variant="h5" sx={styles.title}>
-            Reservar Sala
+            Atualizar Reserva
           </Typography>
           <Typography variant="subtitle1" sx={styles.subTitle}>
-            {roomNome}
+            {reserva?.sala}
           </Typography>
 
           <ToggleButtonGroup
@@ -679,14 +594,14 @@ export default function ReservarModal({ isOpen, onClose, idSala, roomNome }) {
 
           <Button
             variant="contained"
-            onClick={handleReserva}
+            onClick={handleUpdateReserva}
             sx={styles.reserveButton}
             disabled={loading}
           >
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "Confirmar Reserva"
+              "Atualizar Reserva"
             )}
           </Button>
         </Box>
@@ -725,9 +640,9 @@ function getStyles() {
     },
     modalBox: {
       position: "relative",
-      width: { xs: "90%", sm: 400, md: 450 },
+      width: { xs: "90%", sm: 400, md: 420 },
       backgroundColor: "#fff",
-      borderRadius: 16,
+      borderRadius: 4,
       padding: { xs: 3, sm: 4 },
       display: "flex",
       flexDirection: "column",
@@ -762,8 +677,8 @@ function getStyles() {
     },
     modeToggleContainer: {
       marginBottom: 3,
-      width: "100%",
-      borderRadius: 10,
+      width: "90%",
+      borderRadius: 2,
       overflow: "hidden",
       backgroundColor: "#f0f0f0",
       "& .MuiToggleButton-root": {
@@ -809,10 +724,9 @@ function getStyles() {
       justifyContent: "center",
       gap: 1,
       backgroundColor: "#f5f5f5",
-      borderRadius: 8,
+      borderRadius: 2,
       padding: "12px 16px",
-      width: "calc(100% - 35px)",
-      maxWidth: "380px",
+      width: "340px",
       marginTop: 1,
       marginBottom: 3,
       boxShadow: "inset 0 1px 3px rgba(0,0,0,0.08)",
