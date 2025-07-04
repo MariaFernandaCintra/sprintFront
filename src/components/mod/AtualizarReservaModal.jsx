@@ -1,165 +1,630 @@
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { useState, useEffect } from "react";
-import { getIdFromToken } from "../../auth/auth";
-import api from "../../services/axios";
+import {
+  Box,
+  Button,
+  Modal,
+  TextField,
+  Typography,
+  IconButton,
+  CircularProgress,
+  ToggleButtonGroup,
+  ToggleButton,
+} from "@mui/material";
 
-import { Modal, Box, Typography, Button, TextField } from "@mui/material";
+import EventAvailableIcon from "@mui/icons-material/EventAvailable";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import CloseIcon from "@mui/icons-material/Close";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import {
   DatePicker,
   TimePicker,
   LocalizationProvider,
 } from "@mui/x-date-pickers";
-
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { format, parseISO } from "date-fns";
 
-export default function AtualizarReservasUsuario({
+import { getToday } from "../../utils/dateUtils";
+import { getIdFromToken } from "../../auth/auth";
+import api from "../../services/axios";
+import CustomModal from "./CustomModal";
+import DiasModal from "./DiasModal";
+
+export default function AtualizarReservaModal({
   open,
   onClose,
   reserva,
   onSuccess,
-  setCustomModalOpen,
-  setCustomModalTitle,
-  setCustomModalMessage,
-  setCustomModalType,
 }) {
   const styles = getStyles();
 
-  const [date, setDate] = useState(new Date());
+  const [currentMode, setCurrentMode] = useState("simples");
+
+  const [dataSimples, setDataSimples] = useState(getToday());
+
+  const [dataInicioPeriodica, setDataInicioPeriodica] = useState(getToday());
+  const [dataFimPeriodica, setDataFimPeriodica] = useState(getToday());
+  const [selectedDays, setSelectedDays] = useState([]);
+  const [validDays, setValidDays] = useState([]);
+  const [showDaySelectionModal, setShowDaySelectionModal] = useState(false);
+
   const [horaInicio, setHoraInicio] = useState(new Date());
-  const [horaFim, setHoraFim] = useState(new Date());
+  const [horaFim, setHoraFim] = useState(
+    new Date(new Date().getTime() + 60 * 60 * 1000)
+  );
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalInfo, setModalInfo] = useState({
+    type: "success",
+    title: "",
+    message: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const idUsuario = getIdFromToken();
+  const navigate = useNavigate();
+
+  const diasSemanaMap = {
+    1: "Segunda-Feira",
+    2: "Terça-Feira",
+    3: "Quarta-Feira",
+    4: "Quinta-Feira",
+    5: "Sexta-Feira",
+    6: "Sábado",
+    0: "Domingo",
+  };
+  const diasSemanaKeys = Object.keys(diasSemanaMap).map(Number);
+
+  const ajustarHoraFim = useCallback(
+    (newHoraInicio) => {
+      const baseTime =
+        newHoraInicio instanceof Date ? newHoraInicio : horaInicio;
+      const adjustedTime = new Date(baseTime.getTime() + 60 * 60 * 1000);
+      setHoraFim(adjustedTime);
+    },
+    [horaInicio]
+  );
+
+  const formatarHoraComSegundosZero = useCallback((date) => {
+    if (!(date instanceof Date) || isNaN(date)) return "";
+    const horas = date.getHours().toString().padStart(2, "0");
+    const minutos = date.getMinutes().toString().padStart(2, "0");
+    return `${horas}:${minutos}:00`;
+  }, []);
+
+  const formatarDataExibicao = useCallback((date) => {
+    if (!(date instanceof Date) || isNaN(date)) return "";
+    return format(date, "dd/MM/yyyy");
+  }, []);
+
+  const formatarHoraExibicao = useCallback((date) => {
+    if (!(date instanceof Date) || isNaN(date)) {
+      return "";
+    }
+    return format(date, "HH:mm");
+  }, []);
+
+  const getDaysInRange = useCallback(
+    (startDate, endDate) => {
+      const days = new Set();
+      const current = new Date(startDate);
+      current.setHours(0, 0, 0, 0);
+
+      const end = new Date(endDate);
+      end.setHours(0, 0, 0, 0);
+
+      while (current <= end) {
+        const dayOfWeek = current.getDay();
+
+        if (diasSemanaKeys.includes(dayOfWeek)) {
+          days.add(dayOfWeek);
+        }
+        current.setDate(current.getDate() + 1);
+      }
+      return Array.from(days).sort((a, b) => a - b);
+    },
+    [diasSemanaKeys]
+  );
+
+  const toggleDay = useCallback((dayNum) => {
+    setSelectedDays((prevSelectedDays) => {
+      if (prevSelectedDays.includes(dayNum)) {
+        return prevSelectedDays.filter((day) => day !== dayNum);
+      } else {
+        return [...prevSelectedDays, dayNum];
+      }
+    });
+  }, []);
+
+  const getSelectedDaysText = useCallback(() => {
+    if (selectedDays.length === 0) {
+      return "Selecione os dias";
+    }
+    return selectedDays.map((dayNum) => diasSemanaMap[dayNum]).join(", ");
+  }, [selectedDays, diasSemanaMap]);
 
   useEffect(() => {
-    if (reserva) {
-      const [day, month, year] = reserva.data.split("-");
-      const parsedDate = new Date(`${year}-${month}-${day}`);
-      setDate(parsedDate);
+    if (open && reserva) {
+      setCurrentMode(reserva.tipo || "simples");
+      console.log("Reserva object in AtualizarReservaModal:", reserva);
 
-      const [hiHour, hiMin, hiSec] = reserva.hora_inicio.split(":");
-      const [hfHour, hfMin, hfSec] = reserva.hora_fim.split(":");
+      if (reserva.tipo === "simples") {
+        setDataSimples(reserva.data ? parseISO(reserva.data) : getToday());
+      } else {
+        setDataInicioPeriodica(
+          reserva.data_inicio
+            ? parseISO(reserva.data_inicio)
+            : getToday()
+        );
+        setDataFimPeriodica(
+          reserva.data_fim
+            ? parseISO(reserva.data_fim)
+            : getToday()
+        );
+        setSelectedDays(reserva.dias_semana || []);
+      }
 
-      const now = new Date();
-      const startTime = new Date(now);
-      const endTime = new Date(now);
-      startTime.setHours(+hiHour, +hiMin, +hiSec || 0);
-      endTime.setHours(+hfHour, +hfMin, +hfSec || 0);
-      setHoraInicio(startTime);
-      setHoraFim(endTime);
+      setHoraInicio(
+        reserva.hora_inicio
+          ? parseISO(`2000-01-01T${reserva.hora_inicio}`)
+          : new Date()
+      );
+      setHoraFim(
+        reserva.hora_fim
+          ? parseISO(`2000-01-01T${reserva.hora_fim}`)
+          : new Date(new Date().getTime() + 60 * 60 * 1000)
+      );
+    } else if (open && !reserva) {
+      setCurrentMode("simples");
+      setDataSimples(getToday());
+      setDataInicioPeriodica(getToday());
+      setDataFimPeriodica(getToday());
+      setSelectedDays([]);
+      setHoraInicio(new Date());
+      setHoraFim(new Date(new Date().getTime() + 60 * 60 * 1000));
     }
-  }, [reserva]);
+  }, [open, reserva]);
 
-  const formatarHoraComSegundosZero = (date) => {
-    const hora = date.getHours().toString().padStart(2, "0");
-    const minuto = date.getMinutes().toString().padStart(2, "0");
-    return `${hora}:${minuto}:00`;
-  };
+  useEffect(() => {
+    if (currentMode === "periodica") {
+      const newCalculatedValidDays = getDaysInRange(
+        dataInicioPeriodica,
+        dataFimPeriodica
+      );
 
-  const handleSubmit = async () => {
-    const idUsuario = getIdFromToken();
-    const fk_id_usuario = Number(idUsuario);
+      const areValidDaysEqual =
+        validDays.length === newCalculatedValidDays.length &&
+        validDays.every((val, index) => val === newCalculatedValidDays[index]);
 
-    const reservaAtualizada = {
-      data: date.toISOString().split("T")[0],
-      hora_inicio: formatarHoraComSegundosZero(horaInicio),
-      hora_fim: formatarHoraComSegundosZero(horaFim),
-      fk_id_usuario,
-    };
+      if (!areValidDaysEqual) {
+        setValidDays(newCalculatedValidDays);
 
+        setSelectedDays((prevSelectedDays) => {
+          const filteredDays = prevSelectedDays.filter((day) =>
+            newCalculatedValidDays.includes(day)
+          );
+          const areSelectedDaysEqual =
+            filteredDays.length === prevSelectedDays.length &&
+            filteredDays.every((val, index) => val === prevSelectedDays[index]);
+          if (!areSelectedDaysEqual) {
+            return filteredDays;
+          }
+          return prevSelectedDays;
+        });
+      }
+    }
+  }, [
+    dataInicioPeriodica,
+    dataFimPeriodica,
+    currentMode,
+    getDaysInRange,
+    validDays,
+  ]);
+
+  const handleUpdateReserva = useCallback(async () => {
+    setLoading(true);
+
+    if (horaFim.getTime() <= horaInicio.getTime()) {
+      setModalInfo({
+        type: "error",
+        title: "Erro de Hora",
+        message: "A Hora de Fim deve ser posterior à Hora de Início.",
+      });
+      setModalVisible(true);
+      setLoading(false);
+      return;
+    }
+
+    let reservaToUpdate;
     try {
-      const response = await api.updateReserva(
-        reserva.id_reserva,
-        reservaAtualizada
-      );
+      if (currentMode === "simples") {
+        const formattedData = format(dataSimples, "yyyy-MM-dd");
+        const formattedHoraInicio = formatarHoraComSegundosZero(horaInicio);
+        const formattedHoraFim = formatarHoraComSegundosZero(horaFim);
 
-      setCustomModalTitle("Sucesso");
-      setCustomModalMessage(
-        response.data?.message || "Reserva atualizada com sucesso!"
-      );
-      setCustomModalType("success");
-      setCustomModalOpen(true);
-      onSuccess();
-      onClose();
+        reservaToUpdate = {
+          id_reserva: reserva.id_reserva,
+          data: formattedData,
+          hora_inicio: formattedHoraInicio,
+          hora_fim: formattedHoraFim,
+          fk_id_usuario: idUsuario,
+          fk_id_sala: reserva.fk_id_sala,
+          tipo_reserva: "simples",
+        };
+
+        console.log("Reserva a atualizar (simples):", reservaToUpdate);
+        const response = await api.putReserva(reserva.id_reserva, reservaToUpdate);
+        setModalInfo({
+          type: "success",
+          title: "Reserva Atualizada!",
+          message: response.data.message,
+        });
+      } else {
+        if (dataFimPeriodica.getTime() < dataInicioPeriodica.getTime()) {
+          setModalInfo({
+            type: "error",
+            title: "Erro de Data",
+            message:
+              "A Data de Fim deve ser posterior ou igual à Data de Início.",
+          });
+          setModalVisible(true);
+          setLoading(false);
+          return;
+        }
+        if (selectedDays.length === 0) {
+          setModalInfo({
+            type: "error",
+            title: "Erro de Dias da Semana",
+            message:
+              "Selecione pelo menos um dia da semana para a reserva periódica.",
+          });
+          setModalVisible(true);
+          setLoading(false);
+          return;
+        }
+
+        const formattedDataInicio = format(dataInicioPeriodica, "yyyy-MM-dd");
+        const formattedDataFim = format(dataFimPeriodica, "yyyy-MM-dd");
+        const formattedHoraInicio = formatarHoraComSegundosZero(horaInicio);
+        const formattedHoraFim = formatarHoraComSegundosZero(horaFim);
+
+        let diasSemanaToSend =
+          selectedDays.length === 1 ? selectedDays[0] : selectedDays;
+
+        reservaToUpdate = {
+          id_reserva: reserva.id_reserva,
+          data_inicio: formattedDataInicio,
+          data_fim: formattedDataFim,
+          hora_inicio: formattedHoraInicio,
+          hora_fim: formattedHoraFim,
+          fk_id_usuario: idUsuario,
+          fk_id_sala: reserva.fk_id_sala,
+          dias_semana: diasSemanaToSend,
+          tipo_reserva: "periodica",
+        };
+        console.log("Reserva a atualizar (periodica):", reservaToUpdate);
+        const response = await api.putReservaPeriodica(
+          reserva.id_reserva,
+          reservaToUpdate
+        );
+        setModalInfo({
+          type: "success",
+          title: "Reserva Atualizada!",
+          message: response.data.message,
+        });
+      }
+      setModalVisible(true);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
-      const msg =
-        error.response?.data?.error || "Não foi possível atualizar a reserva.";
-      setCustomModalTitle("Erro");
-      setCustomModalMessage(msg);
-      setCustomModalType("error");
-      setCustomModalOpen(true);
+      setModalInfo({
+        type: "error",
+        title: "Erro na Atualização da Reserva",
+        message:
+          error.response?.data?.error ||
+          "Erro desconhecido ao atualizar a reserva da sala.",
+      });
+      setModalVisible(true);
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-  };
+  }, [
+    currentMode,
+    dataSimples,
+    dataInicioPeriodica,
+    dataFimPeriodica,
+    horaInicio,
+    horaFim,
+    idUsuario,
+    selectedDays,
+    formatarHoraComSegundosZero,
+    reserva,
+    onSuccess,
+  ]);
+
+  const handleModalClose = useCallback(() => {
+    setModalVisible(false);
+    if (modalInfo.type === "success") {
+      navigate("/principal");
+      onClose();
+    }
+  }, [modalInfo.type, navigate, onClose]);
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <Modal open={open} onClose={onClose} sx={styles.modalContainer}>
         <Box sx={styles.modalBox}>
-          <Typography variant="h6" sx={styles.title}>
+          <IconButton onClick={onClose} sx={styles.closeButton}>
+            <CloseIcon />
+          </IconButton>
+
+          <EventAvailableIcon sx={styles.icon} />
+          <Typography variant="h5" sx={styles.title}>
             Atualizar Reserva
           </Typography>
-
-          <Typography variant="subtitle2" sx={styles.inputTitle}>
-            Data
+          <Typography variant="subtitle1" sx={styles.subTitle}>
+            {reserva?.sala}
           </Typography>
-          <DatePicker
-            value={date}
-            onChange={(newValue) => {
-              if (newValue) setDate(newValue);
-            }}
-            sx={styles.input}
-            format="dd/MM/yyyy"
-            renderInput={(params) => (
-              <TextField fullWidth margin="normal" {...params} />
-            )}
-          />
 
-          <Typography variant="subtitle2" sx={styles.inputTitle}>
-            Hora de Início
-          </Typography>
-          <TimePicker
-            value={horaInicio}
-            onChange={(newValue) => {
-              if (newValue) setHoraInicio(newValue);
+          <ToggleButtonGroup
+            value={currentMode}
+            exclusive
+            onChange={(event, newMode) => {
+              if (newMode !== null) {
+                setCurrentMode(newMode);
+              }
             }}
-            ampm={false}
-            sx={styles.input}
-            renderInput={(params) => (
-              <TextField fullWidth margin="normal" {...params} />
-            )}
-          />
+            aria-label="reservation mode"
+            sx={styles.modeToggleContainer}
+          >
+            <ToggleButton value="simples" aria-label="simple reservation">
+              Reserva Simples
+            </ToggleButton>
+            <ToggleButton value="periodica" aria-label="periodic reservation">
+              Reserva Periódica
+            </ToggleButton>
+          </ToggleButtonGroup>
 
-          <Typography variant="subtitle2" sx={styles.inputTitle}>
-            Hora de Fim
-          </Typography>
-          <TimePicker
-            value={horaFim}
-            onChange={(newValue) => {
-              if (newValue) setHoraFim(newValue);
-            }}
-            ampm={false}
-            sx={styles.input}
-            renderInput={(params) => (
-              <TextField fullWidth margin="normal" {...params} />
-            )}
-          />
+          {currentMode === "simples" ? (
+            <>
+              <Box
+                sx={{
+                  ...styles.inputGrid,
+                  gridTemplateColumns: { xs: "1fr", sm: "1fr" },
+                }}
+              >
+                <DatePicker
+                  value={dataSimples}
+                  onChange={(newValue) => newValue && setDataSimples(newValue)}
+                  minDate={getToday()}
+                  format="dd/MM/yyyy"
+                  slotProps={{
+                    textField: {
+                      label: "Data",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+              </Box>
 
-          <Box sx={styles.buttonContainer}>
-            <Button
-              variant="contained"
-              onClick={onClose}
-              sx={styles.buttonCancelar}
-            >
-              Cancelar
-            </Button>
-            <Button
-              variant="contained"
-              onClick={handleSubmit}
-              sx={styles.buttonReservar}
-            >
-              Salvar
-            </Button>
-          </Box>
+              <Box sx={styles.inputGrid}>
+                <TimePicker
+                  value={horaInicio}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      const ajustada = new Date(newValue);
+                      ajustada.setSeconds(0);
+                      ajustada.setMilliseconds(0);
+                      setHoraInicio(ajustada);
+                      ajustarHoraFim(ajustada);
+                    }
+                  }}
+                  ampm={false}
+                  slotProps={{
+                    textField: {
+                      label: "Início",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+
+                <TimePicker
+                  value={horaFim}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      const ajustada = new Date(newValue);
+                      ajustada.setSeconds(0);
+                      ajustada.setMilliseconds(0);
+                      setHoraFim(ajustada);
+                    }
+                  }}
+                  ampm={false}
+                  minTime={new Date(horaInicio.getTime() + 60 * 60 * 1000)}
+                  slotProps={{
+                    textField: {
+                      label: "Fim",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+              </Box>
+
+              <Box sx={styles.summary}>
+                <CalendarMonthIcon
+                  fontSize="small"
+                  sx={{ color: "rgba(177, 16, 16, 0.8)" }}
+                />
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: 500,
+                    color: "#455A64",
+                    flexShrink: 1,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  {formatarDataExibicao(dataSimples)} das{" "}
+                  {formatarHoraExibicao(horaInicio)} às{" "}
+                  {formatarHoraExibicao(horaFim)}
+                </Typography>
+              </Box>
+            </>
+          ) : (
+            <>
+              <Box sx={styles.inputGrid}>
+                <DatePicker
+                  value={dataInicioPeriodica}
+                  onChange={(newValue) =>
+                    newValue && setDataInicioPeriodica(newValue)
+                  }
+                  minDate={getToday()}
+                  format="dd/MM/yyyy"
+                  slotProps={{
+                    textField: {
+                      label: "Data Início",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+                <DatePicker
+                  value={dataFimPeriodica}
+                  onChange={(newValue) =>
+                    newValue && setDataFimPeriodica(newValue)
+                  }
+                  minDate={dataInicioPeriodica}
+                  format="dd/MM/yyyy"
+                  slotProps={{
+                    textField: {
+                      label: "Data Fim",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+              </Box>
+
+              <Box sx={styles.inputGrid}>
+                <TimePicker
+                  value={horaInicio}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      const ajustada = new Date(newValue);
+                      ajustada.setSeconds(0);
+                      ajustada.setMilliseconds(0);
+                      setHoraInicio(ajustada);
+                      ajustarHoraFim(ajustada);
+                    }
+                  }}
+                  ampm={false}
+                  slotProps={{
+                    textField: {
+                      label: "Início",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+
+                <TimePicker
+                  value={horaFim}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      const ajustada = new Date(newValue);
+                      ajustada.setSeconds(0);
+                      ajustada.setMilliseconds(0);
+                      setHoraFim(ajustada);
+                    }
+                  }}
+                  ampm={false}
+                  minTime={new Date(horaInicio.getTime() + 60 * 60 * 1000)}
+                  slotProps={{
+                    textField: {
+                      label: "Fim",
+                      fullWidth: true,
+                      sx: styles.pickerTextField,
+                    },
+                  }}
+                />
+              </Box>
+
+              <Box sx={styles.inputGroupFullWidth}>
+                <TextField
+                  label="Dias da Semana"
+                  fullWidth
+                  value={getSelectedDaysText()}
+                  onClick={() => setShowDaySelectionModal(true)}
+                  InputProps={{
+                    readOnly: true,
+                    endAdornment: <ArrowDropDownIcon sx={{ color: "#888" }} />,
+                    sx: styles.pickerTextField,
+                  }}
+                />
+              </Box>
+
+              <Box sx={styles.summary}>
+                <CalendarMonthIcon
+                  fontSize="small"
+                  sx={{ color: "rgba(177, 16, 16, 0.8)" }}
+                />
+                <Typography
+                  variant="body1"
+                  sx={{
+                    fontWeight: 500,
+                    color: "#455A64",
+                    flexShrink: 1,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  De {formatarDataExibicao(dataInicioPeriodica)} a{" "}
+                  {formatarDataExibicao(dataFimPeriodica)}, na(s){" "}
+                  {getSelectedDaysText()}, das{" "}
+                  {formatarHoraExibicao(horaInicio)} às{" "}
+                  {formatarHoraExibicao(horaFim)}
+                </Typography>
+              </Box>
+            </>
+          )}
+
+          <Button
+            variant="contained"
+            onClick={handleUpdateReserva}
+            sx={styles.reserveButton}
+            disabled={loading}
+          >
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Atualizar Reserva"
+            )}
+          </Button>
         </Box>
       </Modal>
+
+      <CustomModal
+        open={modalVisible}
+        onClose={handleModalClose}
+        title={modalInfo.title}
+        message={modalInfo.message}
+        type={modalInfo.type}
+      />
+
+      {currentMode === "periodica" && (
+        <DiasModal
+          visible={showDaySelectionModal}
+          onClose={() => setShowDaySelectionModal(false)}
+          validDays={validDays}
+          selectedDays={selectedDays}
+          toggleDay={toggleDay}
+          diasSemanaMap={diasSemanaMap}
+        />
+      )}
     </LocalizationProvider>
   );
 }
@@ -167,98 +632,143 @@ export default function AtualizarReservasUsuario({
 function getStyles() {
   return {
     modalContainer: {
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-      backdropFilter: "blur(6px)",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
+      backdropFilter: "blur(8px)",
+      backgroundColor: "rgba(0, 0, 0, 0.4)",
     },
     modalBox: {
-      position: "absolute",
-      top: "50%",
-      left: "50%",
-      transform: "translate(-50%, -50%)",
+      position: "relative",
+      width: { xs: "90%", sm: 400, md: 420 },
+      backgroundColor: "#fff",
+      borderRadius: 4,
+      padding: { xs: 3, sm: 4 },
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
-      justifyContent: "center",
-      width: 360,
-      maxWidth: "90%",
-      padding: 4,
-      backgroundColor: "#FFFFFF",
-      borderRadius: 12,
-      boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)",
+      boxShadow: "0 15px 35px rgba(0, 0, 0, 0.25)",
       outline: "none",
     },
+    closeButton: {
+      position: "absolute",
+      top: 30,
+      right: 40,
+      color: "#616161",
+      "&:hover": {
+        backgroundColor: "rgba(0, 0, 0, 0.04)",
+      },
+    },
+    icon: {
+      fontSize: 60,
+      color: "rgba(177, 16, 16, 1)",
+      marginBottom: 1,
+    },
     title: {
-      fontWeight: 600,
-      color: "#263238",
+      fontWeight: 700,
+      color: "#212121",
+      marginBottom: 0.5,
+    },
+    subTitle: {
+      fontSize: "1rem",
+      color: "#424242",
       marginBottom: 3,
-      fontSize: "24px",
+      textAlign: "center",
     },
-    inputTitle: {
-      color: "#455A64",
-      marginTop: 2,
-      marginBottom: 1,
-      fontSize: "15px",
-      alignSelf: "flex-start",
-      marginLeft: "10%",
+    modeToggleContainer: {
+      marginBottom: 3,
+      width: "90%",
+      borderRadius: 2,
+      overflow: "hidden",
+      backgroundColor: "#f0f0f0",
+      "& .MuiToggleButton-root": {
+        flex: 1,
+        border: "1px solid #e0e0e0",
+        "&.Mui-selected": {
+          backgroundColor: "rgb(177, 16, 16)",
+          color: "white",
+          borderColor: "rgb(177, 16, 16)",
+          "&:hover": {
+            backgroundColor: "rgb(177, 16, 16)",
+          },
+        },
+        "&:not(:first-of-type)": {
+          marginLeft: "-1px",
+          borderLeft: "1px solid transparent",
+        },
+        "&:hover": {
+          backgroundColor: "#e8e8e8",
+        },
+        fontSize: "0.9rem",
+        fontWeight: "bold",
+        color: "#555",
+        paddingY: "12px",
+      },
     },
-    input: {
-      borderRadius: 8,
-      marginBottom: 1,
-      marginTop: 1,
-      width: "80%",
-      "& .MuiInputBase-input": {
-        padding: "12px 16px",
-      },
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#CFD8DC",
-      },
-      "&:hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#90A4AE",
-      },
-      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-        borderColor: "#EF5350",
-        borderWidth: "2px",
-      },
+    inputGrid: {
+      display: "grid",
+      gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" },
+      gap: 2,
+      width: "100%",
+      maxWidth: "380px",
+      marginBottom: 3,
     },
-    buttonContainer: {
-      marginTop: 4,
+    inputGroupFullWidth: {
+      width: "100%",
+      maxWidth: "380px",
+      marginBottom: 3,
+    },
+    summary: {
       display: "flex",
-      justifyContent: "space-around",
-      width: "80%",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+      backgroundColor: "#f5f5f5",
+      borderRadius: 2,
+      padding: "12px 16px",
+      width: "340px",
+      marginTop: 1,
+      marginBottom: 3,
+      boxShadow: "inset 0 1px 3px rgba(0,0,0,0.08)",
+      flexWrap: "wrap",
+      textAlign: "center",
     },
-    buttonCancelar: {
-      backgroundColor: "#B30808",
-      color: "#5FFFFFF",
-      fontWeight: 500,
-      padding: "10px 20px",
-      borderRadius: 8,
-      textTransform: "none",
-      boxShadow: "none",
+    reserveButton: {
+      width: { xs: "80%", sm: "60%" },
+      padding: "12px 20px",
+      borderRadius: 10,
+      fontWeight: 700,
+      fontSize: "1.05rem",
+      backgroundColor: "rgba(177, 16, 16, 1)",
+      color: "#fff",
+      marginTop: 2,
+      transition:
+        "background-color 0.3s ease-in-out, transform 0.2s ease-in-out",
       "&:hover": {
-        backgroundColor: "#E53935",
-        boxShadow: "0 6px 15px rgba(239, 83, 80, 0.4)",
+        backgroundColor: "#b11010",
+        transform: "translateY(-2px)",
+        boxShadow: "0 4px 12px rgba(177, 16, 16, 0.4)",
       },
-      "&:active": {
-        backgroundColor: "#B0BEC5",
+      "&:disabled": {
+        backgroundColor: "rgba(177, 16, 16, 0.5)",
+        color: "#f0f0f0",
+        cursor: "not-allowed",
+        transform: "none",
+        boxShadow: "none",
       },
     },
-    buttonReservar: {
-      backgroundColor: "#B30808",
-      color: "#5FFFFFF",
-      fontWeight: 500,
-      padding: "10px 20px",
-      borderRadius: 8,
-      textTransform: "none",
-      boxShadow: "0 4px 12px rgba(239, 83, 80, 0.3)",
-      "&:hover": {
-        backgroundColor: "#E53935",
-        boxShadow: "0 6px 15px rgba(239, 83, 80, 0.4)",
-      },
-      "&:active": {
-        backgroundColor: "#D32F2F",
+    pickerTextField: {
+      "& .MuiOutlinedInput-root": {
+        backgroundColor: "#f5f5f5",
+        "& fieldset": {
+          borderColor: "#ddd",
+        },
+        "&:hover fieldset": {
+          borderColor: "#bbb",
+        },
+        "&.Mui-focused fieldset": {
+          borderColor: "rgb(177, 16, 16)",
+        },
       },
     },
   };

@@ -20,7 +20,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
-export default function HistoricoReservasModal({ open, onClose }) {
+export default function ReservasHistoricoModal({ open, onClose }) {
   const styles = getStyles();
 
   const [reservasSimples, setReservasSimples] = useState([]);
@@ -37,6 +37,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
     4: "Quinta-Feira",
     5: "Sexta-Feira",
     6: "Sábado",
+    7: "Domingo",
   };
 
   const fetchHistoricoReservas = useCallback(async () => {
@@ -44,13 +45,15 @@ export default function HistoricoReservasModal({ open, onClose }) {
     setError(null);
     try {
       const idUsuario = getIdFromToken();
+
       if (!idUsuario) {
         setError("ID do usuário não encontrado.");
         setLoading(false);
         return;
       }
-      const response = await api.getUsuarioHistoricoReservasbyId(idUsuario);
-      const historico = response.data.historico || [];
+
+      const response = await api.getHistoricoReservasById(idUsuario);
+      const historico = response.data.reservasHistorico || [];
 
       const simples = historico.filter(
         (reserva) => reserva.data_inicio === reserva.data_fim
@@ -82,6 +85,21 @@ export default function HistoricoReservasModal({ open, onClose }) {
   };
 
   const renderReservasList = (reservaList) => {
+    if (loading) {
+      return (
+        <Box sx={styles.loadingContainer}>
+          <CircularProgress sx={{ color: "#ccc" }} />
+          <Typography sx={{ mt: 2, color: "#ccc" }}>
+            Carregando histórico...
+          </Typography>
+        </Box>
+      );
+    }
+
+    if (error) {
+      return <Typography sx={styles.errorMessage}>{error}</Typography>;
+    }
+
     return (
       <Box sx={styles.scrollArea}>
         {reservaList.length === 0 ? (
@@ -112,10 +130,10 @@ export default function HistoricoReservasModal({ open, onClose }) {
                       </Typography>
                     }
                     secondary={
-                      <>
+                      <Typography component="div">
                         {activeTab === "simples" ? (
                           <Box>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -124,7 +142,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                               </Typography>{" "}
                               {String(reserva.data_inicio)}
                             </Typography>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -133,7 +151,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                               </Typography>{" "}
                               {String(reserva.hora_inicio).substring(0, 5)}
                             </Typography>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -142,7 +160,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                               </Typography>{" "}
                               {String(reserva.hora_fim).substring(0, 5)}
                             </Typography>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -156,7 +174,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                           </Box>
                         ) : (
                           <Box>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -165,7 +183,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                               </Typography>{" "}
                               {String(reserva.data_inicio)}
                             </Typography>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -174,7 +192,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                               </Typography>{" "}
                               {String(reserva.data_fim)}
                             </Typography>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -183,7 +201,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                               </Typography>{" "}
                               {String(reserva.hora_inicio).substring(0, 5)}
                             </Typography>
-                            <Typography sx={styles.detailText}>
+                            <Typography component="div" sx={styles.detailText}>
                               <Typography
                                 component="span"
                                 sx={styles.detailLabel}
@@ -227,7 +245,7 @@ export default function HistoricoReservasModal({ open, onClose }) {
                             </Box>
                           </Box>
                         )}
-                      </>
+                      </Typography>
                     }
                   />
                 </ListItem>
@@ -382,7 +400,8 @@ function getStyles() {
     },
     noReservas: {
       textAlign: "center",
-      marginVertical: "20px",
+      marginTop: "20px",
+      marginBottom: "20px",
       color: "gray",
       fontSize: "18px",
       flexGrow: 1,

@@ -12,7 +12,7 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Chip,
-  CircularProgress, // Adicionado para o estado de carregamento
+  CircularProgress,
 } from "@mui/material";
 
 import CloseIcon from "@mui/icons-material/Close";
@@ -24,8 +24,8 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import { getIdFromToken } from "../../auth/auth";
 import api from "../../services/axios";
 import AtualizarReservaModal from "./AtualizarReservaModal";
-import HistoricoReservasModal from "./HistoricoReservasModal";
-import HistoricoDelecaoReservasModal from "./HistoricoDelecaoReservasModal";
+import ReservasHistoricoModal from "./ReservasHistoricoModal";
+import ReservasDeletadasModal from "./ReservasDeletadasModal";
 
 function ReservasUsuarioModal({
   open,
@@ -43,8 +43,8 @@ function ReservasUsuarioModal({
   const [reservaSelecionadaParaEdicao, setReservaSelecionadaParaEdicao] =
     useState(null);
   const [mostrarEdicaoReserva, setMostrarEdicaoReserva] = useState(false);
-  const [loading, setLoading] = useState(true); // Estado de carregamento
-  const [error, setError] = useState(null); // Estado de erro
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [openHistorico, setOpenHistorico] = useState(false);
   const [openDelecao, setOpenDelecao] = useState(false);
@@ -73,8 +73,8 @@ function ReservasUsuarioModal({
   }, []);
 
   const fetchCurrentReservations = useCallback(async () => {
-    setLoading(true); // Inicia o carregamento
-    setError(null);    // Limpa erros anteriores
+    setLoading(true);
+    setError(null);
     try {
       const idUsuario = getIdFromToken();
       if (isNaN(idUsuario)) {
@@ -87,22 +87,36 @@ function ReservasUsuarioModal({
 
       const reservasFuturas = (responseReservas.data.reservas || []).filter(
         (reserva) => {
-          // Ajuste para lidar com casos onde data_fim ou hora_fim podem ser undefined/null
-          if (!reserva.data_fim || !reserva.hora_fim) {
-            console.warn("Reserva sem data_fim ou hora_fim:", reserva);
-            return false; // Ignora reservas sem informações completas de data/hora
+          if (reserva.tipo.toLowerCase().includes("simples")) {
+            const dataHoraInicio = parseDataHora(
+              reserva.data_inicio,
+              reserva.hora_fim
+            );
+            return dataHoraInicio >= agora;
+          } else if (reserva.tipo.toLowerCase().includes("periodica")) {
+            if (!reserva.data_fim || !reserva.hora_fim) {
+              console.warn(
+                "Reserva periódica sem data_fim ou hora_fim:",
+                reserva
+              );
+              return false;
+            }
+            const dataHoraFim = parseDataHora(
+              reserva.data_fim,
+              reserva.hora_fim
+            );
+            return dataHoraFim >= agora;
           }
-          const dataHoraFim = parseDataHora(reserva.data_fim, reserva.hora_fim);
-          const isFuture = dataHoraFim >= agora;
-          return isFuture;
+          return false;
         }
       );
+      console.log("resrevasFuturas", reservasFuturas);
       setCurrentReservas(reservasFuturas);
     } catch (error) {
       console.error("Erro ao buscar reservas atuais:", error);
       setError("Não foi possível carregar suas reservas.");
     } finally {
-      setLoading(false); // Finaliza o carregamento
+      setLoading(false);
     }
   }, [parseDataHora]);
 
@@ -138,7 +152,7 @@ function ReservasUsuarioModal({
   const handleFecharEdicaoReserva = () => {
     setMostrarEdicaoReserva(false);
     setReservaSelecionadaParaEdicao(null);
-    fetchCurrentReservations(); // Recarrega as reservas após a edição
+    fetchCurrentReservations();
   };
 
   const handleDeletarReserva = (reserva) => {
@@ -158,8 +172,9 @@ function ReservasUsuarioModal({
         setCustomModalTitle("Sucesso");
         setCustomModalMessage("Reserva apagada com sucesso!");
         setCustomModalType("success");
-        fetchCurrentReservations(); // Recarrega as reservas após a deleção
+        fetchCurrentReservations();
       } catch (error) {
+        console.error("Erro ao apagar reserva:", error);
         setCustomModalOpen(true);
         setCustomModalTitle("Erro");
         setCustomModalMessage("Erro ao apagar reserva. Tente novamente.");
@@ -190,15 +205,16 @@ function ReservasUsuarioModal({
     }
 
     if (error) {
-      return (
-        <Typography sx={styles.errorMessage}>{error}</Typography>
-      );
+      return <Typography sx={styles.errorMessage}>{error}</Typography>;
     }
 
     return (
       <Box sx={styles.scrollArea}>
         {reservaList.length === 0 ? (
-          <Typography sx={styles.noReservas}>Nenhuma reserva {activeTab === "simples" ? "simples" : "periódica"} encontrada.</Typography>
+          <Typography sx={styles.noReservas}>
+            Nenhuma reserva {activeTab === "simples" ? "simples" : "periódica"}{" "}
+            encontrada.
+          </Typography>
         ) : (
           <List>
             {reservaList.map((reserva) => {
@@ -214,19 +230,15 @@ function ReservasUsuarioModal({
               const showExpandToggle = formattedDaysArray.length > 1;
 
               return (
-                <ListItem
-                  key={reserva.id_reserva} // Corrigido: usando apenas id_reserva como key única
-                  sx={styles.itemReserva}
-                >
+                <ListItem key={reserva.id_reserva} sx={styles.itemReserva}>
                   <ListItemText
                     primary={
                       <Typography sx={styles.itemTitle}>
                         {String(reserva.sala)}
                       </Typography>
                     }
-                    // Adicionado component="div" para evitar aninhamento de <p>
                     secondary={
-                      <Box component="div">
+                      <Typography component="div">
                         {activeTab === "simples" ? (
                           <>
                             <Typography component="div" sx={styles.detailText}>
@@ -256,17 +268,20 @@ function ReservasUsuarioModal({
                               </Typography>{" "}
                               {String(reserva.hora_fim).substring(0, 5)}
                             </Typography>
-                            <Typography component="div" sx={styles.detailText}>
+                            {formattedDaysArray.length > 0 && (
                               <Typography
-                                component="span"
-                                sx={styles.detailLabel}
+                                component="div"
+                                sx={styles.detailText}
                               >
-                                Dia da Semana:
-                              </Typography>{" "}
-                              {formattedDaysArray.length > 0
-                                ? formattedDaysArray.join(", ")
-                                : "N/A"}
-                            </Typography>
+                                <Typography
+                                  component="span"
+                                  sx={styles.detailLabel}
+                                >
+                                  Dia da Semana:
+                                </Typography>{" "}
+                                {formattedDaysArray.join(", ")}
+                              </Typography>
+                            )}
                           </>
                         ) : (
                           <Box>
@@ -315,13 +330,15 @@ function ReservasUsuarioModal({
                               </Typography>{" "}
                               <Box sx={styles.chipsContainer}>
                                 {isExpanded || !showExpandToggle ? (
-                                  formattedDaysArray.map((dayName, dayIndex) => (
-                                    <Chip
-                                      key={dayIndex}
-                                      label={dayName}
-                                      sx={styles.dayChip}
-                                    />
-                                  ))
+                                  formattedDaysArray.map(
+                                    (dayName, dayIndex) => (
+                                      <Chip
+                                        key={dayIndex}
+                                        label={dayName}
+                                        sx={styles.dayChip}
+                                      />
+                                    )
+                                  )
                                 ) : (
                                   <Chip
                                     label={`${formattedDaysArray[0]}...`}
@@ -330,23 +347,31 @@ function ReservasUsuarioModal({
                                 )}
                                 {showExpandToggle && (
                                   <IconButton
-                                    onClick={() => toggleDayExpansion(reserva.id_reserva)}
+                                    onClick={() =>
+                                      toggleDayExpansion(reserva.id_reserva)
+                                    }
                                     size="small"
                                     sx={styles.expandToggleButton}
                                   >
-                                    {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                    {isExpanded ? (
+                                      <ExpandLessIcon />
+                                    ) : (
+                                      <ExpandMoreIcon />
+                                    )}
                                   </IconButton>
                                 )}
                               </Box>
                             </Box>
                           </Box>
                         )}
-                      </Box>
+                      </Typography>
                     }
                   />
                   <Box sx={styles.itemActions}>
                     <IconButton
-                      onClick={() => handleEditarReserva(reserva)}
+                      onClick={() => {
+                        handleEditarReserva(reserva);
+                      }}
                       sx={styles.actionButton}
                     >
                       <EditIcon sx={styles.actionIcon} />
@@ -451,12 +476,12 @@ function ReservasUsuarioModal({
         </Box>
       </Modal>
 
-      {reservaSelecionadaParaEdicao && (
+      {mostrarEdicaoReserva && reservaSelecionadaParaEdicao && (
         <AtualizarReservaModal
-          visible={mostrarEdicaoReserva}
+          open={true}
           onClose={handleFecharEdicaoReserva}
           reserva={reservaSelecionadaParaEdicao}
-          onUpdateSuccess={fetchCurrentReservations}
+          onSuccess={fetchCurrentReservations}
           setCustomModalOpen={setCustomModalOpen}
           setCustomModalTitle={setCustomModalTitle}
           setCustomModalMessage={setCustomModalMessage}
@@ -464,7 +489,7 @@ function ReservasUsuarioModal({
         />
       )}
 
-      <HistoricoReservasModal
+      <ReservasHistoricoModal
         open={openHistorico}
         onClose={() => setOpenHistorico(false)}
         setCustomModalOpen={setCustomModalOpen}
@@ -472,7 +497,7 @@ function ReservasUsuarioModal({
         setCustomModalMessage={setCustomModalMessage}
         setCustomModalType={setCustomModalType}
       />
-      <HistoricoDelecaoReservasModal
+      <ReservasDeletadasModal
         open={openDelecao}
         onClose={() => setOpenDelecao(false)}
       />

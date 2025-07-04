@@ -18,9 +18,9 @@ import {
 
 import CloseIcon from "@mui/icons-material/Close";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandLessIcon from "@mui/icons-material/ExpandMore";
 
-export default function HistoricoDelecaoReservasModal({ open, onClose }) {
+export default function ReservasDeletadasModal({ open, onClose }) {
   const [delecoes, setDelecoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -38,10 +38,10 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
     7: "Domingo",
   };
 
-  const toggleDayExpansion = (logId) => {
+  const toggleDayExpansion = (reservationId) => {
     setExpandedDaysMap((prevState) => ({
       ...prevState,
-      [logId]: !prevState[logId],
+      [reservationId]: !prevState[reservationId],
     }));
   };
 
@@ -53,13 +53,12 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
       if (!idUsuario) {
         throw new Error("ID do usuário não encontrado.");
       }
-      const { data } = await api.getUsuarioHistoricoReservasDelecaobyId(
-        idUsuario
-      );
-      const formattedDelecoes = (data.reservasDeletadas || []).map(item => ({
+      const { data } = await api.getReservasDeletadasById(idUsuario);
+      const formattedDelecoes = (data.reservasDeletadas || []).map((item) => ({
         ...item,
-        // Garante que 'dias_semana' é um array e seus itens são strings
-        dias_semana: Array.isArray(item.dias_semana) ? item.dias_semana.map(String) : [],
+        dias_semana: Array.isArray(item.dias_semana)
+          ? item.dias_semana.map(String)
+          : [],
       }));
       setDelecoes(formattedDelecoes);
     } catch (err) {
@@ -78,11 +77,13 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
 
   const simplesDelecoes = delecoes.filter(
     (delecao) =>
-      typeof delecao.tipo === "string" && delecao.tipo.toLowerCase() === "simples"
+      typeof delecao.tipo === "string" &&
+      delecao.tipo.toLowerCase() === "simples"
   );
   const periodicasDelecoes = delecoes.filter(
     (delecao) =>
-      typeof delecao.tipo === "string" && delecao.tipo.toLowerCase() === "periodica"
+      typeof delecao.tipo === "string" &&
+      delecao.tipo.toLowerCase() === "periodica"
   );
 
   const renderDelecoesList = (list) => {
@@ -90,12 +91,13 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
       <Box sx={styles.scrollArea}>
         {list.length === 0 ? (
           <Typography sx={styles.noData}>
-            Nenhum registro de deleção {activeTab === "simples" ? "simples" : "periódica"} encontrado.
+            Nenhum registro de deleção{" "}
+            {activeTab === "simples" ? "simples" : "periódica"} encontrado.
           </Typography>
         ) : (
           <List>
-            {list.map((item) => { // Removido 'idx' pois 'id_log' já é uma key única
-              const isExpanded = expandedDaysMap[item.id_log];
+            {list.map((item) => {
+              const isExpanded = expandedDaysMap[item.id_reserva];
               const formattedDaysArray =
                 item.dias_semana && Array.isArray(item.dias_semana)
                   ? item.dias_semana.map(
@@ -107,7 +109,7 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
               const showExpandToggle = formattedDaysArray.length > 1;
 
               return (
-                <ListItem key={item.id_log} sx={styles.listItem}>
+                <ListItem key={item.id_reserva} sx={styles.listItem}>
                   <ListItemText
                     primary={
                       <Typography sx={styles.listItemTitle}>
@@ -115,88 +117,99 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
                       </Typography>
                     }
                     secondary={
-                      <>
+                      // This is the Typography that was rendering as <p>
+                      // Changed component to "div" to allow Box children
+                      <Typography component="div">
                         {activeTab === "simples" ? (
                           <Box>
-                            <Typography sx={styles.detailText}>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Data:
                               </Typography>{" "}
                               {item.data_inicio}
-                            </Typography>
-                            <Typography sx={styles.detailText}>
+                            </Box>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Hora Início:
                               </Typography>{" "}
                               {String(item.hora_inicio).substring(0, 5)}
-                            </Typography>
-                            <Typography sx={styles.detailText}>
+                            </Box>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Hora Fim:
                               </Typography>{" "}
                               {String(item.hora_fim).substring(0, 5)}
-                            </Typography>
-                            <Typography sx={styles.detailText}>
+                            </Box>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Removido em:
                               </Typography>{" "}
-                              {new Date(item.data_delecao).toLocaleDateString()}
-                            </Typography>
+                              {item.data_delecao}
+                            </Box>
                           </Box>
                         ) : (
                           <Box>
-                            <Typography sx={styles.detailText}>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Data Início:
                               </Typography>{" "}
                               {item.data_inicio}
-                            </Typography>
-                            <Typography sx={styles.detailText}>
+                            </Box>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Data Fim:
                               </Typography>{" "}
                               {item.data_fim}
-                            </Typography>
-                            <Typography sx={styles.detailText}>
+                            </Box>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Hora Início:
                               </Typography>{" "}
                               {String(item.hora_inicio).substring(0, 5)}
-                            </Typography>
-                            <Typography sx={styles.detailText}>
+                            </Box>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Hora Fim:
                               </Typography>{" "}
                               {String(item.hora_fim).substring(0, 5)}
-                            </Typography>
+                            </Box>
                             <Box sx={styles.detailRow}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Dias da Semana:
                               </Typography>{" "}
@@ -204,7 +217,7 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
                                 {isExpanded || !showExpandToggle ? (
                                   formattedDaysArray.map((dayName, dayIndex) => (
                                     <Chip
-                                      key={dayIndex}
+                                      key={`${item.id_reserva}-${item.dias_semana[dayIndex]}`}
                                       label={dayName}
                                       sx={styles.dayChip}
                                     />
@@ -213,31 +226,39 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
                                   <Chip
                                     label={`${formattedDaysArray[0]}...`}
                                     sx={styles.dayChip}
+                                    key={`${item.id_reserva}-${item.dias_semana[0]}-collapsed`}
                                   />
                                 )}
                                 {showExpandToggle && (
                                   <IconButton
-                                    onClick={() => toggleDayExpansion(item.id_log)}
+                                    onClick={() =>
+                                      toggleDayExpansion(item.id_reserva)
+                                    }
                                     size="small"
                                     sx={styles.expandToggleButton}
                                   >
-                                    {isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                    {isExpanded ? (
+                                      <ExpandLessIcon />
+                                    ) : (
+                                      <ExpandMoreIcon />
+                                    )}
                                   </IconButton>
                                 )}
                               </Box>
                             </Box>
-                            <Typography sx={styles.detailText}>
+                            <Box sx={styles.detailText}>
                               <Typography
-                                component="span"
                                 sx={styles.detailLabel}
+                                display="inline"
+                                component="span"
                               >
                                 Removido em:
                               </Typography>{" "}
-                              {new Date(item.data_delecao).toLocaleDateString()}
-                            </Typography>
+                              {item.data_delecao}
+                            </Box>
                           </Box>
                         )}
-                      </>
+                      </Typography>
                     }
                   />
                 </ListItem>
@@ -251,7 +272,6 @@ export default function HistoricoDelecaoReservasModal({ open, onClose }) {
 
   return (
     <Modal open={open} onClose={onClose} sx={styles.overlay}>
-      {/* O único filho direto do Modal deve ser um único elemento */}
       <Box sx={styles.modal}>
         <IconButton onClick={onClose} sx={styles.closeButton}>
           <CloseIcon sx={{ fontSize: "35px" }} />

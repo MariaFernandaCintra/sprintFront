@@ -21,7 +21,7 @@ import {
 } from "@mui/icons-material";
 import CloseIcon from "@mui/icons-material/Close";
 
-function UpdateUsuarioModal({
+function AtualizarUsuarioModal({
   open,
   onClose,
   userData,
@@ -299,4 +299,4 @@ function getStyles() {
   };
 }
 
-export default UpdateUsuarioModal;
+export default AtualizarUsuarioModal;

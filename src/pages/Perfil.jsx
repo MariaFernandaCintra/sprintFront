@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import api from "../services/axios";
 import { getIdFromToken } from "../auth/auth";
@@ -22,7 +22,7 @@ import AtualizarReservaModal from "../components/mod/AtualizarReservaModal";
 import ReservasUsuarioModal from "../components/mod/ReservasUsuarioModal";
 import CustomModal from "../components/mod/CustomModal";
 import ConfirmarSenhaModal from "../components/mod/ConfirmarSenhaModal";
-import UpdateUsuarioModal from "../components/mod/UpdateUsuarioModal";
+import AtualizarUsuarioModal from "../components/mod/AtualizarUsuarioModal";
 import ConfirmarDelecaoModal from "../components/mod/ConfirmarDelecaoModal";
 
 function Perfil() {
@@ -47,20 +47,14 @@ function Perfil() {
   const [openUpdateModal, setOpenUpdateModal] = useState(false);
   const [selectedReserva, setSelectedReserva] = useState(null);
 
-  const [openConfirmPasswordModal, setOpenConfirmPasswordModal] =
-    useState(false);
+  const [openConfirmPasswordModal, setOpenConfirmPasswordModal] = useState(false);
   const [confirmPasswordAction, setConfirmPasswordAction] = useState(null);
 
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
 
   const [openConfirmDeleteModal, setOpenConfirmDeleteModal] = useState(false);
 
-  useEffect(() => {
-    document.title = "Perfil | SENAI";
-    fetchDados();
-  }, []);
-
-  const fetchDados = async () => {
+  const fetchDados = useCallback(async () => {
     const idUsuario = getIdFromToken();
     if (!idUsuario) return;
     try {
@@ -71,16 +65,18 @@ function Perfil() {
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    document.title = "Perfil | SENAI";
+    fetchDados();
+  }, [fetchDados]);
 
   const handleApagarReserva = async (idReserva) => {
     try {
       const idUsuario = getIdFromToken();
       await api.deleteReserva(idReserva, idUsuario);
-      if (idUsuario) {
-        const responseReservas = await api.getUsuarioReservasById(idUsuario);
-        setReservas(responseReservas.data.reservas || []);
-      }
+      await fetchDados();
       setCustomModalTitle("Sucesso");
       setCustomModalMessage("Reserva apagada com sucesso!");
       setCustomModalType("success");
@@ -285,11 +281,7 @@ function Perfil() {
           open={openUpdateModal}
           onClose={() => setOpenUpdateModal(false)}
           reserva={selectedReserva}
-          onSuccess={async () => {
-            const idUsuario = getIdFromToken();
-            const response = await api.getUsuarioReservaById(idUsuario);
-            setReservas(response.data.reservas || []);
-          }}
+          onSuccess={fetchDados}
           setCustomModalOpen={setCustomModalOpen}
           setCustomModalTitle={setCustomModalTitle}
           setCustomModalMessage={setCustomModalMessage}
@@ -303,7 +295,7 @@ function Perfil() {
         onConfirm={handlePasswordConfirmation}
       />
 
-      <UpdateUsuarioModal
+      <AtualizarUsuarioModal
         open={openEditProfileModal}
         onClose={() => setOpenEditProfileModal(false)}
         userData={usuario}
