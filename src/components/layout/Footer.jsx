@@ -9,7 +9,7 @@ const Footer = () => {
   return (
     <Box sx={styles.footer}>
       <Typography sx={styles.footerText}>
-        &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria Fernanda
+        &copy;CSSTORAGE
       </Typography>
     </Box>
   );
