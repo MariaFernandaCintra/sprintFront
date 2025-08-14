@@ -12,7 +12,13 @@ import {
   Typography,
 } from "@mui/material";
 
-import { Visibility, VisibilityOff, Person, Lock, ArrowForward } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  Person,
+  Lock,
+  ArrowForward,
+} from "@mui/icons-material";
 
 import CustomModal from "../components/mod/CustomModal";
 
@@ -21,7 +27,7 @@ function Login() {
   useEffect(() => {
     document.title = "Login | SENAI";
   }, []);
-  const [user, setUser] = useState({ email: "", password: "" });
+  const [usuario, setUsuario] = useState({ email: "", senha: "" });
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
@@ -50,7 +56,7 @@ function Login() {
   };
 
   async function LoginUsuario() {
-    await api.postLogin(user).then(
+    await api.postLogin(usuario).then(
       (response) => {
         setModalInfo({
           title: "Sucesso!",
@@ -93,13 +99,13 @@ function Login() {
           name="email"
           autoComplete="email"
           autoFocus
-          value={user.email}
+          value={usuario.email}
           onChange={onChange}
           sx={styles.textField}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Person sx={{ color: 'gray' }} />
+                <Person sx={{ color: "gray" }} />
               </InputAdornment>
             ),
           }}
@@ -108,25 +114,27 @@ function Login() {
           margin="normal"
           required
           fullWidth
-          name="password"
+          name="senha"
           label="senha"
           type={mostrarSenha ? "text" : "password"}
-          id="password"
+          id="senha"
           autoComplete="current-password"
-          value={user.password}
+          value={usuario.senha}
           onChange={onChange}
           sx={styles.textField}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Lock sx={{ color: 'gray' }} />
+                <Lock sx={{ color: "gray" }} />
               </InputAdornment>
             ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={() => setMostrarSenha((previousState) => !previousState)}
+                  onClick={() =>
+                    setMostrarSenha((previousState) => !previousState)
+                  }
                   edge="end"
                   sx={{ color: "gray", mr: 0 }}
                 >
@@ -136,11 +144,7 @@ function Login() {
             ),
           }}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          sx={styles.buttonLogin}
-        >
+        <Button type="submit" variant="contained" sx={styles.buttonLogin}>
           Login
         </Button>
         <Typography variant="body2" sx={styles.naoTemContaText}>
@@ -180,7 +184,7 @@ function getStyles() {
       alignItems: "center",
       minHeight: "80.5vh",
       minWidth: "100%",
-      justifyContent: 'center',
+      justifyContent: "center",
     },
     form: {
       mt: 0,
@@ -188,59 +192,59 @@ function getStyles() {
       flexDirection: "column",
       alignItems: "center",
       backgroundColor: "white",
-      padding: '40px 30px',
-      borderRadius: '20px',
-      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-      width: '100%',
-      maxWidth: '400px',
+      padding: "40px 30px",
+      borderRadius: "20px",
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+      width: "100%",
+      maxWidth: "400px",
     },
     loginIconBox: {
-        backgroundColor: 'rgba(255, 0, 0, 1)',
-        borderRadius: '50%',
-        width: '80px',
-        height: '80px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        mb: 2,
+      backgroundColor: "rgba(255, 0, 0, 1)",
+      borderRadius: "50%",
+      width: "80px",
+      height: "80px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      mb: 2,
     },
     loginIcon: {
-        color: 'white',
-        fontSize: '40px',
+      color: "white",
+      fontSize: "40px",
     },
     loginTitle: {
-        fontSize: '24px',
-        fontWeight: 'bold',
-        mb: 3,
-        color: '#333',
+      fontSize: "24px",
+      fontWeight: "bold",
+      mb: 3,
+      color: "#333",
     },
     textField: {
-        mb: 2,
-        '& .MuiOutlinedInput-root': {
-            borderRadius: '10px',
-            backgroundColor: '#f5f5f5',
-            '& fieldset': {
-                borderColor: 'transparent',
-            },
-            '&:hover fieldset': {
-                borderColor: 'transparent',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: 'rgba(255, 0, 0, 0.5)',
-                borderWidth: '1px',
-            },
+      mb: 2,
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+        backgroundColor: "#f5f5f5",
+        "& fieldset": {
+          borderColor: "transparent",
         },
-        '& .MuiInputBase-input': {
-            padding: '12px 14px',
-            fontSize: '16px',
-            color: '#333',
+        "&:hover fieldset": {
+          borderColor: "transparent",
         },
-        '& .MuiInputLabel-root': {
-            color: 'gray',
-            '&.Mui-focused': {
-                color: 'rgba(255, 0, 0, 1)',
-            },
+        "&.Mui-focused fieldset": {
+          borderColor: "rgba(255, 0, 0, 0.5)",
+          borderWidth: "1px",
         },
+      },
+      "& .MuiInputBase-input": {
+        padding: "12px 14px",
+        fontSize: "16px",
+        color: "#333",
+      },
+      "& .MuiInputLabel-root": {
+        color: "gray",
+        "&.Mui-focused": {
+          color: "rgba(255, 0, 0, 1)",
+        },
+      },
     },
     buttonLogin: {
       "&.MuiButton-root": {
@@ -253,7 +257,7 @@ function getStyles() {
       mt: 3,
       color: "white",
       backgroundColor: "rgba(255, 0, 0, 1)",
-      width: '100%',
+      width: "100%",
       height: 50,
       fontWeight: 600,
       fontSize: 16,
@@ -261,8 +265,8 @@ function getStyles() {
       textTransform: "none",
     },
     naoTemContaText: {
-        mt: 2,
-        color: 'gray',
+      mt: 2,
+      color: "gray",
     },
     buttonCadastro: {
       color: "rgba(255, 0, 0, 1)",

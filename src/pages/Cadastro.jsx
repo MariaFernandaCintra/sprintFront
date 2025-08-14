@@ -12,21 +12,29 @@ import {
   Typography,
 } from "@mui/material";
 
-import { Visibility, VisibilityOff, PersonOutline, Email, Article, Lock } from "@mui/icons-material";
+import {
+  Visibility,
+  VisibilityOff,
+  PersonOutline,
+  Email,
+  Article,
+  Lock,
+} from "@mui/icons-material";
 
 import CustomModal from "../components/mod/CustomModal";
 
-function Register() {
+function Cadastro() {
   const styles = getStyles();
   useEffect(() => {
     document.title = "Cadastro | SENAI";
   }, []);
 
-  const [user, setUser] = useState({
-    name: "",
+  const [usuario, setUsuario] = useState({
+    nome: "",
     email: "",
-    password: "",
-    confirmPassword: "",
+    NIF: "",
+    senha: "",
+    confirmarSenha: "",
   });
 
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -44,12 +52,12 @@ function Register() {
 
   const onChange = (event) => {
     const { name, value } = event.target;
-    setUser({ ...user, [name]: value });
+    setUsuario({ ...usuario, [name]: value });
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    RegisterUser();
+    CadastroUsuario();
   };
 
   const handleCloseModal = () => {
@@ -59,8 +67,8 @@ function Register() {
     }
   };
 
-  async function RegisterUser() {
-    await api.postRegister(user).then(
+  async function CadastroUsuario() {
+    await api.postCadastro(usuario).then(
       (response) => {
         setModalInfo({
           title: "Sucesso!",
@@ -97,18 +105,18 @@ function Register() {
           margin="normal"
           required
           fullWidth
-          id="name"
+          id="nome"
           label="nome"
-          name="name"
+          name="nome"
           autoComplete="name"
           autoFocus
-          value={user.name}
+          value={usuario.nome}
           onChange={onChange}
           sx={styles.textField}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <PersonOutline sx={{ color: 'gray' }} />
+                <PersonOutline sx={{ color: "gray" }} />
               </InputAdornment>
             ),
           }}
@@ -121,13 +129,13 @@ function Register() {
           label="e-mail"
           name="email"
           autoComplete="email"
-          value={user.email}
+          value={usuario.email}
           onChange={onChange}
           sx={styles.textField}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Email sx={{ color: 'gray' }} />
+                <Email sx={{ color: "gray" }} />
               </InputAdornment>
             ),
           }}
@@ -136,25 +144,47 @@ function Register() {
           margin="normal"
           required
           fullWidth
-          name="password"
-          label="senha"
-          type={mostrarSenha ? "text" : "password"}
-          id="senha"
-          autoComplete="new-password"
-          value={user.password}
+          id="NIF"
+          label="NIF"
+          type="number"
+          name="NIF"
+          autoComplete="off"
+          value={usuario.NIF}
           onChange={onChange}
           sx={styles.textField}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Lock sx={{ color: 'gray' }} />
+                <Article sx={{ color: "gray" }} />
+              </InputAdornment>
+            ),
+          }}
+        />
+        <TextField
+          margin="normal"
+          required
+          fullWidth
+          name="senha"
+          label="senha"
+          type={mostrarSenha ? "text" : "password"}
+          id="senha"
+          autoComplete="new-password"
+          value={usuario.senha}
+          onChange={onChange}
+          sx={styles.textField}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <Lock sx={{ color: "gray" }} />
               </InputAdornment>
             ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle password visibility"
-                  onClick={() => setMostrarSenha((previousState) => !previousState)}
+                  onClick={() =>
+                    setMostrarSenha((previousState) => !previousState)
+                  }
                   edge="end"
                   sx={{ color: "gray", mr: 0 }}
                 >
@@ -168,25 +198,27 @@ function Register() {
           margin="normal"
           required
           fullWidth
-          name="confirmPassword"
+          name="confirmarSenha"
           label="confirmar senha"
           type={mostrarConfirmarSenha ? "text" : "password"}
           id="confirmarSenha"
           autoComplete="new-password"
-          value={user.confirmPassword}
+          value={usuario.confirmarSenha}
           onChange={onChange}
           sx={styles.textField}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Lock sx={{ color: 'gray' }} />
+                <Lock sx={{ color: "gray" }} />
               </InputAdornment>
             ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
                   aria-label="toggle confirm password visibility"
-                  onClick={() => setMostrarConfirmarSenha((previousState) => !previousState)}
+                  onClick={() =>
+                    setMostrarConfirmarSenha((previousState) => !previousState)
+                  }
                   edge="end"
                   sx={{ color: "gray", mr: 0 }}
                 >
@@ -196,11 +228,7 @@ function Register() {
             ),
           }}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          sx={styles.buttonCadastro}
-        >
+        <Button type="submit" variant="contained" sx={styles.buttonCadastro}>
           Cadastrar-se
         </Button>
         <Typography variant="body2" sx={styles.jaTemContaText}>
@@ -240,7 +268,7 @@ function getStyles() {
       alignItems: "center",
       minHeight: "80.5vh",
       minWidth: "100%",
-      justifyContent: 'center',
+      justifyContent: "center",
     },
     form: {
       mt: 0,
@@ -248,59 +276,59 @@ function getStyles() {
       flexDirection: "column",
       alignItems: "center",
       backgroundColor: "white",
-      padding: '40px 30px',
-      borderRadius: '20px',
-      boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-      width: '100%',
-      maxWidth: '400px',
+      padding: "40px 30px",
+      borderRadius: "20px",
+      boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
+      width: "100%",
+      maxWidth: "400px",
     },
     cadastroIconBox: {
-        backgroundColor: 'rgba(255, 0, 0, 1)',
-        borderRadius: '50%',
-        width: '80px',
-        height: '80px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        mb: 2,
+      backgroundColor: "rgba(255, 0, 0, 1)",
+      borderRadius: "50%",
+      width: "80px",
+      height: "80px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      mb: 2,
     },
     cadastroIcon: {
-        color: 'white',
-        fontSize: '40px',
+      color: "white",
+      fontSize: "40px",
     },
     cadastroTitle: {
-        fontSize: '24px',
-        fontWeight: 'bold',
-        mb: 3,
-        color: '#333',
+      fontSize: "24px",
+      fontWeight: "bold",
+      mb: 3,
+      color: "#333",
     },
     textField: {
-        mb: 2,
-        '& .MuiOutlinedInput-root': {
-            borderRadius: '10px',
-            backgroundColor: '#f5f5f5',
-            '& fieldset': {
-                borderColor: 'transparent',
-            },
-            '&:hover fieldset': {
-                borderColor: 'transparent',
-            },
-            '&.Mui-focused fieldset': {
-                borderColor: 'rgba(255, 0, 0, 0.5)',
-                borderWidth: '1px',
-            },
+      mb: 2,
+      "& .MuiOutlinedInput-root": {
+        borderRadius: "10px",
+        backgroundColor: "#f5f5f5",
+        "& fieldset": {
+          borderColor: "transparent",
         },
-        '& .MuiInputBase-input': {
-            padding: '12px 14px',
-            fontSize: '16px',
-            color: '#333',
+        "&:hover fieldset": {
+          borderColor: "transparent",
         },
-        '& .MuiInputLabel-root': {
-            color: 'gray',
-            '&.Mui-focused': {
-                color: 'rgba(255, 0, 0, 1)',
-            },
+        "&.Mui-focused fieldset": {
+          borderColor: "rgba(255, 0, 0, 0.5)",
+          borderWidth: "1px",
         },
+      },
+      "& .MuiInputBase-input": {
+        padding: "12px 14px",
+        fontSize: "16px",
+        color: "#333",
+      },
+      "& .MuiInputLabel-root": {
+        color: "gray",
+        "&.Mui-focused": {
+          color: "rgba(255, 0, 0, 1)",
+        },
+      },
     },
     buttonCadastro: {
       "&.MuiButton-root": {
@@ -313,7 +341,7 @@ function getStyles() {
       mt: 3,
       color: "white",
       backgroundColor: "rgba(255, 0, 0, 1)",
-      width: '100%',
+      width: "100%",
       height: 50,
       fontWeight: 600,
       fontSize: 16,
@@ -321,8 +349,8 @@ function getStyles() {
       textTransform: "none",
     },
     jaTemContaText: {
-        mt: 2,
-        color: 'gray',
+      mt: 2,
+      color: "gray",
     },
     buttonToLogin: {
       color: "rgba(255, 0, 0, 1)",
@@ -341,4 +369,4 @@ function getStyles() {
   };
 }
 
-export default Register;
+export default Cadastro;

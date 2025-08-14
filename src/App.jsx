@@ -7,6 +7,8 @@ import ProtectedRouter from "./components/secure/ProtectedRoute";
 import Cadastro from "./pages/Cadastro";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import Principal from "./pages/Principal";
+import Perfil from "./pages/Perfil";
 
 import DefaultLayout from "./components/layout/DefaultLayout";
 
@@ -36,6 +38,22 @@ function App() {
               <DefaultLayout>
                 <Cadastro />
               </DefaultLayout>
+            }
+          />
+          <Route
+            path="/principal"
+            element={
+              <ProtectedRouter>
+                <Principal />
+              </ProtectedRouter>
+            }
+          />
+          <Route
+            path="/perfil"
+            element={
+              <ProtectedRouter>
+                <Perfil />
+              </ProtectedRouter>
             }
           />
         </Routes>

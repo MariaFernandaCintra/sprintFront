@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import logo from "../../img/logo.png";
+
 import { Box, Button, Container, Typography } from "@mui/material";
-import Footer from "../components/layout/Footer";
 
 function Home() {
   const styles = getStyles();
@@ -30,11 +30,14 @@ function Home() {
         </Box>
         <Box sx={styles.body}>
           <Typography sx={styles.bodyText}>
-            Seja Bem-vindo ao site de estoque do SENAI
+            Seja Bem-vindo ao site de Reservas do SENAI
           </Typography>
         </Box>
         <Box sx={styles.footer}>
-          <Typography sx={styles.footerText}>&copy;CSSTORAGE</Typography>
+          <Typography sx={styles.footerText}>
+            &copy; Desenvolvido por: Vinicius Fogaça, Maria Júlia e Maria
+            Fernanda
+          </Typography>
         </Box>
       </Container>
     </div>
